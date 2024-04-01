@@ -1,0 +1,52 @@
+\titleformat{\chapter}[display]
+{\normalfont\huge\bfseries}{Capítulo \thechapter}{0.5em}{\huge}
+\titlespacing*{\chapter}{0pt}{-1.25cm}{25pt}
+\chapter{Introducción}
+\section{¿Qué es APRS?}
+		CARACULO The document is divided into \texttt{chapters}, \texttt{sections}, and \texttt{subsections}.
+
+		Some important references are \cite{einstein,latexcompanion,knuthwebsite}.
+
+		To add paragraphs in the document, 
+		one line break is not enough,
+
+		two line breaks are needed.
+
+		An itemized list:
+
+		\begin{itemize}
+			\item An item.
+			\item Another item.
+			\item Final item.
+		\end{itemize}
+
+		An enumerated list:
+
+		\begin{enumerate}
+			\item First item.
+			\item Second item.
+			\item Third item.
+		\end{enumerate}
+
+		A figure with an image is presented in \Cref{fig:logo_ucm}. Note that it floats away and latex places it where convenient.
+
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=0.4\textwidth]{./Images/escudo_ucm.pdf}
+			\caption{Sample figure}
+			\label{fig:logo_ucm}
+		\end{figure}
+
+		Tables work in the same way, as seen in \Cref{tab:tabla}
+
+		\begin{table}[h!]
+			\centering
+			\begin{tabular}{c|c|c}
+				Row & English & Español \\\hline\hline
+				1 & One & Uno \\
+				2 & Two & Dos \\
+			\end{tabular}
+			\caption{Sample table}
+			\label{tab:tabla}
+		\end{table}
+	\blindtext

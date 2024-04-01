@@ -1,0 +1,104 @@
+\documentclass[11pt,a4paper,spanish,openany,twoside]{report}
+\usepackage{csquotes}
+\usepackage[spanish,es-tabla]{babel}
+%allow for áéíóú
+\usepackage[utf8]{inputenc}
+%set page geometry for PRINTED version (more margin on the inner side towards the book's spine)
+%\usepackage[top=2.25cm, bottom=2.25cm, outer=2cm, inner=3cm, heightrounded, marginparwidth=2.5cm, marginparsep=0.3cm]{geometry}
+%set page geometry for PDF version
+\usepackage[top=2.25cm, bottom=2.25cm, outer=2.5cm, inner=2.5cm, heightrounded, marginparwidth=2.5cm, marginparsep=0.3cm]{geometry}
+
+
+%load images
+\usepackage{graphicx}
+\graphicspath{{Images/}}
+
+
+%bibliography: add .bib file in Others/library.bib
+%set bibliography style according to faculty specifications
+\usepackage[%
+	backend=bibtex       % biber or bibtex
+	%,style=authoryear   % Alphabeticalsch
+	,style=numeric-comp  % numerical-compressed
+	,sorting=nty         % no sorting: none %nty (name title year)
+	,sortcites=true      % some other example options ...
+	,block=none
+	,indexing=false
+	,citereset=none
+	,isbn=false
+	,url=true
+	,doi=false           % prints doi
+	,natbib=true         % if you need natbib functions
+]{biblatex}
+\addbibresource{Others/library.bib}  
+\setcounter{biburllcpenalty}{7000}
+\setcounter{biburlucpenalty}{8000}
+\usepackage{multicol}
+\renewcommand*{\bibfont}{\scriptsize} %\tiny
+
+
+%in-document links (LOAD LAST, math overwrites the reference system)
+\usepackage[hidelinks]{hyperref}
+\usepackage[capitalise]{cleveref}
+\crefname{table}{tabla}{tablas}
+
+
+%for adding dummy text
+\usepackage[math]{blindtext}
+
+\usepackage{titlesec}
+
+%BEGIN THE DOCUMENT ITSELF
+\begin{document}
+	%Do not number pages until we are ready
+	\pagenumbering{gobble} 
+	
+	%Place TOP COVER 
+	\input{Others/top_cover.tex}
+	\clearpage
+
+	%Place authorship declaration
+	%and financial support on its back 
+	\input{Others/authorship.tex}
+	\clearpage
+	
+	%Place dedication
+	\input{Others/dedication.tex}
+	\clearpage
+
+	%Start numbering pages with roman numbers
+	\pagenumbering{roman}
+	\input{Others/thanks.tex}
+	\input{Others/abstract.tex}
+	\clearpage
+
+
+	%Table of contents, list of figures, list of tables
+	\tableofcontents 
+	\newpage
+	\phantomsection\addcontentsline{toc}{chapter}{\listfigurename} %add LOF to index
+	\listoffigures
+	\newpage
+	\phantomsection\addcontentsline{toc}{chapter}{\listtablename} %add LOT to index
+	\listoftables
+	\clearpage
+
+    
+	%capítulos
+	\pagenumbering{arabic} 
+	\input{Chapters/1_example.tex}
+	\input{Chapters/2_problem_context.tex}
+	\input{Chapters/3_idea_proposition.tex}
+	\input{Chapters/4_implementation.tex}
+	\input{Chapters/5_results.tex}
+	\input{Chapters/6_conclusions_future_work.tex}
+	
+	
+	
+	%Compact bibliography style
+	\begin{multicols}{2}[\printbibheading]
+		\printbibliography[heading=none]
+		\addcontentsline{toc}{chapter}{Bibliography}
+	\end{multicols}
+
+\end{document}
