@@ -2,6 +2,29 @@
 {\normalfont\huge\bfseries}{Capítulo \thechapter}{0.5em}{\huge}
 \titlespacing*{\chapter}{0pt}{-1.25cm}{25pt}
 \chapter{Introducción}
+Las enfermedades cardiovasculares son la primera causa de muerte en el mundo y una de las causas mas comunes
+de estas enfermedades son las arritmias como las contracciones prematuras del corazón. Estas arritmias se 
+pueden detectar con un electrocardiograma (ECG) que es un diagrama de los latidos del corazon.
+
+(IMAGEN ECG)
+
+Dado que para detectar las arritmias correctamente se necesitan varios años de cardiologia,el algoritmo de 
+deteccion que se utilizara consistira en detectar las arritmias segun la distancia de los picos QRS. Con lo
+que el algoritmo detectara cuales son esos picos y comparara las distancias entre ellos haciendo antes un 
+filtrado sobre la señal inicial. Para intentar lograr mayor precision en la deteccion de picos se hizo el 
+algoritmo sobre la señal inicial sin filtrar pero los resultados llegaron a ser peores.  
+
+(IMAGEN QRS)
+
+El algoritmo se implementara en una FPGA para optimizar el rendimiento del algoritmo, paralelizar 
+las instrucciones, disminuir el consumo de energia ademas de la latencia a la hora de procesar la señal a tiempo real.
+Ademas se ha pensado que este algoritmo se utilize en un dispositivo portable para que los usuarios puedan
+tener una idea de las contracciones prematuras que tienen y tomen la decision de ir a un cardiologo.
+
+Los objetivos de este proyecto es tener una solucion para detectar contracciones prematuras a tiempo real en un largo periodo 
+de tiempo.
+
+
 \section{¿Qué es APRS?}
 		The document is divided into \texttt{chapters}, \texttt{sections}, and \texttt{subsections}.
 
