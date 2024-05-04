@@ -48,23 +48,24 @@
 
 \usepackage{titlesec}
 
+\usepackage{parskip}
 %BEGIN THE DOCUMENT ITSELF
 \begin{document}
 	%Do not number pages until we are ready
-	\pagenumbering{gobble} 
+	%\pagenumbering{gobble} 
 	
 	%Place TOP COVER 
-	\input{Others/top_cover.tex}
+	%\input{Others/top_cover.tex}
 	\clearpage
 
 	%Place authorship declaration
 	%and financial support on its back 
-	\input{Others/authorship.tex}
+	%\input{Others/authorship.tex}
 	\clearpage
 
 	%Start numbering pages with roman numbers
 	\pagenumbering{roman}
-	\input{Others/abstract.tex}
+	%\input{Others/abstract.tex}
 	\clearpage
 
 
@@ -81,7 +82,7 @@
     
 	%capítulos
 	\pagenumbering{arabic} 
-	\input{Chapters/1_example.tex}
+	\input{Chapters/1_Introduccion.tex}
 	\input{Chapters/2_problem_context.tex}
 	\input{Chapters/3_idea_proposition.tex}
 	\input{Chapters/4_implementation.tex}
