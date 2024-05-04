@@ -2,30 +2,65 @@
 {\normalfont\huge\bfseries}{Capítulo \thechapter}{0.5em}{\huge}
 \titlespacing*{\chapter}{0pt}{-1.25cm}{25pt}
 \chapter{Introducción}
+\section{Arritmias}
 Las enfermedades cardiovasculares son la primera causa de muerte en el mundo y una de las causas mas comunes
-de estas enfermedades son las arritmias como las contracciones prematuras del corazón. Estas arritmias se 
-pueden detectar con un electrocardiograma (ECG) que es un diagrama de los latidos del corazon.
+de estas enfermedades son las arritmias.
+
+Una arritmia cardiaca es una alteración en el ritmo normal del corazón. Si se produce una arritmia, el corazón 
+puede latir demasiado rápido, demasiado lento o de manera irregular. Esto puede provocar síntomas como palpitaciones,
+mareos, falta de aire e incluso desmayos y estas pueden llegar a ser mortales.
+
+Los cardiologos utilizan dispositivos como un Holter para generar tiras de ritmo o electrocardiogramas, que es un 
+diagrama que representa los latidos del corazon y con eso pueden llegar a detectar arritmias.
 
 (IMAGEN ECG)
 
-Dado que para detectar las arritmias correctamente se necesitan varios años de cardiologia,el algoritmo de 
-deteccion que se utilizara consistira en detectar las arritmias segun la distancia de los picos QRS. Con lo
-que el algoritmo detectara cuales son esos picos y comparara las distancias entre ellos haciendo antes un 
-filtrado sobre la señal inicial. Para intentar lograr mayor precision en la deteccion de picos se hizo el 
-algoritmo sobre la señal inicial sin filtrar pero los resultados llegaron a ser peores.  
+En este proyecto se tratara de solucionar las arritmias en las que se produce una contraccion prematura del corazon
+como las contracciones prematuras del corazón. Estas arritmias se 
+pueden detectar con un electrocardiograma (ECG) que es un diagrama de los latidos del corazon.
+
+
+
+\section{Algoritmo de deteccion}
+Dado que para detectar arritmias correctamente se necesitan varios años de cardiologia,el algoritmo de 
+deteccion que se utilizara consistira en detectar las arritmias unicamente usando los picos QRS del electrocardiograma.
+
+Un pico QRS en un electrocardiograma es causado por la contaccion del ventriculo al bombear la sangre por las arterias.
+Este es el impulso electrico mas fuerte que el corazon produce en cada latido. En este proyecto utilizaremos estos picos
+para comparar la distancia entre ellos y poder ver si se ha producido una arritmia. 
 
 (IMAGEN QRS)
 
+\subsection{Filtrado}
+Como se puede ver en las imagenes es conveniente hacer un filtrado de las tiras de ritmo para poder detectar mejor
+los picos QRS. Ya que el filtrado centra la onda en el 0 y evita fallos en el algoritmo de deteccion de picos del 
+que se hablará mas adelante. 
+
+En la creacion del proyecto se ha intentado no filtrar la onda para comprobar si se obtienen mejores resultados que
+sin dicho filtrado pero no se ha dado el caso por las irregularidades de la misma.
+
+\section{Pruebas con pacientes}
+Se han realizado las pruebas con unos resultados del Instituto de Tecnología de Massachusetts (MIT) en el que se han
+recogido tiras de ritmo de media hora de varios pacientes con edades diversas y algunos de ellos llevan un marcapasos
+que actua cuando el corazón no bombea la sangre lo suficientemente fuerte, es decir que el pico QRS no es tan prominente
+y se necesita la ayuda de dicho marcapasos para proporcionar el impulso electrico necesario.
+
+Estas pruebas han sido analizadas por cardiologos y se ha indicado donde el paciente padece una arritmia y donde el ritmo
+es normal y donde se ha producido un error en la lectura de la señal. Tambien muestra informacion menos relevante como la 
+activacion del marcapasos.
+
+\section{Utilizacion de las FPGAs}
 El algoritmo se implementara en una FPGA para optimizar el rendimiento del algoritmo, paralelizar 
 las instrucciones, disminuir el consumo de energia ademas de la latencia a la hora de procesar la señal a tiempo real.
 Ademas se ha pensado que este algoritmo se utilize en un dispositivo portable para que los usuarios puedan
 tener una idea de las contracciones prematuras que tienen y tomen la decision de ir a un cardiologo.
 
+\section{Objetivos del proyecto}
 Los objetivos de este proyecto es tener una solucion para detectar contracciones prematuras a tiempo real en un largo periodo 
 de tiempo.
 
 
-\section{¿Qué es APRS?}
+\section{Plantilla para usos de la herramienta}
 		The document is divided into \texttt{chapters}, \texttt{sections}, and \texttt{subsections}.
 
 		Some important references are \cite{einstein,latexcompanion,knuthwebsite}.
