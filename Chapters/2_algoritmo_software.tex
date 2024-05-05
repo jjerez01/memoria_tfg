@@ -1,0 +1,98 @@
+\chapter{Planteamiento del algoritmo en software}
+\section{Recopilacion de los datos}
+Para la recopilacion de los datos se utilizara la libreria wfdb que se encarga de proporcionar
+funciones para leer y escribir archivos de diferentes formatos que contienen señales biomédicas,
+como archivos de registro de señales (por ejemplo, formato .dat), archivos de anotaciones
+ (por ejemplo, formato .atr) y archivos de cabecera (por ejemplo, formato .hea).
+
+ Los pacientes vienen identificados por un id (por ejemplo, 101) y hay 3 ficheros por paciente, 
+ con extensiones .dat, .atr y .hea
+
+Se descarga la base de datos con la funcion de la libreria de wfdb, dldatabase que recoge 
+la señal del paciente y las anotaciones de los cardiologos sobre cada pico QRS.
+
+
+\lstset{language=python, breaklines=true, basicstyle=\footnotesize}
+\begin{lstlisting}[frame=single]
+#download the database if not available
+if os.path.isdir("mitdb"):
+	print('You already have the data.')
+else:
+	wfdb.dl_database('mitdb', 'mitdb')
+\end{lstlisting}
+
+Los pacientes de la base de datos se han hecho una prueba de 30 mins lo que en la señal 
+equivale a 650000 samples.
+
+\lstset{language=python, breaklines=true, basicstyle=\footnotesize}
+\begin{lstlisting}[frame=single]
+sampfrom = 0
+sampto = 650000
+record = wfdb.rdsamp('mitdb/102', sampfrom=sampfrom, sampto=sampto)
+annotation = wfdb.rdann('mitdb/102', 'atr', sampfrom=sampfrom, sampto=sampto)
+\end{lstlisting}
+
+Por ultimo, para visualizar esta señal con las anotaciones de los cardiologos y poder comparar 
+con las anotaciones que realiza el algoritmo se usara la libreria matplotlib.pyplot.
+
+Con esto se mostrara la señal original con las anotaciones y la señal filtrada con las anotaciones
+del algoritmo como en \Cref{fig:102filtradoysinfiltrar}
+
+\lstset{language=python, breaklines=true, basicstyle=\footnotesize}
+\begin{lstlisting}[frame=single]
+#plot the signal
+#add markers to the original signal
+ax[0].plot(original_signal)
+ax[1].plot(filtered_signal)
+ax[0].set_xlabel('Samples')
+ax[0].set_ylabel('Lead I')
+ax[1].set_xlabel('Samples')
+ax[1].set_ylabel('Lead I')
+
+
+#Making the upper signal
+for pos, sym in zip(annotation.sample, annotation.symbol):
+    pos -= sampfrom
+    ax[0].plot(pos, original_signal[pos], 'go', markersize=4, markerfacecolor='white')
+    if(sym == "A" or sym == "V" or sym == "a"):
+        ax[0].text(pos+10, original_signal[pos], sym, color='red')
+    else:
+        ax[0].text(pos+10, original_signal[pos], sym, color='orange')
+\end{lstlisting}
+
+\section{Filtrado de la señal original}
+Este filtrado es llevado a cabo por el filtrado IIR.
+
+El filtrado IIR, que significa "Infinite Impulse Response" (respuesta infinita al impulso),
+es un tipo de filtro utilizado en el procesamiento de señales digitales y analógicas.
+
+La formula que se utilizara para el filtrado es
+
+\[ Y[i] = \sum_{k=0}^{N_x -1} b_k \cdot x[i-k] \]
+
+Con lo que b son los coeficientes y x la señal a filtrar
+
+Los coeficientes son 
+
+\lstset{language=python, breaklines=true, basicstyle=\footnotesize}
+\begin{lstlisting}[frame=single]
+filter_taps_99_6_28 = [  -0.022064516719960285,  -0.01248143191787449,  -0.014272402451704691,  -0.01482693239340742,  -0.013830723879265979,  -0.011121793043893711,  -0.006713818327951467,  -0.0008089345809688635,  0.006216127611731759,  0.013857892265470411,  0.02152515460626638,  0.028576965837020497,  0.034398765027779624,  0.03844530602431575,  0.04025284446627053,  0.039530808378156514,  0.0361389960690063,  0.030158595190338606,  0.021892977443216645,  0.01187877085962161,  0.0008679402497379659,  -0.010209492943778627,  -0.020330840764461847,  -0.02848685236456877,  -0.03381377331912697,  -0.03574615252534521,  -0.03413529962465352,  -0.02933049408837693,  -0.022191934029519987,  -0.014013910197915145,  -0.006355535107839268,  -0.0008277532244847638,  0.0011959567983135999,  -0.0011634462076121899,  -0.008076950035987168,  -0.018875074584752207,  -0.0320701386231862,  -0.04551445963999694,  -0.05668375253673195,  -0.0630716859149452,  -0.06260700837237966,  -0.05404472876437898,  -0.037193610758084875,  -0.013167513231520076,  0.01590495809018272,  0.04685141764647888,  0.07609319762164894,  0.10009947011806296,  0.11585338656670081,  0.12133902448458535,  0.11585338656670081,  0.10009947011806296,  0.07609319762164894,  0.04685141764647888,  0.01590495809018272,  -0.013167513231520076,  -0.037193610758084875,  -0.05404472876437898,  -0.06260700837237966,  -0.0630716859149452,  -0.05668375253673195,  -0.04551445963999694,  -0.0320701386231862,  -0.018875074584752207,  -0.008076950035987168,  -0.0011634462076121899,  0.0011959567983135999,  -0.0008277532244847638,  -0.006355535107839268,  -0.014013910197915145,  -0.022191934029519987,  -0.02933049408837693,  -0.03413529962465352,  -0.03574615252534521,  -0.03381377331912697,  -0.02848685236456877,  -0.020330840764461847,  -0.010209492943778627,  0.0008679402497379659,  0.01187877085962161,  0.021892977443216645,  0.030158595190338606,  0.0361389960690063,  0.039530808378156514,  0.04025284446627053,  0.03844530602431575,  0.034398765027779624,  0.028576965837020497,  0.02152515460626638,  0.013857892265470411,  0.006216127611731759,  -0.0008089345809688635,  -0.006713818327951467,  -0.011121793043893711,  -0.013830723879265979,  -0.01482693239340742,  -0.014272402451704691,  -0.01248143191787449,  -0.022064516719960285]
+
+\end{lstlisting}
+
+Para el filtrado se usa la funcion lfilter de la libreria scipy.signal
+
+\lstset{language=python, breaklines=true, basicstyle=\footnotesize}
+\begin{lstlisting}[frame=single]
+    filtered_signal = lfilter(filter_taps_99_6_28, 1.0, original_signal)
+\end{lstlisting}
+TODO a y formula completa ademas de una mejor explicacion
+
+\section{Detección de picos QRS}
+
+
+
+\section{Detección de arritmias}
+
+\section{Pruebas con el algoritmo}
+
