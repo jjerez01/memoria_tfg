@@ -90,9 +90,196 @@ TODO a y formula completa ademas de una mejor explicacion
 
 \section{Detección de picos QRS}
 
+El algoritmo de deteccion de picos esta representada en esta funcion que 
+recibe la señal filtrada e intenta detectar los picos QRS.
 
+Este algoritmo esta basado en el que se usa en el documento  https://www.mdpi.com/2079-9292/10/19/2324 
+donde en el 4.1.2 muestran una maquina de estados del proceso que realizan.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.6\textwidth]{./Images/img_algoritmo/fsm_mdpi.png}
+    \caption{Maquina de estados de algoritmo de deteccion de picos de estudio de caracterizacion de señales usando polinomios de Hermite}
+    \label{fig:fsm_mpdi}
+\end{figure}
+
+Si bien nuestro algoritmo es distinto a ese, se replica el esperar a 72 muestras
+para asegurar de que no se encuentra un pico superior y asi considerarlo como un pico QRS.
+
+Es por ello que definimos la variable samples\_around\_peak como 72 para comparar dicha condición.
+
+Para hallar el pico mas alto se necestia definir un pico en last\_peak y si se encuentra otro pico se produce
+
+\lstset{language=python, breaklines=true, basicstyle=\footnotesize}
+\begin{lstlisting}[frame=single]
+last-peak = max(last-peak,signal[i])
+\end{lstlisting}
+
+Sin embargo hay un problema y es que cuando se detecte un pico QRS, es decir cuando se haya detectado el pico 
+mas alto despues de haber pasado 72 samples se restauran los valores para empezar a detectar nuevos picos y al
+haber ruido el algoritmo podria detectar falsos picos QRS asi que por ello se implementa un cutoff.
+
+El cutoff es representado como una funcion descendente que parte de cada pico localizado y mientras no se haya
+encontrado ningun pico, el valor de dicha funcion va decreciendo. La principal funcion del cutoff es evitar que
+el algoritmo detecte picos con el ruido y por ello se ha ajustado para que no ocurra el problema anterior y 
+ser capaz de detectar todos los picos QRS.
+
+La funcion del cutoff es la siguiente.
+\lstset{language=python, breaklines=true, basicstyle=\footnotesize}
+\begin{lstlisting}[frame=single]
+def calcular_cutoff(cutoff):
+    cutoff = cutoff - cutoff/(256 - 64)
+    return cutoff
+\end{lstlisting}
+
+Esta funcion es llamada cuando no se ha encontrado un nuevo pico y decrementa su valor, cuando se localiza un
+nuevo pico, el cutoff pasa a tener el valor del pico localizado.
+
+\lstset{language=python, breaklines=true, basicstyle=\footnotesize}
+\begin{lstlisting}[frame=single]
+    def extract_peak_indices(signal, total_samples):
+        samples_around_peak = total_samples // 2
+        last_peak = None
+        last_index = None
+        peak_indices = []
+        cutoff = 0
+        for i in range(samples_around_peak-1, len(signal)):
+            if last_peak == None:
+                last_peak = signal[i]
+                last_index = i
+                cutoff = calcular_cutoff(cutoff)
+            else:
+                if signal[i] > last_peak and signal[i] > cutoff:
+                    last_peak = signal[i]
+                    last_index = i
+                    cutoff= signal[i]
+                else:
+                    if (i - last_index) >= samples_around_peak and last_peak > cutoff:
+                        peak_indices.append(last_index)
+                        cutoff = calcular_cutoff(cutoff)
+                        last_peak = None
+                        last_index = None         
+                    else:
+                        cutoff = calcular_cutoff(cutoff)
+            cutoff_plot.append(cutoff)
+        ax[1].plot(range(samples_around_peak-1, len(signal)),cutoff_plot)
+        return peak_indices
+\end{lstlisting}
+
+La salida de dicha funcion es un buffer de samples que sirven como indices para indicar donde se han encontrado
+los picos QRS y asi poder pasar al modulo de deteccion de arritmias.
 
 \section{Detección de arritmias}
+
+El algoritmo de deteccion de arritmias se encarga de ver si se ha producido una arritmia segun la
+distancia entre los picos.
+
+En la deteccion de arritmias es de vital importancia establecer un límite en la distancia entre los picos
+para poder considerar que ha habido una arritmia o no, esta tarea solo se pudo hacer probando con diferentes
+rangos y viendo el indice de aciertos producidos en las pruebas a cada paciente de las que se hablara más adelante. 
+
+El algoritmo va almacenando distancias entre los picos QRS (es por ello que en la primera iteración no se almacena nada)
+y se declaran varias variables.
+
+\begin{itemize}
+    \item last\_distance: se utiliza para almacenar la ultima distancia recogida y asi poder compararla con la distancia 
+    actual en calculos posteriores
+    \item counter\_buffer: utilizado para tener el valor de la posicion del buffer donde se escribe.
+    \item counter\_arrythmia: utilizado para indicar si la distancia anterior fue una arritmia.
+    \item TNRange: Se utiliza para indicar si hay una distancia mas grande de lo normal entre 2 picos QRS producido
+    por una arritmia. Es importante tener esta distancia en cuenta ya que si el ritmo del paciente vuelve a la
+    normalidad se compararia la distancia entre el ritmo normal del paciente con el ritmo extendido por la arritmia,
+    ya que de no tenerlo en cuenta el algoritmo lo clasificaria como arritmia como se puede ver en la \cref{fig:senial_explicacion_TNRANGE}, por ello se compara con un valor anterior
+    que sea el ritmo normal del paciente.
+\end{itemize}
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.9\textwidth]{./Images/img_algoritmo/senial_explicacion_TNRANGE.png}
+    \caption{Cuando se detecta una arritmia, a veces, la siguiente distancia es considerablemente mas grande de lo normal. Para no detectar falsos positivos, se omite esa distancia}
+    \label{fig:senial_explicacion_TNRANGE}
+\end{figure}
+
+Por ello si se ha detectado una arritmia, la siguiente distancia se compara con
+la tercera ultima distancia escrita en el buffer que posiblemente sea una distancia causada por un ritmo normal. 
+Si no se da el caso, se compara con last\_distance.
+
+la funcion que compara las distancias devuelve un char que va a ser el que se vaya a plotear en la grafica, 
+si el char es "N" significa que se ha detectado un ritmo normal y por tanto solo se plotea. Sin embargo si el 
+resultado es "T" significa que la distancia es mas corta de lo normal, se detecta la arritmia y se ponen
+counter\_arritmia a 1 para saber que la distancia es mas corta y TNRange a true para que el algoritmo sepa 
+que la distancia que venga despues puede ser una ampliada. 
+
+\lstset{language=python, breaklines=true, basicstyle=\footnotesize}
+\begin{lstlisting}[frame=single]
+    #init the first distance, the first beat doesn't count
+    posant = peaks[0]
+    last_distance = peaks[1] - peaks[0]
+
+    pos_buffer = [last_distance]
+    counterBuffer = 0
+    #this var refers to the distance left in between an arrythmia and normal rythm 
+    # which tends to be longer. To avoid detection problems we will not compare this distance so the detection can be more precise
+    TNRange = False
+    counter_arrrythmia = 0
+    for pos in peaks[1:]:
+        act_distance = pos - posant
+        pos_buffer.append(act_distance)
+        counterBuffer += 1
+    
+        if(TNRange==True and counter_arrrythmia == 0):
+            sym = get_frecuency_in_char(pos_buffer[counterBuffer - 3],act_distance)
+    
+            TNRange=False
+        else:
+            if(TNRange == True):
+                counter_arrrythmia -= 1
+            sym = get_frecuency_in_char(last_distance,act_distance)
+        
+    
+        if(sym == "N"):
+            ax[1].plot(pos, filtered_signal[pos], 'go', markersize=4, markerfacecolor='green')
+            ax[1].text(pos-30, filtered_signal[pos], sym, color='green')       
+        elif(sym == "T"):
+            ax[1].plot(pos, filtered_signal[pos], 'go', markersize=4, markerfacecolor='red')
+            ax[1].text(pos-30, filtered_signal[pos], sym, color='red')
+            TNRange = True
+            counter_arrrythmia = 1
+        
+        posant = pos
+        last_distance = act_distance
+\end{lstlisting}
+
+La funcion get\_frecuency\_in\_char() se encarga de calcular las distancias entre el ritmo actual y un ritmo normal. 
+Para ello recibe como entrada ambas distancias.
+
+Para empezar se calcula el gap que es simplemente la diferencia que tiene el la distancia anterior con la actual.
+Despues se calcula el porcentaje de la diferencia de distancia con la distancia anterior que sabemos que va a ser 
+un ritmo normal.
+
+Si ese porcentaje es mayor que el 15\% entonces se considera que la distancia normal es mucho mayor que la actual
+y por tanto como la distancia actual entre 2 picos es pequeña, se da por hecho que hay una arrimtia.
+
+Notese que no le damos importancia si el gap da como resultado un número negativo de cualquier tamaño, esto se debe
+a que este proyecto solo esta pensado para detectar contracciones prematuras del corazon, por ende solo necesitamos 
+saber si la distancia actual es menor que la anterior. Además ningun paciente parece padecer ninguna arritmia de otro
+tipo.
+
+\lstset{language=python, breaklines=true, basicstyle=\footnotesize}
+\begin{lstlisting}[frame=single]
+def get_frecuency_in_char(last_distance,act_distance): 
+
+    gap = last_distance - act_distance
+
+    percentaje = (gap / last_distance) * 100
+
+    if(percentaje > 15):
+        ret = "T"
+    else:
+        ret = "N"
+    return ret
+
+\end{lstlisting}
 
 \section{Pruebas con el algoritmo}
 
