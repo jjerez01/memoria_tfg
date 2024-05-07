@@ -106,7 +106,7 @@ donde en el 4.1.2 muestran una maquina de estados del proceso que realizan.
 Si bien nuestro algoritmo es distinto a ese, se replica el esperar a 72 muestras
 para asegurar de que no se encuentra un pico superior y asi considerarlo como un pico QRS.
 
-Es por ello que definimos la variable samples\_around\_peak como 72 para comparar dicha condición.
+Es por ello que definimos la variable \lstinline|samples_around_peak| como 72 para comparar dicha condición.
 
 Para hallar el pico mas alto se necestia definir un pico en last\_peak y si se encuentra otro pico se produce
 
@@ -282,4 +282,13 @@ def get_frecuency_in_char(last_distance,act_distance):
 \end{lstlisting}
 
 \section{Pruebas con el algoritmo}
+
+Se han realizado una serie de pruebas para probar el algoritmo estas se encargan de comprobar si las posiciones donde
+se ha detectado un pico QRS coinciden con las posiciones de los picos detectados por los cardiologos, y ademas se 
+encargan de comparar las anotaciones de los cardiologos con las generadas por el algoritmo.
+
+Con estas estadisticas es posible comparar el porcentaje de aciertos, en los que se comprende el numero de 
+falsos positivos, (referido a los ritmos normales que el algoritmo considara arritmias) y 
+falsos negativos (referido a las arrimtias que el algoritmo considera un ritmo normal).
+
 
