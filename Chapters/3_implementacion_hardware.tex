@@ -14,13 +14,414 @@ Por tanto en esta imagen quedan representados todos los modulos.
 
 \section{Modulo de filtrado}
 
-Este modulo se compone por un
+Este modulo utiliza una ROM con los coeficientes, una RAM con las muestras y un modulo de multiplicacion
+de numeros en punto flotante.
+
+Este modulo se compone de una maquina de estados que va multiplicando cada elemento de la RAM muestras 
+con los elementos de la ROM coeficientes con el modulo de multiplicacion de punto flotante.
+
+\subsection{Señales de entrada y salida}
+
+Las señales de entrada son:
+
+\begin{itemize}
+\item clk y reset
+\item input\_signal\_data: señal que recibe las muestras de la señal original 
+\item input\_valid e input\_ready: son flags que sirven para sincronizar el modulo con la llegada de muestras. 
+\end{itemize}
+
+Las señales de salida son:
+
+\begin{itemize}
+    \item output\_filter\_data: saca los valores de la señal filtrada
+    \item output\_filter\_index: saca los indices de cada valor de la señal filtrada
+    \item output\_valid y output\_ready: se encargan de sincronizar el modulo del filtrado 
+    con el modulo de deteccion de picos
+\end{itemize}
+
+\lstset{language=VHDL, breaklines=true, basicstyle=\footnotesize}
+\begin{lstlisting}[frame=single]
+    entity filter is
+    port (
+        -- Seniales de reloj y de reset
+        clk                 : in  std_logic;
+        reset               : in  std_logic; 
+        
+        -- bus AXI Stream de entrada
+        input_signal_data   : in  std_logic_vector(31 downto 0);
+        input_valid         : in  std_logic;
+        input_ready         : out std_logic;
+        
+        -- bus AXI Stream de salida
+        output_filter_data  : out std_logic_vector(31 downto 0);
+        output_filter_index : out std_logic_vector(31 downto 0);
+        output_valid        : out std_logic;
+        output_ready        : in  std_logic   
+   );
+end filter;
+\end{lstlisting}
+
+\subsection{Maquina de estados}
+
+Se realiza el proceso de sincronizacion de los estados, donde las señales siguientes pasan a las señales actuales.
+
+\lstset{language=VHDL, breaklines=true, basicstyle=\footnotesize}
+\begin{lstlisting}[frame=single]
+    sync: process(clk)
+    begin
+        if ( rising_edge(clk) ) then
+            if ( reset = '1' ) then
+                state <= estado_espera;
+                cont_muestras <= (others=>'0');
+                cont_coeficientes <= (others=>'0');
+                cont_indice <= (others=>'0');
+                acumulado <= (others=>'0');
+            else
+                state <= next_state;
+                cont_muestras <= next_cont_muestras;
+                cont_coeficientes <= next_cont_coeficientes;
+                cont_indice <= next_cont_indice;
+                acumulado <= next_acumulado;                
+            end if;
+        end if;
+    end process sync;
+\end{lstlisting}
+
+Se realiza el proceso de actualizacion de las señales donde se le asignan nuevos valores para el siguiente ciclo de reloj.
+
+\begin{itemize}
+    \item Estado de espera: En el estado de espera se activa la señal de ready y se espera a que se envie un valor de la
+    señal sin filtrar, se borra el valor de la solucion de la multiplicacion anterior en caso de haberla, se activan las
+    señales de escritura de la RAM y se establece el indice donde se va a escribir la muestra.
+    \item Estado lectura: Se activa la lectura de los coeficientes y de las muestras.
+    \item Estado para ordenar el cálculo: en este estado se activa el flag del modulo de multiplicacion.
+    \item Estado de espera del calculo: se espera a que termine el modulo de multiplicacion esperando la señal de ready\_muladd
+    y se almacena el resultado, tambien se actualiza el contador de los coeficientes, de las muestras y dependiendo de si el 
+    indice de coeficientes es menor que 98 se va al estado de lectura o el estado de enviar un nuevo dato al siguiente modulo.
+    \item Estado de envio de nuevo dato: este estado sincroniza el siguientemodulo, activa el bit de valid a 1 y espera el bit
+    de ready del siguiente modulo para poder enviar el dato.
+\end{itemize}
+
+\lstset{language=VHDL, breaklines=true, basicstyle=\footnotesize}
+\begin{lstlisting}[frame=single]
+    cmb: process(state, cont_coeficientes, cont_muestras, cont_indice, acumulado, input_valid, ready_muladd, result_muladd, output_ready)
+    begin
+        -- Registros de estado y de seniales
+        next_state <= state;
+        next_cont_coeficientes <= cont_coeficientes;
+        next_cont_muestras <= cont_muestras;
+        next_acumulado <= acumulado;
+        next_cont_indice <= cont_indice;
+        
+        -- Seniales de control de los buses
+        input_ready <= '0';
+        output_valid <= '0';
+        
+        -- Seniales de control para la ruta de datos
+        ROM_coeficientes_ena <= '0';
+        RAM_muestras_ena <= '0';
+        RAM_muestras_wea <= "0";
+        enable_muladd <= '0';
+  
+        case state is 
+            
+            when estado_espera =>
+                input_ready <= '1';
+                if ( input_valid = '1' ) then
+                    next_acumulado <= (others=>'0');
+                    -- Almacenamos el valor de entrada
+                    RAM_muestras_ena <= '1';
+                    RAM_muestras_wea <= "1";
+                    if ( to_integer(unsigned(cont_muestras)) < 98 ) then
+                        next_cont_muestras <= std_logic_vector(unsigned(cont_muestras) + 1);                        
+                    else
+                        next_cont_muestras <= (others=>'0');
+                    end if;
+                    next_state <= estado_lectura;
+                end if;
+                 
+            when estado_lectura => 
+                -- Hacemos la lectura de ambas memorias  
+                ROM_coeficientes_ena <= '1';
+                RAM_muestras_ena <= '1';
+                next_state <= estado_ordenar_calculo;
+                
+            when estado_ordenar_calculo =>
+                enable_muladd <= '1';
+                next_state <= estado_espera_calculo;
+                            
+            when estado_espera_calculo =>
+                if ( ready_muladd = '1' ) then
+                    next_acumulado <= result_muladd;
+                    
+                    if ( to_integer(unsigned(cont_muestras)) < 98 ) then
+                        next_cont_muestras <= std_logic_vector(unsigned(cont_muestras) + 1);                        
+                    else
+                        next_cont_muestras <= (others=>'0');
+                    end if;
+                    
+                    if ( to_integer(unsigned(cont_coeficientes)) < 98 ) then
+                        next_cont_coeficientes <= std_logic_vector(unsigned(cont_coeficientes) + 1);                        
+                    else
+                        next_cont_coeficientes <= (others=>'0');
+                    end if;                    
+                    
+                    if ( to_integer(unsigned(cont_coeficientes)) < 98 ) then
+                        next_state <= estado_lectura;
+                    else
+                        next_state <= estado_enviar_nuevo_dato;
+                    end if;
+                    
+                end if;
+            
+            when estado_enviar_nuevo_dato =>      
+                output_valid <= '1';
+                if ( output_ready = '1' ) then
+                    next_cont_indice <= std_logic_vector(unsigned(cont_indice) + 1);
+                    next_state <= estado_espera;
+                end if;
+
+        end case;
+    end process cmb;
+\end{lstlisting}
+
+El envio de datos al output se realiza de forma asincrona
+\lstset{language=VHDL, breaklines=true, basicstyle=\footnotesize}
+\begin{lstlisting}[frame=single]
+    output_filter_data <= acumulado;
+    output_filter_index <= cont_indice;
+\end{lstlisting}
+
+\subsection{Modulos utilizados}
+Se utilizo una ROM para almacenar los coeficientes y poder leerlos
+
+\lstset{language=VHDL, breaklines=true, basicstyle=\footnotesize}
+\begin{lstlisting}[frame=single]
+    -- ROM que contiene los coeficientes 
+    ROM_coeficientes_i : entity work.ROM_coeficientes port map (
+        clka      => clk,
+        ena       => ROM_coeficientes_ena,
+        addra     => ROM_coeficientes_addra,
+        douta     => ROM_coeficientes_douta
+    );
+    
+    ROM_coeficientes_addra <= cont_coeficientes;
+\end{lstlisting}
+
+Se usa una RAM para poder leer y escribir en las muestras de la señal original.
+
+\lstset{language=VHDL, breaklines=true, basicstyle=\footnotesize}
+\begin{lstlisting}[frame=single]
+    -- ROM que contiene las muestras 
+    RAM_muestras_i : entity work.RAM_muestras port map (
+        clka      => clk,
+        ena       => RAM_muestras_ena,
+        wea       => RAM_muestras_wea,
+        addra     => RAM_muestras_addra,
+        dina      => RAM_muestras_dina,
+        douta     => RAM_muestras_douta
+    );    
+    
+    RAM_muestras_addra <= cont_muestras;
+    RAM_muestras_dina <= input_signal_data;
+\end{lstlisting}
+
+Se usa un modulo de multiplicacion para poder multiplicar los valores de las muestras con los valores de los coeficientes.
+
+\lstset{language=VHDL, breaklines=true, basicstyle=\footnotesize}
+\begin{lstlisting}[frame=single] 
+    -- Multiplicacion y suma 
+    mul_add_i : entity work.muladdpf port map (
+        aclk                    => clk,
+        s_axis_a_tvalid         => enable_muladd,
+        s_axis_a_tdata          => RAM_muestras_douta,
+        s_axis_b_tvalid         => enable_muladd,
+        s_axis_b_tdata          => ROM_coeficientes_douta,
+        s_axis_c_tvalid         => enable_muladd,
+        s_axis_c_tdata          => acumulado,                
+        m_axis_result_tvalid    => ready_muladd,
+        m_axis_result_tdata     => result_muladd
+    );
+\end{lstlisting}
 
 \section{Modulo de deteccion de picos}
 
+Este modulo se encarga de detectar los picos de la señal filtrada. 
+\subsection{Señales de entrada y salida}
+    \begin{itemize}
+    \item clk y reset
+    \item input\_signal\_data: señal que recibe las muestras de la señal filtrada 
+    \item input\_signal\_index: señal que recibe lso indices de las muestras de la señal filtrada 
+    \item input\_valid e input\_ready: son flags que sirven para sincronizar el modulo con la llegada de muestras. 
+    \end{itemize}
+    
+    Las señales de salida son:
+    
+    \begin{itemize}
+        \item output\_peak\_index: saca los indices de los picos detectados
+        \item output\_valid y output\_ready: Se encargan de sincronizar el modulo de deteccion de picos 
+        con el modulo de deteccion de arritmias.
+    \end{itemize}
+    
+\lstset{language=VHDL, breaklines=true, basicstyle=\footnotesize}
+\begin{lstlisting}[frame=single] 
+port (
+    -- Seniales de reloj y de reset
+    clk                 : in  std_logic;
+    reset               : in  std_logic; 
+    
+    -- bus AXI Stream de entrada
+    input_signal_data   : in  std_logic_vector(31 downto 0);
+    input_signal_index  : in  std_logic_vector(31 downto 0); -- vamos a dejarlo en 32 (aunque no sean necesarios tantos bits) para sean todos los buses iguales
+    input_valid         : in  std_logic;
+    input_ready         : out std_logic;
+    
+    -- bus AXI Stream de salida
+    output_peak_index   : out std_logic_vector(31 downto 0); -- vamos a dejarlo en 32 (aunque no sean necesarios tantos bits) para sean todos los buses iguales
+    output_valid        : out std_logic;
+    output_ready        : in  std_logic   
+);
+\end{lstlisting}
+\subsection{Maquina de estados}
+Se realiza el proceso de sincronizacion de los estados, donde las señales siguientes pasan a las señales actuales.
+
+\lstset{language=VHDL, breaklines=true, basicstyle=\footnotesize}
+\begin{lstlisting}[frame=single]
+    sync: process(clk)
+    begin
+        if ( rising_edge(clk) ) then
+            if ( reset = '1' ) then
+                state <= estado_espera;
+                signal_data <= (others=>'0');
+                signal_index <= (others=>'0');
+                last_peak <= (others=>'0');
+                last_index <= (others=>'0');
+                cutoff <= (others=>'0');
+            else
+                state <= next_state;
+                signal_data <= next_signal_data;
+                signal_index <= next_signal_index;
+                last_peak <= next_last_peak;
+                last_index <= next_last_index; 
+                cutoff <= next_cutoff;
+            end if;
+        end if;
+    end process sync;
+\end{lstlisting}
+
+Se realiza el proceso de actualizacion de las señales donde se le asignan nuevos valores para el siguiente ciclo de reloj.
+
+\begin{itemize}
+    \item Estado de espera: En el estado de espera se activa la señal de ready y se espera a que se envie un valor de la
+    señal sin filtrar, se borra el valor de la solucion de la multiplicacion anterior en caso de haberla, se activan las
+    señales de escritura de la RAM y se establece el indice donde se va a escribir la muestra.
+    \item Estado de comprobar indice: 
+    \item Estado de actualizar cutoff:
+    \item Estado de espera a la condicion en la que la señal es mayor que el pico maximo: 
+    \item Estado de envio de nuevo pico:
+\end{itemize}
+\lstset{language=VHDL, breaklines=true, basicstyle=\footnotesize}
+\begin{lstlisting}[frame=single]
+    cmb: process(state, signal_data, signal_index, last_peak, last_index, cutoff, input_valid, input_signal_data, input_signal_index, ready_signal_data_gt_cutoff, result_signal_data_gt_cutoff, ready_sub, result_sub, ready_signal_data_gt_last_peak, result_signal_data_gt_last_peak, result_signal_index_sub_last_index_gt_or_eq_samples_around_peak, result_last_peak_gt_cutoff, output_ready,samples_around_peak)
+    begin
+        -- Registros de estado y de seniales
+        next_state <= state;
+        next_signal_data <= signal_data;
+        next_signal_index <= signal_index;
+        next_last_peak <= last_peak;
+        next_last_index <= last_index;
+        next_cutoff <= cutoff;
+        
+        -- Seniales de control de los buses
+        input_ready <= '0';
+        output_valid <= '0';
+        
+        -- Seniales de control para la ruta de datos
+        enable_signal_data_gt_cutoff <= '0';
+        enable_div <= '0';
+        enable_signal_data_gt_last_peak <= '0';
+        enable_last_peak_gt_cutoff <= '0';
+    
+        case state is 
+        
+            -- Esperamos a que llegue una nueva muestra
+            when estado_espera =>
+                -- El modulo esta listo para recibir nuevos datos
+                input_ready <= '1';
+                if ( input_valid = '1' ) then
+                    -- Almaceno los valores de entrada
+                    next_signal_data <= input_signal_data;
+                    next_signal_index <= input_signal_index;
+                    next_state <= estado_comprueba_indice;
+                 end if;
+                 
+            when estado_comprueba_indice =>
+                if ( to_integer(unsigned(signal_index)) < unsigned(samples_around_peak)) then  -- Las primeras 300 muestras las utilizamos para fijar un cutoff inicial
+                    next_state <= estado_espera;
+                else
+                    if ( last_peak = x"00000000" ) then
+                        next_last_peak <= signal_data;
+                        next_last_index <= signal_index;
+                        -- ordenar la actualizacion del cutoff (division)
+                        enable_div <= '1';
+                        next_state <= estado_actualizar_cutoff;
+                    else
+                        -- Ordenamos hacer la comparacion 'signal[i] > last_peak'
+                        enable_signal_data_gt_last_peak <= '1';
+                        enable_signal_data_gt_cutoff <= '1';
+                        -- OJO: Ordenamos tambien hacer la comparacion 'last_peak > cutoff'. Aunque quizï¿½s no haga fata, adelantamos su cï¿½lculo
+                        enable_last_peak_gt_cutoff <= '1';
+                        next_state <= estado_espera_condicion_signal_data_gt_last_peak;
+                    end if;
+                end if;
+                
+            when estado_actualizar_cutoff =>
+                -- Ha terminado la resta
+                if ( ready_sub = '1' ) then
+                    next_cutoff <= result_sub;
+                    next_state <= estado_espera;
+                end if;                
+                
+             when estado_espera_condicion_signal_data_gt_last_peak =>
+                if ( ready_signal_data_gt_last_peak = '1' and ready_signal_data_gt_cutoff = '1') then
+                    if ( result_signal_data_gt_last_peak(0) = '1' and result_signal_data_gt_cutoff(0) = '1') then
+                        next_last_peak <= signal_data;
+                        next_last_index <= signal_index;
+                        next_cutoff <= signal_data;
+                        next_state <= estado_espera;
+                    elsif ( result_signal_index_sub_last_index_gt_or_eq_samples_around_peak ='1' and result_last_peak_gt_cutoff(0) = '1' ) then                     
+                        -- Hemos encontrado un nuevo pico
+                        next_state <= estado_envio_nuevo_pico;
+                    else
+                        -- ordenar la actualizacion del cutoff (division)
+                        enable_div <= '1';
+                        next_state <= estado_actualizar_cutoff;
+                    end if;
+                end if;
+                
+              when estado_envio_nuevo_pico =>
+                    -- output_peak_index <= last_index;
+                    output_valid <= '1';
+                    if ( output_ready = '1' ) then
+                        next_last_peak <= (others => '0');
+                        next_last_index <= (others => '0');
+                       -- ordenar la actualización del cutoff (división)
+                        enable_div <= '1';
+                        next_state <= estado_actualizar_cutoff;
+                    end if;
+                
+        end case;
+    end process cmb;
+\end{lstlisting}
+
 \section{Modulo de deteccion de arritmias}
 
+
+\subsection{Señales de entrada y salida}
+
 \section{Modulo principal y testbench}
+
+\subsection{Señales de entrada y salida}
 
 \section{Otros modulos}
 
