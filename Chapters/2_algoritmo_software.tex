@@ -135,6 +135,10 @@ def calcular_cutoff(cutoff):
 Esta funcion es llamada cuando no se ha encontrado un nuevo pico y decrementa su valor, cuando se localiza un
 nuevo pico, el cutoff pasa a tener el valor del pico localizado.
 
+Se han dado los valores (256 - 64) a la formula para que fuese mas facil la divison en hardware pero como al final 
+se acabo haciendo en un modulo de division en punto flotante cualquier valor es valido para la division aunque debido 
+al buen desempeño del valor en el programa se decidio dejar asi.
+
 \lstset{language=python, breaklines=true, basicstyle=\footnotesize}
 \begin{lstlisting}[frame=single]
     def extract_peak_indices(signal, total_samples):
@@ -291,4 +295,229 @@ Con estas estadisticas es posible comparar el porcentaje de aciertos, en los que
 falsos positivos, (referido a los ritmos normales que el algoritmo considara arritmias) y 
 falsos negativos (referido a las arrimtias que el algoritmo considera un ritmo normal).
 
+Para desarrollar estas pruebas, se crea una clase Pair que contenga por cada iteracion de la deteccion de arritmias, el simbolo sacado 
+por el algoritmo y la posicion del sample en la que se encuentre dicho pico QRS.
 
+\lstset{language=python, breaklines=true, basicstyle=\footnotesize}
+\begin{lstlisting}[frame=single]
+class Pair:
+def __init__(self, sym, pos):
+    self.sym = sym
+    self.pos = pos
+
+def __repr__(self):
+    return f"Pair({self.sym}, {self.pos})"
+
+\end{lstlisting}
+
+Dicho objeto se inserta en un buffer para luego poder comparar con las anotaciones de la señal original.
+
+\lstset{language=python, breaklines=true, basicstyle=\footnotesize}
+\begin{lstlisting}[frame=single]
+if(sym == "N" or sym == "T"):
+    pair = Pair(sym,pos)    
+    produced_symbols.append(pair)
+\end{lstlisting}
+
+Una vez se rellena todo el buffer de Pares, se comprueban 2 cosas.
+\begin{enumerate}
+	\item Si se ha detectado un pico QRS en la señal filtrada y se
+     corresponde con el pico de la señal original situado en un sample de una posicion aproximada.
+	\item Si,en el caso de que se haya detectado el pico, las anotaciones de los cardiologos coinciden
+     con las generadas por el algoritmo
+\end{enumerate} 
+
+Para este proyecto, solo se valora si el paciente tiene un ritmo normal o una arritmia, pero las anotaciones
+que contiene la señal original pueden simbolizar otros problemas como la entrada del marcapasos o otros problemas con la onda T.
+En la clase Annotation de la libreria wfdb, vienen explicadas todas las posibles anotaciones que puede haber.
+\lstset{language=python, breaklines=true, basicstyle=\footnotesize}
+\begin{lstlisting}[frame=single]
+    ann_labels = [
+        AnnotationLabel(0, " ", 'NOTANN', 'Not an actual annotation'),
+        AnnotationLabel(1, "N", 'NORMAL', 'Normal beat'),
+        AnnotationLabel(2, "L", 'LBBB', 'Left bundle branch block beat'),
+        AnnotationLabel(3, "R", 'RBBB', 'Right bundle branch block beat'),
+        AnnotationLabel(4, "a", 'ABERR', 'Aberrated atrial premature beat'),
+        AnnotationLabel(5, "V", 'PVC', 'Premature ventricular contraction'),
+        AnnotationLabel(6, "F", 'FUSION', 'Fusion of ventricular and normal beat'),
+        AnnotationLabel(7, "J", 'NPC', 'Nodal (junctional) premature beat'),
+        AnnotationLabel(8, "A", 'APC', 'Atrial premature contraction'),
+        AnnotationLabel(9, "S", 'SVPB', 'Premature or ectopic supraventricular beat'),
+        AnnotationLabel(10, "E", 'VESC', 'Ventricular escape beat'),
+        AnnotationLabel(11, "j", 'NESC', 'Nodal (junctional) escape beat'),
+        AnnotationLabel(12, "/", 'PACE', 'Paced beat'),
+        AnnotationLabel(13, "Q", 'UNKNOWN', 'Unclassifiable beat'),
+        AnnotationLabel(14, "~", 'NOISE', 'Signal quality change'),
+        AnnotationLabel(16, "|", 'ARFCT',  'Isolated QRS-like artifact'),
+        AnnotationLabel(18, "s", 'STCH',  'ST change'),
+        AnnotationLabel(19, "T", 'TCH',  'T-wave change'),
+        AnnotationLabel(20, "*", 'SYSTOLE',  'Systole'),
+        AnnotationLabel(21, "D", 'DIASTOLE',  'Diastole'),
+        AnnotationLabel(22, '"', 'NOTE',  'Comment annotation'),
+        AnnotationLabel(23, "=", 'MEASURE',  'Measurement annotation'),
+        AnnotationLabel(24, "p", 'PWAVE',  'P-wave peak'),
+        AnnotationLabel(25, "B", 'BBB',  'Left or right bundle branch block'),
+        AnnotationLabel(26, "^", 'PACESP',  'Non-conducted pacer spike'),
+        AnnotationLabel(27, "t", 'TWAVE',  'T-wave peak'),
+        AnnotationLabel(28, "+", 'RHYTHM',  'Rhythm change'),
+        AnnotationLabel(29, "u", 'UWAVE',  'U-wave peak'),
+        AnnotationLabel(30, "?", 'LEARN',  'Learning'),
+        AnnotationLabel(31, "!", 'FLWAV',  'Ventricular flutter wave'),
+        AnnotationLabel(32, "[", 'VFON',  'Start of ventricular flutter/fibrillation'),
+        AnnotationLabel(33, "]", 'VFOFF',  'End of ventricular flutter/fibrillation'),
+        AnnotationLabel(34, "e", 'AESC',  'Atrial escape beat'),
+        AnnotationLabel(35, "n", 'SVESC',  'Supraventricular escape beat'),
+        AnnotationLabel(36, "@", 'LINK',  'Link to external data (aux_note contains URL)'),
+        AnnotationLabel(37, "x", 'NAPC',  'Non-conducted P-wave (blocked APB)'),
+        AnnotationLabel(38, "f", 'PFUS',  'Fusion of paced and normal beat'),
+        AnnotationLabel(39, "(", 'WFON',  'Waveform onset'),
+        AnnotationLabel(40, ")", 'WFOFF',  'Waveform end'),
+        AnnotationLabel(41, "r", 'RONT',  'R-on-T premature ventricular contraction')
+    ]
+\end{lstlisting}
+
+Por ello en este proyecto solo se prestara atencion a la anotacion \"A\" y a la anotacion \"V\" que simbolizan 
+las contacciones prematuras de la auricula y el ventriculo, las demas anotaciones sobre el pico QRS seran 
+consideradas como ritmos normales.
+
+Para poder ver donde se pueden producir posibles errores y el tipo de estos se ha creado un buffer donde en 
+cada iteracion se hace push de un string con el resultado de la señal filtrada y la señal original.
+
+Si por otro lado, el pico no se ha detectado donde tendria que haber un pico QRS puesto en la señal original, 
+se pone \"--\" para simbolizarlo.
+
+Como se menciono anteriormente la deteccion de picos sobre a señal filtrada es aproximado, por lo que se cuenta
+si se ha detectado un pico 50 samples antes del pico de la señal original y 50 picos despues. El numero de aproximacion 
+es moderadamente mas amplio para evitar problemas con las posibles imprecisiones del filtrado.  
+
+Otra prueba que se realiza es un conteo de las anotaciones correctas en total, las anotaciones incorrectas en total, las anotaciones
+correctas solo de los picos detectados como arritmia, las incorrectas de ese mismo tipo, y los picos no registados. 
+
+\lstset{language=python, breaklines=true, basicstyle=\footnotesize}
+\begin{lstlisting}[frame=single]
+def test_arrythmias(original_symbols,produced_symbols):
+    sol = []
+    #stats parameters
+    detected = 0
+    undetected = 0
+    correctValue = 0
+    incorrectValue = 0
+    correctArrythmia = 0
+    incorrectArrythmia = 0
+    
+    for i in range(len(original_symbols)):
+        found = False
+        aproximation = 5
+        for j in range(len(produced_symbols)):
+            if((produced_symbols[j].pos - 50) > original_symbols[i].pos - aproximation and (produced_symbols[j].pos - 50) < original_symbols[i].pos + aproximation):
+                found = True
+                sol.append(""+produced_symbols[j].sym + original_symbols[i].sym)
+                detected += 1
+                
+                if produced_symbols[j].sym == 'N' and (original_symbols[i].sym == 'N' or original_symbols[i].sym == '/' or original_symbols[i].sym == 'f' or original_symbols[i].sym == 'L'):
+                    correctValue += 1
+                elif produced_symbols[j].sym == 'T' and (original_symbols[i].sym == 'A' or original_symbols[i].sym == 'V' or original_symbols[i].sym == 'a'):
+                    correctValue += 1
+                    correctArrythmia += 1
+                elif produced_symbols[j].sym == 'T' and (original_symbols[i].sym == 'N' or original_symbols[i].sym == '/' or original_symbols[i].sym == 'f'or original_symbols[i].sym == 'L'):
+                    incorrectValue += 1
+                    incorrectArrythmia += 1
+                elif produced_symbols[j].sym == 'N' and (original_symbols[i].sym == 'A' or original_symbols[i].sym == 'V'):
+                    incorrectValue += 1
+                    incorrectArrythmia += 1
+                else:
+                    incorrectValue += 1
+                
+        if(found==False):
+            sol.append("--")
+            undetected += 1
+\end{lstlisting}
+
+Con el conteo de las anotaciones se pueden sacar varias conclusiones aparte de las dichas 
+anteriormente como los picos totales que tiene la señal original, el procentaje de picos 
+detectados, el porcentaje de picos no detectados, el porcentaje de arritmias detectadas 
+correcetamente, el porcentaje de falsos positivos o falsos negativos, y el porcentaje de exito de deteccion de 
+arritmias segun todas las arrimtias contando falsos positivos y negativos.
+
+\lstset{language=python, breaklines=true, basicstyle=\footnotesize}
+\begin{lstlisting}[frame=single]
+
+print("detected: " + str(detected))
+print("undetected: " + str(undetected))
+print("correctValue: "+ str(correctValue))
+print("incorrectValue: "+ str(incorrectValue))
+print("correctArrythmia: "+ str(correctArrythmia))
+print("incorrectArrythmia: "+ str(incorrectArrythmia))
+print("---------------")
+totalValues = undetected + detected
+print("total values "+ str(totalValues))
+
+totalDetected = detected / totalValues * 100
+print("total detected "+ str(totalDetected))
+
+totalUndetected = undetected / totalValues * 100
+print("total undetected "+ str(totalUndetected))
+
+totalCorrect = correctValue / detected * 100
+print("total correct "+ str(totalCorrect))
+
+totalIncorrect = incorrectValue / detected * 100
+print("total incorrect "+ str(totalIncorrect))       
+if(incorrectArrythmia == 0):
+    totalCorrectArrythmias = 100
+else:
+    totalCorrectArrythmias = correctArrythmia / (correctArrythmia + incorrectArrythmia) *100
+print("total correct arrythmias " + str(totalCorrectArrythmias))
+\end{lstlisting}
+
+Las pruebas que se han realizado se aplican solo para un paciente pero es posible aplicar estas pruebas a todos los pacientes.
+Para ello se ha creado un nuevo fichero de python que se encarga de realizar la misma prueba para los pacientes cuyo id esta
+almacenado en un buffer.
+
+Este programa tiene 2 modos, uno procesa un paciente individualmente y el otro itera la lista definida procesandolos a todos. La
+logica del algoritmo esta contenida en una nueva funcion llamada calculations().
+
+\lstset{language=python, breaklines=true, basicstyle=\footnotesize}
+\begin{lstlisting}[frame=single]
+    mode = input("Introduce 1 to process only a patient or 2 to process all (monster mode): ")
+if mode == "1":
+    patientNumber = input("introduce the patient number: ")
+    #select the data quantity (650000 sample intervals)
+    sampfrom = 0
+    sampto = 650000
+    record = wfdb.rdsamp("mitdb/"+patientNumber, sampfrom=sampfrom, sampto=sampto)
+    annotation = wfdb.rdann("mitdb/"+patientNumber, 'atr', sampfrom=sampfrom, sampto=sampto)
+    calculations(sampfrom,sampto,record,annotation)
+    perc = test_arrythmias(original_symbols,produced_symbols)
+elif mode == "2":
+    print(number_of_patients)
+    print(len(number_of_patients))
+    for pat in number_of_patients:
+        #select the data quantity (650000 sample intervals)
+        sampfrom = 0
+        sampto = 650000
+        record = wfdb.rdsamp("mitdb/"+str(pat), sampfrom=sampfrom, sampto=sampto)
+        annotation = wfdb.rdann("mitdb/"+str(pat), 'atr', sampfrom=sampfrom, sampto=sampto)
+        calculations(sampfrom,sampto,record,annotation)
+        procesed_patients.append(pat)
+        print(str(pat))
+        perc = test_arrythmias(original_symbols,produced_symbols)
+\end{lstlisting}
+
+Las pruebas que se realizan para este algoritmo son iguales que en el fichero anterior pero tambien
+se han realizado las siguentes estadisticas.
+
+\begin{enumerate}
+	\item La media de los picos detectados de cada paciente.
+	\item La media de las arritmias correctas detectadas en cada paciente.
+\end{enumerate} 
+
+\lstset{language=python, breaklines=true, basicstyle=\footnotesize}
+\begin{lstlisting}[frame=single]
+if mode=="2":
+    tdv = statistics.mean(detected_values)
+    print("mean all patients detected values: "+str(tdv))
+    tcv = statistics.mean(correct_values)
+    print("mean all patients correct values: "+str(tcv))
+    print(procesed_patients)
+\end{lstlisting}
