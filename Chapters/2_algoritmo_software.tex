@@ -72,13 +72,8 @@ La formula que se utilizara para el filtrado es
 
 Con lo que b son los coeficientes y x la señal a filtrar
 
-Los coeficientes son 
-
-\lstset{language=python, breaklines=true, basicstyle=\footnotesize}
-\begin{lstlisting}[frame=single]
-filter_taps_99_6_28 = [  -0.022064516719960285,  -0.01248143191787449,  -0.014272402451704691,  -0.01482693239340742,  -0.013830723879265979,  -0.011121793043893711,  -0.006713818327951467,  -0.0008089345809688635,  0.006216127611731759,  0.013857892265470411,  0.02152515460626638,  0.028576965837020497,  0.034398765027779624,  0.03844530602431575,  0.04025284446627053,  0.039530808378156514,  0.0361389960690063,  0.030158595190338606,  0.021892977443216645,  0.01187877085962161,  0.0008679402497379659,  -0.010209492943778627,  -0.020330840764461847,  -0.02848685236456877,  -0.03381377331912697,  -0.03574615252534521,  -0.03413529962465352,  -0.02933049408837693,  -0.022191934029519987,  -0.014013910197915145,  -0.006355535107839268,  -0.0008277532244847638,  0.0011959567983135999,  -0.0011634462076121899,  -0.008076950035987168,  -0.018875074584752207,  -0.0320701386231862,  -0.04551445963999694,  -0.05668375253673195,  -0.0630716859149452,  -0.06260700837237966,  -0.05404472876437898,  -0.037193610758084875,  -0.013167513231520076,  0.01590495809018272,  0.04685141764647888,  0.07609319762164894,  0.10009947011806296,  0.11585338656670081,  0.12133902448458535,  0.11585338656670081,  0.10009947011806296,  0.07609319762164894,  0.04685141764647888,  0.01590495809018272,  -0.013167513231520076,  -0.037193610758084875,  -0.05404472876437898,  -0.06260700837237966,  -0.0630716859149452,  -0.05668375253673195,  -0.04551445963999694,  -0.0320701386231862,  -0.018875074584752207,  -0.008076950035987168,  -0.0011634462076121899,  0.0011959567983135999,  -0.0008277532244847638,  -0.006355535107839268,  -0.014013910197915145,  -0.022191934029519987,  -0.02933049408837693,  -0.03413529962465352,  -0.03574615252534521,  -0.03381377331912697,  -0.02848685236456877,  -0.020330840764461847,  -0.010209492943778627,  0.0008679402497379659,  0.01187877085962161,  0.021892977443216645,  0.030158595190338606,  0.0361389960690063,  0.039530808378156514,  0.04025284446627053,  0.03844530602431575,  0.034398765027779624,  0.028576965837020497,  0.02152515460626638,  0.013857892265470411,  0.006216127611731759,  -0.0008089345809688635,  -0.006713818327951467,  -0.011121793043893711,  -0.013830723879265979,  -0.01482693239340742,  -0.014272402451704691,  -0.01248143191787449,  -0.022064516719960285]
-
-\end{lstlisting}
+Los coeficientes se trata de un buffer de 99 valores en punto flotante simetricos que se iteran de forma 
+circular, con lo que despues de ejecutar el ultimo valor vuelve de nuevo al primero.  
 
 Para el filtrado se usa la funcion lfilter de la libreria scipy.signal
 
@@ -342,41 +337,18 @@ En la clase Annotation de la libreria wfdb, vienen explicadas todas las posibles
         AnnotationLabel(6, "F", 'FUSION', 'Fusion of ventricular and normal beat'),
         AnnotationLabel(7, "J", 'NPC', 'Nodal (junctional) premature beat'),
         AnnotationLabel(8, "A", 'APC', 'Atrial premature contraction'),
-        AnnotationLabel(9, "S", 'SVPB', 'Premature or ectopic supraventricular beat'),
-        AnnotationLabel(10, "E", 'VESC', 'Ventricular escape beat'),
-        AnnotationLabel(11, "j", 'NESC', 'Nodal (junctional) escape beat'),
+        ...
         AnnotationLabel(12, "/", 'PACE', 'Paced beat'),
         AnnotationLabel(13, "Q", 'UNKNOWN', 'Unclassifiable beat'),
         AnnotationLabel(14, "~", 'NOISE', 'Signal quality change'),
         AnnotationLabel(16, "|", 'ARFCT',  'Isolated QRS-like artifact'),
-        AnnotationLabel(18, "s", 'STCH',  'ST change'),
-        AnnotationLabel(19, "T", 'TCH',  'T-wave change'),
-        AnnotationLabel(20, "*", 'SYSTOLE',  'Systole'),
-        AnnotationLabel(21, "D", 'DIASTOLE',  'Diastole'),
-        AnnotationLabel(22, '"', 'NOTE',  'Comment annotation'),
-        AnnotationLabel(23, "=", 'MEASURE',  'Measurement annotation'),
-        AnnotationLabel(24, "p", 'PWAVE',  'P-wave peak'),
-        AnnotationLabel(25, "B", 'BBB',  'Left or right bundle branch block'),
-        AnnotationLabel(26, "^", 'PACESP',  'Non-conducted pacer spike'),
-        AnnotationLabel(27, "t", 'TWAVE',  'T-wave peak'),
-        AnnotationLabel(28, "+", 'RHYTHM',  'Rhythm change'),
-        AnnotationLabel(29, "u", 'UWAVE',  'U-wave peak'),
-        AnnotationLabel(30, "?", 'LEARN',  'Learning'),
-        AnnotationLabel(31, "!", 'FLWAV',  'Ventricular flutter wave'),
-        AnnotationLabel(32, "[", 'VFON',  'Start of ventricular flutter/fibrillation'),
-        AnnotationLabel(33, "]", 'VFOFF',  'End of ventricular flutter/fibrillation'),
-        AnnotationLabel(34, "e", 'AESC',  'Atrial escape beat'),
-        AnnotationLabel(35, "n", 'SVESC',  'Supraventricular escape beat'),
-        AnnotationLabel(36, "@", 'LINK',  'Link to external data (aux_note contains URL)'),
-        AnnotationLabel(37, "x", 'NAPC',  'Non-conducted P-wave (blocked APB)'),
+        ...
         AnnotationLabel(38, "f", 'PFUS',  'Fusion of paced and normal beat'),
-        AnnotationLabel(39, "(", 'WFON',  'Waveform onset'),
-        AnnotationLabel(40, ")", 'WFOFF',  'Waveform end'),
-        AnnotationLabel(41, "r", 'RONT',  'R-on-T premature ventricular contraction')
+        ...
     ]
 \end{lstlisting}
 
-Por ello en este proyecto solo se prestara atencion a la anotacion \"A\" y a la anotacion \"V\" que simbolizan 
+Por ello en este proyecto solo se prestara atencion a la anotacion A y a la anotacion V que simbolizan 
 las contacciones prematuras de la auricula y el ventriculo, las demas anotaciones sobre el pico QRS seran 
 consideradas como ritmos normales.
 

@@ -588,9 +588,7 @@ end process;
 Se realiza el proceso de actualizacion de las señales donde se le asignan nuevos valores para el siguiente ciclo de reloj.
 
 \begin{itemize}
-    \item Estado de espera: En el estado de espera se activa la señal de ready y se espera a que se envie un valor de la
-    señal sin filtrar, se borra el valor de la solucion de la multiplicacion anterior en caso de haberla, se activan las
-    señales de escritura de la RAM y se establece el indice donde se va a escribir la muestra.
+    \item Estado de espera: En el estado de espera se activa la señal de ready y se espera a que se envie un pico QRS despues pasa al estado S0
     \item Estado de comprobar indice: si no hay pico, o lo que es lo mismo que la señal de last\_peak este a 0 este se asigna
      a la señal y ademas se registra el indice, despues pasa al estado de actualizar el cutoff activando por tanto la señal de 
      division para que empiecen los modulos de division y resta de valores en punto flotante a calcular el valor. Si por otro
@@ -604,61 +602,12 @@ Se realiza el proceso de actualizacion de las señales donde se le asignan nuevo
     ready\_sub sea '1' se actualiza el cutoff y pasa al estado de espera terminando la iteracion. 
     \item Estado de espera a la condicion en la que la señal es mayor que el pico maximo: cuando las señales ready de los comparadores esten a '1' 
     se podra ejecutar las funcionalidades del estado. este tiene 3 condiciones:
-    \begin{itemize}
-        \item si se ha encontrado un valor mas alto que last\_index, este pico pasa a ser el nuevo last\_peak y el nuevo cutoff, el index tambien se actualiza. 
-        \item la señal result\_signal\_index\_sub\_last\_index\_gt\_or\_eq\_samples\_around\_peak se calcula de forma asincrona, por lo que si esa condicion que
-         indica que han pasado 72 muestras sin encontrar un valor mas alto que last\_peak y ademas last\_peak es mayor que el cutoff, se pasa directamente al estado
-         de envio de nuevo pico para enviar el pico QRS.
-        \item Sino simplemente se ordena la actualizacion del cutoff activando el enable del modulo de la division y pasando al estado correspondiente.
-    \end{itemize}
+    
     \item Estado de envio de nuevo pico: se activa la señal de valid a 1 y espera a que el modulo de deteccion de arritmias mande la señal de ready para resetear 
     las señales de last peak y last index a '0' ademas se actualiza el cutoff.
 \end{itemize}
 \lstset{language=VHDL, breaklines=true, basicstyle=\footnotesize}
 \begin{lstlisting}[frame=single]
-    sync: process(clk,rst)
-begin
-    if rising_edge(clk) then
-        if(rst = '1') then
-            state <= estado_espera;
-            
-            peak_index <= (others=>'0');
-            last_peak_index <= (others=>'0');
-            act_distance <= (others=>'0');
-            last_distance <= (others=>'0');
-            pos_buffer0 <= (others=>'0');
-            pos_buffer1 <= (others=>'0');
-            pos_buffer2 <= (others=>'0');
-            pos_buffer3 <= (others=>'0');
-            TNRange <= '0';
-            counter_arrythmias <= (others=>'0');
-            counter <= (others=>'0');
-            --para que no de arritmia al principio inicializo el gap a 1
-            gap <= (others => '0');
-            distance_for_calc <= (others => '0');
-            --percentage <= '0';
-        else
-            state <= next_state;
-            peak_index <= next_peak_index;
-            last_peak_index <= next_last_peak_index;
-            act_distance <= next_act_distance;
-            last_distance <= next_last_distance;
-            pos_buffer0 <= next_pos_buffer0;
-            pos_buffer1 <= next_pos_buffer1;
-            pos_buffer2 <= next_pos_buffer2;
-            pos_buffer3 <= next_pos_buffer3;
-            TNRange <= next_TNRange;
-            counter_arrythmias <= next_counter_arrythmias;
-            counter <= next_counter; 
-            -- frequency calc
-            gap <= next_gap;
-            distance_for_calc <= next_distance_for_calc;
-            --percentage <= next_percentage;
-            
-            
-        end if;
-    end if;
-end process;
 
 fsm: process(distance_for_calc,TNRange,state,peak_index,last_peak_index,act_distance,last_distance,pos_buffer0,pos_buffer1,pos_buffer2,pos_buffer3,counter_arrythmias,counter,gap,percentage,input_valid,input_peak_index,output_ready)
 begin
@@ -751,9 +700,39 @@ end process;
 
 
 \section{Otros modulos} 
-
 explicar modulos de punto flotante y ROM/RAM pero mover
 arriba para que sean los primeros modulos que se expliquen
+\subsection{Modulos ROM y RAM}
+ ROM muestras
 
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.6\textwidth]{./Images/img_implementacion_hw/rom_muestras_1.png}
+    \caption{Seleccion de la opcion simple block ROM y}
+    \label{fig:rom_muestras_1}
+\end{figure}
+ Es importante desactivar l a opcion de primitive output para que no se añada un registro extra 
+ al principio y la simulacion se ejecute en cada tiempo correspondiente. 
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.6\textwidth]{./Images/img_implementacion_hw/rom_muestras_2.png}
+    \caption{Se establecen las filas de la BROM y la longitud de estas}
+    \label{fig:rom_muestras_2}
+\end{figure}
 
+El modulo de filtrado utiliza 1 ROM y una RAM
 
+\begin{itemize}
+\item La ROM se configura igual que la ROM del modulo de input, este tiene 99 filas y de anchura 
+tiene 32 bits.
+\item La RAM se configura como single port RAM y se mantiene desactivado el valor de primitive output.
+ Ahora bien los valores asignados son los siguientes.
+ 
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.6\textwidth]{./Images/img_implementacion_hw/rom_muestras_2.png}
+    \caption{Se establecen las filas de lectura y escritura de la RAM y las longitud de dichas filas}
+    \label{fig:ram_muestras_1}
+\end{figure}
+
+\end{itemize}
