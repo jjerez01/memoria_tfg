@@ -315,10 +315,28 @@ Se realiza el proceso de actualizacion de las señales donde se le asignan nuevo
     \item Estado de espera: En el estado de espera se activa la señal de ready y se espera a que se envie un valor de la
     señal sin filtrar, se borra el valor de la solucion de la multiplicacion anterior en caso de haberla, se activan las
     señales de escritura de la RAM y se establece el indice donde se va a escribir la muestra.
-    \item Estado de comprobar indice: 
-    \item Estado de actualizar cutoff:
-    \item Estado de espera a la condicion en la que la señal es mayor que el pico maximo: 
-    \item Estado de envio de nuevo pico:
+    \item Estado de comprobar indice: si no hay pico, o lo que es lo mismo que la señal de last\_peak este a 0 este se asigna
+     a la señal y ademas se registra el indice, despues pasa al estado de actualizar el cutoff activando por tanto la señal de 
+     division para que empiecen los modulos de division y resta de valores en punto flotante a calcular el valor. Si por otro
+     lado si que hay pico, se ordena hacer la comparacion signal\_data > last\_peak pasando las señales correspondientes al modulo de comparacion en 
+     punto flotante. Ademas se anticipa y se hace la comparacion last\_peak > cutoff para en dado caso de que no se cumpla la 
+     condicion anterior ya esta la comparacion hecha y se pude pasar directamente al estado siguiente. Tambien activamos las señales
+     del modulo de comparacion correspondiente. El siguiente estado es el estado de espera a la condicion en la que la señal es mayor 
+     que el pico maximo.
+    \item Estado de actualizar cutoff: este estado espera a la señal ready del modulo de la resta ya que es la ultima operacion que se realiza para 
+    calcular el cutoff. Primero se ejecuta el modulo de la division para calcular cutoff/192 y luego la resta cutoff - cutoff/192. cuando la señal
+    ready\_sub sea '1' se actualiza el cutoff y pasa al estado de espera terminando la iteracion. 
+    \item Estado de espera a la condicion en la que la señal es mayor que el pico maximo: cuando las señales ready de los comparadores esten a '1' 
+    se podra ejecutar las funcionalidades del estado. este tiene 3 condiciones:
+    \begin{itemize}
+        \item si se ha encontrado un valor mas alto que last\_index, este pico pasa a ser el nuevo last\_peak y el nuevo cutoff, el index tambien se actualiza. 
+        \item la señal result\_signal\_index\_sub\_last\_index\_gt\_or\_eq\_samples\_around\_peak se calcula de forma asincrona, por lo que si esa condicion que
+         indica que han pasado 72 muestras sin encontrar un valor mas alto que last\_peak y ademas last\_peak es mayor que el cutoff, se pasa directamente al estado
+         de envio de nuevo pico para enviar el pico QRS.
+        \item Sino simplemente se ordena la actualizacion del cutoff activando el enable del modulo de la division y pasando al estado correspondiente.
+    \end{itemize}
+    \item Estado de envio de nuevo pico: se activa la señal de valid a 1 y espera a que el modulo de deteccion de arritmias mande la señal de ready para resetear 
+    las señales de last peak y last index a '0' ademas se actualiza el cutoff.
 \end{itemize}
 \lstset{language=VHDL, breaklines=true, basicstyle=\footnotesize}
 \begin{lstlisting}[frame=single]
@@ -369,7 +387,7 @@ Se realiza el proceso de actualizacion de las señales donde se le asignan nuevo
                         -- Ordenamos hacer la comparacion 'signal[i] > last_peak'
                         enable_signal_data_gt_last_peak <= '1';
                         enable_signal_data_gt_cutoff <= '1';
-                        -- OJO: Ordenamos tambien hacer la comparacion 'last_peak > cutoff'. Aunque quizï¿½s no haga fata, adelantamos su cï¿½lculo
+                        
                         enable_last_peak_gt_cutoff <= '1';
                         next_state <= estado_espera_condicion_signal_data_gt_last_peak;
                     end if;
@@ -405,7 +423,6 @@ Se realiza el proceso de actualizacion de las señales donde se le asignan nuevo
                     if ( output_ready = '1' ) then
                         next_last_peak <= (others => '0');
                         next_last_index <= (others => '0');
-                       -- ordenar la actualización del cutoff (división)
                         enable_div <= '1';
                         next_state <= estado_actualizar_cutoff;
                     end if;
@@ -414,16 +431,329 @@ Se realiza el proceso de actualizacion de las señales donde se le asignan nuevo
     end process cmb;
 \end{lstlisting}
 
+De manera asincrona se pasa como output el last index pero el modulo de deteccion de arritmias se activa cuando input\_valid
+se activa usando asi el last index correspondiente 
+\lstset{language=VHDL, breaklines=true, basicstyle=\footnotesize}
+\begin{lstlisting}[frame=single]
+    output_peak_index <= last_index;
+\end{lstlisting}
+
+\subsection{Módulos utilizados}
+
+Se usa un modulo de comparador para 2 comparaciones, y uno de division y otro de resta para calcular el cutoff
+(TODO IMAGEN DE LOS MODULOS)
+\lstset{language=VHDL, breaklines=true, basicstyle=\footnotesize}
+\begin{lstlisting}[frame=single]
+-- Comparador 'signal[i] > cutoff' 
+signal_data_gt_cutoff : entity work.gtFP port map (
+    aclk                  => clk,
+    s_axis_a_tvalid       => enable_signal_data_gt_cutoff,
+    s_axis_a_tdata        => signal_data,
+    s_axis_b_tvalid       => enable_signal_data_gt_cutoff,
+    s_axis_b_tdata        => cutoff,
+    m_axis_result_tvalid  => ready_signal_data_gt_cutoff,
+    m_axis_result_tdata   => result_signal_data_gt_cutoff
+);
+
+-- Divisor 'cutoff / 192'
+divisor : entity work.divFP port map (
+    aclk                  => clk,
+    s_axis_a_tvalid       => enable_div,
+    s_axis_a_tdata        => cutoff,
+    s_axis_b_tvalid       => enable_div,
+    s_axis_b_tdata        => x"43400000",                    -- 192 en decimal
+    m_axis_result_tvalid  => ready_div,
+    m_axis_result_tdata   => result_div
+);
+
+-- Restador 'cutoff - cutoff/192'
+enable_sub <= ready_div;
+restador : entity work.subfp port map(
+    aclk                  => clk,
+    s_axis_a_tvalid       => enable_sub,
+    s_axis_a_tdata        => cutoff,
+    s_axis_b_tvalid       => enable_sub,
+    s_axis_b_tdata        => result_div,
+    m_axis_result_tvalid  => ready_sub,
+    m_axis_result_tdata   => result_sub
+);
+
+-- Comparacion 'signal[i] > last_peak'
+signal_data_gt_last_peak: entity work.gtFP port map(
+    aclk                  => clk,
+    s_axis_a_tvalid       => enable_signal_data_gt_last_peak,
+    s_axis_a_tdata        => signal_data,
+    s_axis_b_tvalid       => enable_signal_data_gt_last_peak,
+    s_axis_b_tdata        => last_peak,
+    m_axis_result_tvalid  => ready_signal_data_gt_last_peak,
+    m_axis_result_tdata   => result_signal_data_gt_last_peak
+);
+
+-- Comparacion 'last_peak > cutoff'
+last_peak_gt_cutoff: entity work.gtFP port map(
+    aclk                  => clk,
+    s_axis_a_tvalid       => enable_last_peak_gt_cutoff,
+    s_axis_a_tdata        => last_peak,
+    s_axis_b_tvalid       => enable_last_peak_gt_cutoff,
+    s_axis_b_tdata        => cutoff,
+    m_axis_result_tvalid  => ready_last_peak_gt_cutoff,
+    m_axis_result_tdata   => result_last_peak_gt_cutoff
+);
+\end{lstlisting}
 \section{Modulo de deteccion de arritmias}
 
-
+El modulo de deteccion de arritmias se encarga de detectar si la distancia entre 2 picos QRS es considerada una arritmia o no,
+ 
 \subsection{Señales de entrada y salida}
+las señales de entrada de este modulo son:
+
+\begin{itemize}
+    \item clk y reset
+    \item input\_peak\_index: señal que recibe las muestras de los picos QRS.
+    \item input\_valid e input\_ready: son flags que sirven para sincronizar este modulo con el modulo de deteccion de picos. 
+\end{itemize}
+    
+Las señales de salida son:
+
+\begin{itemize}
+    \item output\_arrythmia\_detected: flag que saca 0 si el ritmo es normal y 1 si se ha detectado una arritmia.
+    \item output\_arrythmia\_index: valor que indica en que sample se ha producido la arritmia.
+    \item output\_valid y output\_ready: para la sincronizacion con el modulo output.
+\end{itemize}
+
+\lstset{language=VHDL, breaklines=true, basicstyle=\footnotesize}
+\begin{lstlisting}[frame=single]
+    Port (
+        clk: in std_logic;
+        rst: in std_logic;
+        
+        input_peak_index: in std_logic_vector(31 downto 0); --por coherencia con el modulo anterior lo dejamos asi
+        input_valid: in std_logic;
+        input_ready: out std_logic;
+        
+        output_arrythmia_detected: out std_logic; -- ya que saca 0 si es ritmo normal y 1 si es arritmia
+        output_arrythmia_index: out std_logic_vector(31 downto 0);
+        output_valid: out std_logic;
+        output_ready: in std_logic
+       );
+\end{lstlisting}
+
+\subsection{Maquina de estados}
+Se realiza el proceso de sincronizacion de los estados, donde las señales siguientes pasan a las señales actuales.
+
+\lstset{language=VHDL, breaklines=true, basicstyle=\footnotesize}
+\begin{lstlisting}[frame=single]
+sync: process(clk,rst)
+begin
+    if rising_edge(clk) then
+        if(rst = '1') then
+            state <= estado_espera;
+            peak_index <= (others=>'0');
+            last_peak_index <= (others=>'0');
+            act_distance <= (others=>'0');
+            last_distance <= (others=>'0');
+            pos_buffer0 <= (others=>'0');
+            pos_buffer1 <= (others=>'0');
+            pos_buffer2 <= (others=>'0');
+            pos_buffer3 <= (others=>'0');
+            TNRange <= '0';
+            counter_arrythmias <= (others=>'0');
+            counter <= (others=>'0');
+            --para que no de arritmia al principio inicializo el gap a 1
+            gap <= (others => '0');
+            distance_for_calc <= (others => '0');
+            --percentage <= '0';
+        else
+            state <= next_state;
+            peak_index <= next_peak_index;
+            last_peak_index <= next_last_peak_index;
+            act_distance <= next_act_distance;
+            last_distance <= next_last_distance;
+            pos_buffer0 <= next_pos_buffer0;
+            pos_buffer1 <= next_pos_buffer1;
+            pos_buffer2 <= next_pos_buffer2;
+            pos_buffer3 <= next_pos_buffer3;
+            TNRange <= next_TNRange;
+            counter_arrythmias <= next_counter_arrythmias;
+            counter <= next_counter; 
+            -- frequency calc
+            gap <= next_gap;
+            distance_for_calc <= next_distance_for_calc;
+            --percentage <= next_percentage;
+        end if;
+    end if;
+end process;
+\end{lstlisting}
+
+Se realiza el proceso de actualizacion de las señales donde se le asignan nuevos valores para el siguiente ciclo de reloj.
+
+\begin{itemize}
+    \item Estado de espera: En el estado de espera se activa la señal de ready y se espera a que se envie un valor de la
+    señal sin filtrar, se borra el valor de la solucion de la multiplicacion anterior en caso de haberla, se activan las
+    señales de escritura de la RAM y se establece el indice donde se va a escribir la muestra.
+    \item Estado de comprobar indice: si no hay pico, o lo que es lo mismo que la señal de last\_peak este a 0 este se asigna
+     a la señal y ademas se registra el indice, despues pasa al estado de actualizar el cutoff activando por tanto la señal de 
+     division para que empiecen los modulos de division y resta de valores en punto flotante a calcular el valor. Si por otro
+     lado si que hay pico, se ordena hacer la comparacion signal\_data > last\_peak pasando las señales correspondientes al modulo de comparacion en 
+     punto flotante. Ademas se anticipa y se hace la comparacion last\_peak > cutoff para en dado caso de que no se cumpla la 
+     condicion anterior ya esta la comparacion hecha y se pude pasar directamente al estado siguiente. Tambien activamos las señales
+     del modulo de comparacion correspondiente. El siguiente estado es el estado de espera a la condicion en la que la señal es mayor 
+     que el pico maximo.
+    \item Estado de actualizar cutoff: este estado espera a la señal ready del modulo de la resta ya que es la ultima operacion que se realiza para 
+    calcular el cutoff. Primero se ejecuta el modulo de la division para calcular cutoff/192 y luego la resta cutoff - cutoff/192. cuando la señal
+    ready\_sub sea '1' se actualiza el cutoff y pasa al estado de espera terminando la iteracion. 
+    \item Estado de espera a la condicion en la que la señal es mayor que el pico maximo: cuando las señales ready de los comparadores esten a '1' 
+    se podra ejecutar las funcionalidades del estado. este tiene 3 condiciones:
+    \begin{itemize}
+        \item si se ha encontrado un valor mas alto que last\_index, este pico pasa a ser el nuevo last\_peak y el nuevo cutoff, el index tambien se actualiza. 
+        \item la señal result\_signal\_index\_sub\_last\_index\_gt\_or\_eq\_samples\_around\_peak se calcula de forma asincrona, por lo que si esa condicion que
+         indica que han pasado 72 muestras sin encontrar un valor mas alto que last\_peak y ademas last\_peak es mayor que el cutoff, se pasa directamente al estado
+         de envio de nuevo pico para enviar el pico QRS.
+        \item Sino simplemente se ordena la actualizacion del cutoff activando el enable del modulo de la division y pasando al estado correspondiente.
+    \end{itemize}
+    \item Estado de envio de nuevo pico: se activa la señal de valid a 1 y espera a que el modulo de deteccion de arritmias mande la señal de ready para resetear 
+    las señales de last peak y last index a '0' ademas se actualiza el cutoff.
+\end{itemize}
+\lstset{language=VHDL, breaklines=true, basicstyle=\footnotesize}
+\begin{lstlisting}[frame=single]
+    sync: process(clk,rst)
+begin
+    if rising_edge(clk) then
+        if(rst = '1') then
+            state <= estado_espera;
+            
+            peak_index <= (others=>'0');
+            last_peak_index <= (others=>'0');
+            act_distance <= (others=>'0');
+            last_distance <= (others=>'0');
+            pos_buffer0 <= (others=>'0');
+            pos_buffer1 <= (others=>'0');
+            pos_buffer2 <= (others=>'0');
+            pos_buffer3 <= (others=>'0');
+            TNRange <= '0';
+            counter_arrythmias <= (others=>'0');
+            counter <= (others=>'0');
+            --para que no de arritmia al principio inicializo el gap a 1
+            gap <= (others => '0');
+            distance_for_calc <= (others => '0');
+            --percentage <= '0';
+        else
+            state <= next_state;
+            peak_index <= next_peak_index;
+            last_peak_index <= next_last_peak_index;
+            act_distance <= next_act_distance;
+            last_distance <= next_last_distance;
+            pos_buffer0 <= next_pos_buffer0;
+            pos_buffer1 <= next_pos_buffer1;
+            pos_buffer2 <= next_pos_buffer2;
+            pos_buffer3 <= next_pos_buffer3;
+            TNRange <= next_TNRange;
+            counter_arrythmias <= next_counter_arrythmias;
+            counter <= next_counter; 
+            -- frequency calc
+            gap <= next_gap;
+            distance_for_calc <= next_distance_for_calc;
+            --percentage <= next_percentage;
+            
+            
+        end if;
+    end if;
+end process;
+
+fsm: process(distance_for_calc,TNRange,state,peak_index,last_peak_index,act_distance,last_distance,pos_buffer0,pos_buffer1,pos_buffer2,pos_buffer3,counter_arrythmias,counter,gap,percentage,input_valid,input_peak_index,output_ready)
+begin
+        next_state <= state;
+        next_peak_index <= peak_index;
+        next_last_peak_index <= last_peak_index;
+        next_act_distance <= act_distance;
+        next_last_distance <= last_distance;
+        next_pos_buffer0 <= pos_buffer0;
+        next_pos_buffer1 <= pos_buffer1;
+        next_pos_buffer2 <= pos_buffer2;
+        next_pos_buffer3 <= pos_buffer3;
+        next_TNRange <= TNRange;
+        next_counter_arrythmias <= counter_arrythmias;
+        next_counter <= counter; 
+        -- frequency calc
+        next_gap <= gap;
+        next_distance_for_calc <= distance_for_calc;
+        --next_percentage <= percentage;
+        -- sync with other modules
+        input_ready <= '0';
+        output_valid <= '0';
+case state is
+        when estado_espera =>
+         -- El modulo esta listo para recibir nuevos datos
+            input_ready <= '1';
+            if ( input_valid = '1' ) then
+                -- Almaceno los valores de entrada
+                next_peak_index <= input_peak_index;
+                next_state <= S0;    
+            end if;
+        when S0 =>
+            if(to_integer(unsigned(counter)) = 0) then
+                next_last_peak_index <= peak_index;
+                next_counter <= std_logic_vector(unsigned(counter)+1);
+                next_state <= estado_espera; 
+            elsif(to_integer(unsigned(counter)) = 1) then
+                next_last_distance <= std_logic_vector(unsigned(peak_index) - unsigned(last_peak_index));
+                next_state <= S1;
+            else 
+                next_state <= S1;
+            end if;
+        when S1 =>
+            next_counter <= std_logic_vector(unsigned(counter)+1);
+            next_act_distance <= std_logic_vector(unsigned(peak_index) - unsigned(last_peak_index));
+            next_state <= S2;
+        when S2 => 
+            next_pos_buffer3 <= pos_buffer2;
+            next_pos_buffer2 <= pos_buffer1;
+            next_pos_buffer1 <= pos_buffer0;
+            next_pos_buffer0 <= act_distance;
+            next_state <= S3;
+        when S3 => 
+            if(TNRange = '1' and counter_arrythmias = x"00000000") then
+                next_TNRange <= '0';
+                next_gap <= std_logic_vector(signed(pos_buffer3) - signed(act_distance));
+                next_distance_for_calc <= pos_buffer3;
+                --next_state <= S4;
+            else
+                next_gap <= std_logic_vector(signed(last_distance) - signed(act_distance));
+                next_distance_for_calc <= last_distance;
+                if TNRange = '1' then
+                    next_counter_arrythmias <= std_logic_vector(unsigned(counter_arrythmias) - 1);
+                end if;                                         --signed o unsigned?
+
+            end if;            
+ 
+            next_state <= S6;
+
+        when S6 => 
+            if(percentage = '1') then
+                next_TNRange <= '1';
+                next_counter_arrythmias <= x"00000001";
+            end if; 
+            next_last_peak_index <= peak_index;
+            next_last_distance <= act_distance;
+            next_state <= S7;
+        when S7 =>          
+            output_valid <= '1';
+            if(output_ready = '1') then 
+                next_state <= estado_espera;
+            end if;
+     end case;
+end process;
+\end{lstlisting}
+
+\section {Modulos input y output}
 
 \section{Modulo principal y testbench}
 
-\subsection{Señales de entrada y salida}
 
-\section{Otros modulos}
+\section{Otros modulos} 
+
+explicar modulos de punto flotante y ROM/RAM pero mover
+arriba para que sean los primeros modulos que se expliquen
 
 
 
