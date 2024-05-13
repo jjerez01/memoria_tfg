@@ -411,36 +411,20 @@ detectados, el porcentaje de picos no detectados, el porcentaje de arritmias det
 correcetamente, el porcentaje de falsos positivos o falsos negativos, y el porcentaje de exito de deteccion de 
 arritmias segun todas las arrimtias contando falsos positivos y negativos.
 
-\lstset{language=python, breaklines=true, basicstyle=\footnotesize}
-\begin{lstlisting}[frame=single]
+\begin{figure}[h!]
+	\centering
+    \includegraphics[width=0.99\textwidth]{./Images/img_algoritmo/estadisticas_arritmias_1.png}
+    \caption{Estadisticas}
+    \label{fig:estadisticas_algoritmos_1}
+\end{figure} 
 
-print("detected: " + str(detected))
-print("undetected: " + str(undetected))
-print("correctValue: "+ str(correctValue))
-print("incorrectValue: "+ str(incorrectValue))
-print("correctArrythmia: "+ str(correctArrythmia))
-print("incorrectArrythmia: "+ str(incorrectArrythmia))
-print("---------------")
-totalValues = undetected + detected
-print("total values "+ str(totalValues))
+\begin{figure}[h!]
+	\centering
+    \includegraphics[width=0.99\textwidth]{./Images/img_algoritmo/estadisticas_arritmias_2.png}
+    \caption{Porcentaje de las estadisticas}
+    \label{fig:estadisticas_algoritmos_2}
+\end{figure} 
 
-totalDetected = detected / totalValues * 100
-print("total detected "+ str(totalDetected))
-
-totalUndetected = undetected / totalValues * 100
-print("total undetected "+ str(totalUndetected))
-
-totalCorrect = correctValue / detected * 100
-print("total correct "+ str(totalCorrect))
-
-totalIncorrect = incorrectValue / detected * 100
-print("total incorrect "+ str(totalIncorrect))       
-if(incorrectArrythmia == 0):
-    totalCorrectArrythmias = 100
-else:
-    totalCorrectArrythmias = correctArrythmia / (correctArrythmia + incorrectArrythmia) *100
-print("total correct arrythmias " + str(totalCorrectArrythmias))
-\end{lstlisting}
 
 Las pruebas que se han realizado se aplican solo para un paciente pero es posible aplicar estas pruebas a todos los pacientes.
 Para ello se ha creado un nuevo fichero de python que se encarga de realizar la misma prueba para los pacientes cuyo id esta
@@ -493,3 +477,4 @@ if mode=="2":
     print("mean all patients correct values: "+str(tcv))
     print(procesed_patients)
 \end{lstlisting}
+
