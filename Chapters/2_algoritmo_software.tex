@@ -72,7 +72,7 @@ La formula que se utilizara para el filtrado es
 
 Con lo que b son los coeficientes y x la señal a filtrar
 
-Los coeficientes se trata de un buffer de 99 valores en punto flotante simetricos que se iteran de forma 
+Los coeficientes se almacenan en un buffer de 99 valores en punto flotante simetricos que se iteran de forma 
 circular, con lo que despues de ejecutar el ultimo valor vuelve de nuevo al primero.  
 
 Para el filtrado se usa la funcion lfilter de la libreria scipy.signal
@@ -81,14 +81,13 @@ Para el filtrado se usa la funcion lfilter de la libreria scipy.signal
 \begin{lstlisting}[frame=single]
     filtered_signal = lfilter(filter_taps_99_6_28, 1.0, original_signal)
 \end{lstlisting}
-TODO a y formula completa ademas de una mejor explicacion
 
 \section{Detección de picos QRS}
 
 El algoritmo de deteccion de picos esta representada en esta funcion que 
 recibe la señal filtrada e intenta detectar los picos QRS.
 
-Este algoritmo esta basado en el que se usa en el documento  https://www.mdpi.com/2079-9292/10/19/2324 
+Este algoritmo esta basado en el que se usa en el documento \cite{desai2021low} 
 donde en el 4.1.2 muestran una maquina de estados del proceso que realizan.
 
 \begin{figure}[h!]
@@ -107,7 +106,7 @@ Para hallar el pico mas alto se necestia definir un pico en last\_peak y si se e
 
 \lstset{language=python, breaklines=true, basicstyle=\footnotesize}
 \begin{lstlisting}[frame=single]
-last-peak = max(last-peak,signal[i])
+last_peak = max(last_peak,signal[i])
 \end{lstlisting}
 
 Sin embargo hay un problema y es que cuando se detecte un pico QRS, es decir cuando se haya detectado el pico 
@@ -117,7 +116,7 @@ haber ruido el algoritmo podria detectar falsos picos QRS asi que por ello se im
 El cutoff es representado como una funcion descendente que parte de cada pico localizado y mientras no se haya
 encontrado ningun pico, el valor de dicha funcion va decreciendo. La principal funcion del cutoff es evitar que
 el algoritmo detecte picos con el ruido y por ello se ha ajustado para que no ocurra el problema anterior y 
-ser capaz de detectar todos los picos QRS.
+ser capaz de detectar todos los picos QRS.\@
 
 La funcion del cutoff es la siguiente.
 \lstset{language=python, breaklines=true, basicstyle=\footnotesize}

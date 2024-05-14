@@ -4,7 +4,15 @@
 \section{Entorno de pruebas}
 Para hacer las pruebas en la placa se ha utilizado la Basys3 de virtex ya que se utiliza la misma en el estudio en el que se basa el proyecto.
 El problema que se encontro con el uso de la placa es que la ROM no podria almacenar 650000 filas de valores de punto flotante por lo que se probo un dieciseisavo de las pruebas totales que equivale a 40625.
-Porlo que, para hacer la prueba con todos los samples, se requiere utilizar una FPGA mas potente como (FPGA DE LA FACULTAD MAS POTENTE) 
+Porlo que, para hacer la prueba con todos los samples, se requiere utilizar una FPGA con mas recursos como la Virtex-7 VC709 Evaluation Platform.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.6\textwidth]{./Images/img_introduccion/Basys3.jpg}
+	\caption{Basys3 Artix-7 FPGA}
+	\label{fig:Basys3}
+\end{figure}
+
 \section{Consumo}
 	Para evaluar el consumo se tendra en cuenta los resultados sacados del analisis de sintesis, del reporte de timing y de el reporte de power de el modulo principal que contiene el modulo de filtrado de señal,
 	el módulo de deteccion de picos y el modulo de deteccion de arritmias. 
@@ -29,15 +37,14 @@ Porlo que, para hacer la prueba con todos los samples, se requiere utilizar una 
 		\item No se ha usado ninguna block RAM tile
 		\item Hay un total de 474 total slices
 		\item La frecuencia de funcionamiento configurada en el .xdc es de 640800 pero para las pruebas se usara una frecuencia de 540000
-		\item potencia disipada a ese funcionamiento TODO
 	\end{itemize}
 
-	La frecuencia de funcionamiento se ha calculado segun la referencia de el articulo TODO que nos indica que las muestras van a 360sps (samples per second) 
+	La frecuencia de funcionamiento se ha calculado segun la referencia de el articulo \cite{desai2021low} que nos indica que las muestras van a 360sps (samples per second) 
 	por lo que es equivalente a 360Hz. Tambien se calcula el numero de ciclos que tarda en ejecutarse el modulo de filtrado que resulta ser el mas critico 
 	de todos, este da un total de 1780 ciclos pero para hacer las pruebas se usaran 1500 ciclos. Si se multiplican ambos valores da una frecuencia de 540000 
 	cuyo periodo es de 1851,85 que redondeando es de 1852. En el xdc se pone lo siguiente:
 
-	\lstset{language=VHDL, breaklines=true, basicstyle=\footnotesize}
+\lstset{language=VHDL, breaklines=true, basicstyle=\footnotesize}
 \begin{lstlisting}[frame=single]
 ## Clock signal
 set_property PACKAGE_PIN W5 [get_ports clk]							

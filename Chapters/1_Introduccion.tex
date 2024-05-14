@@ -93,12 +93,7 @@ Los motivos son los siguientes:
 Para este proyecto se usara la FPGA Basys3 de Artix-7 para probar el funcionamiento del algoritmo. Aunque se debe considerar, segun
 la cantidad de datos introducidos, que en este caso seria la longitud de la señal segun el tiempo transcurrido, utilizar
 una FPGA cuyo hardware pueda soportar dicha cantidad de datos.
-\begin{figure}[h]
-	\centering
-	\includegraphics[width=0.6\textwidth]{./Images/img_introduccion/Basys3.jpg}
-	\caption{Basys3 Artix-7 FPGA}
-	\label{fig:Basys3}
-\end{figure}
+
 
 \section{Objetivos del proyecto y organización}
 Los objetivos de este proyecto es tener una solucion para detectar contracciones prematuras ventriculares a tiempo real en
@@ -121,68 +116,20 @@ Para lograr los objetivos del algoritmo se centra en tres funciones.
 
 
 \section{Implementacion en la FPGA}
-Para implementar el codigo en la FPGA se implementara varios modulos para tratar de imitar el proyecto creado en software 
+Para implementar el codigo en la FPGA se implementaran varios modulos para tratar de imitar el proyecto creado en software 
 los modulos mas importantes son.
 
 	\begin{enumerate}
-		\item Modulo de filtrado: Lo que hace que la señal sea mas facil de procesar para encontrar los picos QRS.
-		Esto se realiza multiplicando los valores de la señal original por los valores de filtrado.
-		\item Deteccion de picos sobre la señal filtrada: Se analiza cada señal y comparandola con otras señales anteriores se
-		deduce si puede ser un posible pico y si lo es, se comprueba si es un pico QRS.
-		\item Deteccion de arritmias comparando la posicion de los picos: una vez se tienen los picos QRS se calcula la distancia
-		de el pico actual con el pico anterior y dependiendo de las otras distancias se calcula si hay una arritmia.
+		\item Modulo de filtrado: Se guardan los valores del filtrado en una memoria y se van multiplicando los valores que van llegando 
+		al modulo. estos valores multiplicados a su vez se almacenan en memoria hasta que pasan al siguente módulo
+		\item Deteccion de picos sobre la señal filtrada: Se analiza cada señal que pasa del modulo de filtrado y mediante una maquina de estados
+		se busca el pico mas alto dentro de los limites del cutoff, si se encuentra se comprueba si es un pico QRS.
+		\item Deteccion de arritmias comparando la posicion de los picos: una vez se tienen los picos QRS se implementa una maquina de estados que
+		sea capaz de hallar la distancia entre 2 picos, meterla en un buffer y calcular el porcentaje de el tamaño de la distancia con las demas.
 	\end{enumerate}
 
 	Estos modulos tratan de replicar las funcionalidades que realiza el algoritmo de software y se convertiran en la parte esencial
 	de dicho programa. 
 	
-	Ademas de estos modulos se debe de crear un modulo que acompase a estos tres y un testbench para probar el funcionamiento
+	Además de estos modulos se debe de crear un modulo que acompase a estos tres y un testbench para probar el funcionamiento
 	del programa en la simulación.
-
-\section{Plantilla para usos de la herramienta}
-		The document is divided into \texttt{chapters}, \texttt{sections}, and \texttt{subsections}.
-
-		Some important references are \cite{einstein,latexcompanion,knuthwebsite}.
-
-		To add paragraphs in the document, 
-		one line break is not enough,
-
-		two line breaks are needed.
-
-		An itemized list:
-
-		\begin{itemize}
-			\item An item.
-			\item Another item.
-			\item Final item.
-		\end{itemize}
-
-		An enumerated list:
-
-		\begin{enumerate}
-			\item First item.
-			\item Second item.
-			\item Third item.
-		\end{enumerate}
-
-		A figure with an image is presented in \Cref{fig:logo_ucm}. Note that it floats away and latex places it where convenient.
-
-		\begin{figure}[h!]
-			\centering
-			\includegraphics[width=0.9\textwidth]{./Images/escudo_ucm.pdf}
-			\caption{Sample figure}
-			\label{fig:logo_ucm}
-		\end{figure}
-
-		Tables work in the same way, as seen in \Cref{tab:tabla}
-
-		\begin{table}[h!]
-			\centering
-			\begin{tabular}{c|c|c}
-				Row & English & Español \\\hline\hline
-				1 & One & Uno \\
-				2 & Two & Dos \\
-			\end{tabular}
-			\caption{Sample table}
-			\label{tab:tabla}
-		\end{table}

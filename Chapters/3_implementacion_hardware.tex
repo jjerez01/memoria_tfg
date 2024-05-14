@@ -151,6 +151,14 @@ Se usa un módulo de multiplicacion para poder multiplicar los valores de las mu
 
 Este módulo se encarga de detectar los picos de la señal filtrada. 
 \subsection{Señales de entrada y salida}
+
+    \begin{figure}[h!]
+        \centering
+        \includegraphics[width=0.6\textwidth]{./Images/img_implementacion_hw/moddeteccionpicos.png}
+        \caption{Entradas y salidas del módulo de deteccion de picos}
+        \label{fig:moddeteccionpicos}
+    \end{figure} 
+    
     \begin{itemize}
     \item clk y reset
     \item input\_signal\_data: señal que recibe las muestras de la señal filtrada 
@@ -166,13 +174,7 @@ Este módulo se encarga de detectar los picos de la señal filtrada.
         con el módulo de deteccion de arritmias.
     \end{itemize}
 
-    \begin{figure}[h!]
-        \centering
-        \includegraphics[width=0.6\textwidth]{./Images/img_implementacion_hw/moddeteccionpicos.png}
-        \caption{Entradas y salidas del módulo de deteccion de picos}
-        \label{fig:moddeteccionpicos}
-    \end{figure} 
-    
+        
 \lstset{language=VHDL, breaklines=true, basicstyle=\footnotesize}
 \begin{lstlisting}[frame=single] 
 port (

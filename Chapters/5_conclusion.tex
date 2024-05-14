@@ -7,5 +7,52 @@ que ocurrian eran dadas por una contraccion prematura del corazon, por tanto el 
 inicialmente se penso detectar el mayor tipo de arritmias posibles, al no ver ningun ejemplo claro
 de arrimtia no producida por una contraccion prematura el proyecto solo se centro en detectar dichas arritmias.
 
-Para las pruebas en hardware se utiliza la FPGA Basys3 ya que 
-	
+Se realizo un prototipo en python que sirvio para crear el algoritmo y probarlo con facilidad. Este prototipo inicia
+con un filtrado de la señal original aplicando el filtrado IIR. Seguidamente se aplica un algoritmo de detección de 
+picos QRS sobre la señal filtrada que busca el pico mas alto que además sobrepase el cutoff dinámico establecido. Finalmente
+se aplica el algoritmo de deteccion de arritmias calculando la distancia entre el pico actual con el anterior y comparandola con una
+distancia anterior de un ritmo normal.
+
+Para la implementacion de hardware se usaran 3 modulos principales que son el modulo de filtado, el modulo de deteccion de picos 
+y el modulo de deteccion de arritmias. Ademas estos modulos estan contenidos en un modulo principal. Para hacer las pruebas sobre
+estos modulos, se añaden 2 modulos adicionales de input de señal y output donde se comparan los resultados de las anotaciones. Ademas 
+se evaluan los resultados mediante una simulacion al crear un testbench.
+
+Para las pruebas en hardware se utiliza la FPGA Basys3 ya que es la FPGA que se usa en el estudio y aunque no sea capaz de 
+albergar los 30 minutos de pruebas en la RAM, con menos pruebas tiene un buen desempeño.
+
+En el .xdc se ha establecido un periodo especifico teniendo en cuenta la frecuencia de las muestras que es de 365sps y da un periodo 
+de 1852 ns. Gracias al reporte de timing se halla que la minima frecuencia de funcionamiento es de 6,49.
+
+Segun el reporte de power el consumo de la placa es de 0,069W lo que resulta en un consumo bajo incluso para un uso continuo de este.
+Comparandolo con otros proyectos similares, el consumo dinámico es menor.
+
+\section{Conclusion}
+
+This project tries to find a simple solution for the detection of arrhythmias from an electrocardiogram signal. 
+arrhythmias from an electrocardiogram signal. For the elaboration of this project, 
+the behavior of the arrhythmias has been studied, looking at the database of MIT and studying the behavior of the
+the behavior of the noted arrhythmias, it was observed that the vast majority of the arrhythmias that occurred 
+the vast majority of the arrhythmias that occurred were due to premature contraction of the heart.
+initially intended to detect as many arrhythmias as possible, but did not see any clear examples of arrhythmias not caused by premature
+of arrhythmia not caused by premature contraction, the project only focused on detecting these arrhythmias.
+
+A prototype was made in Python which was used to create the algorithm and test it easily. This prototype starts
+with a filtering of the original signal by applying the IIR filtering. Next, a QRS peak detection algorithm is applied to the filtered signal. 
+QRS peak detection algorithm is then applied to the filtered signal to find the highest peak that also exceeds the established dynamic cutoff. Finally
+Finally, the arrhythmia detection algorithm is applied by calculating the distance between the current peak and the previous peak and comparing it with a previous distance of a normal rhythm.
+previous distance of a normal rhythm.
+
+For the hardware implementation, 3 main modules will be used, which are the filtering module, the peak detection module and the peak detection module. 
+and the arrhythmia detection module. In addition these modules are contained in a main module. In order to test on these modules
+These modules are tested by adding 2 additional modules for signal input and output where the results of the annotations are compared. In addition 
+the results are evaluated through a simulation by creating a testbench.
+
+For the hardware tests, the Basys3 FPGA is used since it is the FPGA used in the study and although it is not capable of 
+Although it is not able to hold the 30 minutes of tests in RAM, with less tests it has a good performance.
+
+In the .xdc a specific period has been established taking into account the frequency of the samples which is 365sps and gives a period of 1852 ns. Thanks to the .xdc, a period of 1852 ns has been established. 
+Thanks to the timing report we found that the minimum operating frequency is 6.49.
+
+According to the power report the power consumption of the board is 0.069W which results in a low power consumption even for a continuous use of the board.
+Compared to other similar projects, the dynamic power consumption is lower.
