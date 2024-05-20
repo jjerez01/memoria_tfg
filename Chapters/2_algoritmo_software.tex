@@ -256,7 +256,7 @@ Despues se calcula el porcentaje de la diferencia de distancia con la distancia 
 un ritmo normal.
 
 Si ese porcentaje es mayor que el 15\% entonces se considera que la distancia normal es mucho mayor que la actual
-y por tanto como la distancia actual entre 2 picos es pequeña, se da por hecho que hay una arrimtia.
+y por tanto como la distancia actual entre 2 picos es pequeña, se da por hecho que hay una arritmia.
 
 Notese que no le damos importancia si el gap da como resultado un número negativo de cualquier tamaño, esto se debe
 a que este proyecto solo esta pensado para detectar contracciones prematuras del corazon, por ende solo necesitamos 
@@ -287,7 +287,7 @@ encargan de comparar las anotaciones de los cardiologos con las generadas por el
 
 Con estas estadisticas es posible comparar el porcentaje de aciertos, en los que se comprende el numero de 
 falsos positivos, (referido a los ritmos normales que el algoritmo considara arritmias) y 
-falsos negativos (referido a las arrimtias que el algoritmo considera un ritmo normal).
+falsos negativos (referido a las arritmias que el algoritmo considera un ritmo normal).
 
 Para desarrollar estas pruebas, se crea una clase Pair que contenga por cada iteracion de la deteccion de arritmias, el simbolo sacado 
 por el algoritmo y la posicion del sample en la que se encuentre dicho pico QRS.
@@ -408,19 +408,19 @@ Con el conteo de las anotaciones se pueden sacar varias conclusiones aparte de l
 anteriormente como los picos totales que tiene la señal original, el procentaje de picos 
 detectados, el porcentaje de picos no detectados, el porcentaje de arritmias detectadas 
 correcetamente, el porcentaje de falsos positivos o falsos negativos, y el porcentaje de exito de deteccion de 
-arritmias segun todas las arrimtias contando falsos positivos y negativos.
+arritmias segun todas las arritmias contando falsos positivos y negativos.
 
 \begin{figure}[h!]
 	\centering
     \includegraphics[width=0.99\textwidth]{./Images/img_algoritmo/estadisticas_arritmias_1.png}
-    \caption{Estadisticas}
+    \caption{Métricas de detección de arritmias}
     \label{fig:estadisticas_algoritmos_1}
 \end{figure} 
 
 \begin{figure}[h!]
 	\centering
     \includegraphics[width=0.99\textwidth]{./Images/img_algoritmo/estadisticas_arritmias_2.png}
-    \caption{Porcentaje de las estadisticas}
+    \caption{Porcentajes de detección de arritmias}
     \label{fig:estadisticas_algoritmos_2}
 \end{figure} 
 

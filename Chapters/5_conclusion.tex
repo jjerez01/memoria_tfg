@@ -2,10 +2,10 @@
 Este proyecto trata de buscar una solucion simple para la deteccion de 
 arritmias de una señal de un electrocardiograma, Para la elaboracion de este proyecto, 
 se ha estudiado el comportamiento de las arritmias, viendo la base de datos de MIT y estudiando
-el comportamiento de las arrimtias anotadas se observo que la inmensa mayoria de las arrimtias 
+el comportamiento de las arritmias anotadas se observo que la inmensa mayoria de las arritmias 
 que ocurrian eran dadas por una contraccion prematura del corazon, por tanto el proyecto, aunque
 inicialmente se penso detectar el mayor tipo de arritmias posibles, al no ver ningun ejemplo claro
-de arrimtia no producida por una contraccion prematura el proyecto solo se centro en detectar dichas arritmias.
+de arritmia no producida por una contraccion prematura el proyecto solo se centro en detectar dichas arritmias.
 
 Se realizo un prototipo en python que sirvio para crear el algoritmo y probarlo con facilidad. Este prototipo inicia
 con un filtrado de la señal original aplicando el filtrado IIR. Seguidamente se aplica un algoritmo de detección de 
@@ -21,10 +21,10 @@ se evaluan los resultados mediante una simulacion al crear un testbench.
 Para las pruebas en hardware se utiliza la FPGA Basys3 ya que es la FPGA que se usa en el estudio y aunque no sea capaz de 
 albergar los 30 minutos de pruebas en la RAM, con menos pruebas tiene un buen desempeño.
 
-En el .xdc se ha establecido un periodo especifico teniendo en cuenta la frecuencia de las muestras que es de 365sps y da un periodo 
-de 1852 ns. Gracias al reporte de timing se halla que la minima frecuencia de funcionamiento es de 6,49.
+En el fichero .xdc se ha establecido un periodo especifico teniendo en cuenta la frecuencia de las muestras que es de 365 sps y da un periodo 
+de 1852 ns. Gracias al reporte de timing se halla que la minima frecuencia de funcionamiento es de 6,49 ns.
 
-Segun el reporte de power el consumo de la placa es de 0,069W lo que resulta en un consumo bajo incluso para un uso continuo de este.
+Segun el reporte de power el consumo de la placa es de 0,069 W lo que resulta en un consumo bajo incluso para un uso continuo de este.
 Comparandolo con otros proyectos similares, el consumo dinámico es menor.
 
 \section{Conclusion}
@@ -51,8 +51,8 @@ the results are evaluated through a simulation by creating a testbench.
 For the hardware tests, the Basys3 FPGA is used since it is the FPGA used in the study and although it is not capable of 
 Although it is not able to hold the 30 minutes of tests in RAM, with less tests it has a good performance.
 
-In the .xdc a specific period has been established taking into account the frequency of the samples which is 365sps and gives a period of 1852 ns. Thanks to the .xdc, a period of 1852 ns has been established. 
-Thanks to the timing report we found that the minimum operating frequency is 6.49.
+In the .xdc a specific period has been established taking into account the frequency of the samples which is 365 sps and gives a period of 1852 ns. Thanks to the .xdc, a period of 1852 ns has been established. 
+Thanks to the timing report we found that the minimum operating frequency is 6.49 ns.
 
-According to the power report the power consumption of the board is 0.069W which results in a low power consumption even for a continuous use of the board.
+According to the power report the power consumption of the board is 0.069 W which results in a low power consumption even for a continuous use of the board.
 Compared to other similar projects, the dynamic power consumption is lower.

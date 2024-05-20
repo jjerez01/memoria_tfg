@@ -2,37 +2,32 @@
 {\normalfont\huge\bfseries}{Capítulo \thechapter}{0.5em}{\huge}
 \titlespacing*{\chapter}{0pt}{-1.25cm}{25pt}
 \chapter{Introducción}
-\section{Arritmias}
-Las enfermedades cardiovasculares son la primera causa de muerte en el mundo y una de las causas mas comunes
+\section{Concepto de arritmia}
+Las enfermedades cardiovasculares son la primera causa de muerte en el mundo y una de las causas más comunes
 de estas enfermedades son las arritmias.
 
 Una arritmia cardiaca es una alteración en el ritmo normal del corazón. Si se produce una arritmia, el corazón 
 puede latir demasiado rápido, demasiado lento o de manera irregular. Esto puede provocar síntomas como palpitaciones,
 mareos, falta de aire e incluso desmayos y estas pueden llegar a ser mortales.
 
-Los cardiologos utilizan dispositivos como un Holter para generar tiras de ritmo o electrocardiogramas, que es un 
-diagrama que representa los latidos del corazon y con eso pueden llegar a detectar arritmias.
+Los cardiólogos utilizan dispositivos como un Holter para generar electrocardiogramas (ECG), que son 
+diagramas que representan los latidos del corazón y con ellos son capaces de analizarlos y encontrar anomalias cardiacas.
+Entre esas anomalias están las contracciones prematuras del corazón, un tipo de arritmia que este proyecto se encargará de detectar. 
 
 \begin{figure}[h!]
 	\centering
 	\includegraphics[width=0.7\textwidth]{./Images/img_introduccion/electrocardiograma.png}
-	\caption{Electrocardiogramas}
+	\caption{Imágen de varios electrocardiogramas recopilados por un Holter.}
 	\label{fig:electrocardiogramas}
 \end{figure}
 
-En este proyecto se tratara de solucionar las arritmias en las que se produce una contraccion prematura del corazon
-como las contracciones prematuras del corazón. Estas arritmias se 
-pueden detectar con un electrocardiograma (ECG) que es un diagrama de los latidos del corazon.
+\section{Algoritmo de detección}
+El algoritmo de detección de arritmias que sigue este proyecto se basa en la detección de 
+los picos QRS producidos en el electrocardiograma.
 
-
-
-\section{Algoritmo de deteccion}
-Dado que para detectar arritmias correctamente se necesitan varios años de cardiologia,el algoritmo de 
-deteccion que se utilizara consistira en detectar las arritmias unicamente usando los picos QRS del electrocardiograma.
-
-Un pico QRS como se muestra en la \Cref{fig:complejoQRS} en un electrocardiograma es causado por la contaccion del ventriculo al bombear la sangre por las arterias.
-Este es el impulso electrico mas fuerte que el corazon produce en cada latido. En este proyecto utilizaremos estos picos
-para comparar la distancia entre ellos y poder ver si se ha producido una arritmia. 
+Un pico QRS, como se muestra en la \Cref{fig:complejoQRS} en un electrocardiograma es causado por la contacción del ventriculo al bombear 
+la sangre por las arterias. Este es el impulso eléctrico mas fuerte que el corazón produce en cada latido. En este proyecto utilizaremos estos picos
+para comparar la distancia entre ellos y poder determinar si se ha producido una arritmia. 
 
 \begin{figure}[h]
 	\centering
@@ -42,11 +37,11 @@ para comparar la distancia entre ellos y poder ver si se ha producido una arritm
 \end{figure}
 
 \subsection{Filtrado}
-Como se puede ver en las imagenes es conveniente hacer un filtrado de las tiras de ritmo para poder detectar mejor
-los picos QRS. Ya que el filtrado centra la onda en el 0 y evita fallos en el algoritmo de deteccion de picos del 
-que se hablará mas adelante. 
+Como se puede observar en la \Cref{fig:102filtradoysinfiltrar} es conveniente hacer un filtrado de las tiras de ritmo para poder detectar mejor
+los picos QRS, ya que el filtrado centra la onda en el valor 0 y evita fallos en el algoritmo de detección de picos del 
+que se hablará más adelante. 
 
-En la creacion del proyecto se ha intentado no filtrar la onda para comprobar si se obtienen mejores resultados que
+En la creación del proyecto se ha intentado no filtrar la onda para comprobar si se obtienen mejores resultados que
 sin dicho filtrado pero no se ha dado el caso por las irregularidades de la misma.
 
 \begin{figure}[h!]
@@ -56,15 +51,15 @@ sin dicho filtrado pero no se ha dado el caso por las irregularidades de la mism
 	\label{fig:102filtradoysinfiltrar}
 \end{figure}
 
-\section{Pruebas con pacientes}
-Se han realizado las pruebas con unos resultados del Instituto de Tecnología de Massachusetts (MIT) en el que se han
-recogido tiras de ritmo de media hora de varios pacientes con edades diversas y algunos de ellos llevan un marcapasos
+\section{Datos de referencia}
+Los datos de referencia para probar el algoritmo han sido obtenidos de un estudio realizado en el Instituto de Tecnología de Massachusetts (MIT)
+en el que se han realizado pruebas de media hora a varios pacientes con edades diversas y algunos de ellos llevan un marcapasos
 que actua cuando el corazón no bombea la sangre lo suficientemente fuerte, es decir que el pico QRS no es tan prominente
 y se necesita la ayuda de dicho marcapasos para proporcionar el impulso electrico necesario.
 
-Estas pruebas han sido analizadas por cardiologos y se ha indicado donde el paciente padece una arritmia y donde el ritmo
-es normal y donde se ha producido un error en la lectura de la señal. Tambien muestra informacion menos relevante como la 
-activacion del marcapasos.
+Los datos consisten en electrocardiogramas que previamente han sido analizados por cardiologos y cuyas anotaciones indican cuando un paciente ha padecido 
+una arritmia y cuando el ritmo es normal y cuando se ha producido en la lectura de la señal. También se muestra información menos relevante para nuestro 
+estudio como cuando se ha producido un error en la lectura de la señal y la activación del marcapasos.
 
 \begin{figure}[h]
 	\centering
@@ -73,63 +68,62 @@ activacion del marcapasos.
 	\label{fig:Paciente_pruebas_MIT}
 \end{figure}
 
-\section{Utilizacion de las FPGAs}
-Este proyecto requiere un gran procesamiento de señales, una alta cantidad de calculos y un eficiente paralelismo 
-entre modulos por ello la mejor forma de optimizar el algoritmo es utilizando una FPGA.
+\section{Utilización de las FPGAs}
+Este programa ha sido pensado para ejecutarse en un dispositivo pequeño, poco pesado y portable, es por ello, que es conveniente ejecutarlo en 
+una FPGA, esto de debe a que una FPGA con una placa pequeña tiene el hardware suficiente para poder llegar a ejecutar este programa y por ello pueden
+ser llevados con facilidad, además el consumo producido por una FPGA al ejecutar el algoritmo es bastante bajo como se comprobará posteriormente.
 
-Los motivos son los siguientes:
-
-\begin{itemize}
-	\item Las FPGA pueden procesar datos a velocidades muy altas, lo que lo hace indispensable para esta aplicacion
-	 que esta pensada para ejecutarse en tiempo real.
-	\item Las FPGA son dispositivos de hardware programable que permite diseñar circuitos digitales personalizados, 
-	y por ello pueden reconfigurarse para adaptarse a tareas específicas. Ademas son susceptibles a cambios en el 
-	algoritmo para una posible mejora de este.
-	\item El alto paralelismo que ofrecen las FPGA es perfecto para las multitareas que realiza el algoritmo.
-	\item Puesto que las FPGA pueden ser diseñadas para realizar una tarea en concreto, estas son mas energeticamente
-	eficientes que otros dispositivos como los portatiles.
-\end{itemize}
-
-Para este proyecto se usara la FPGA Basys3 de Artix-7 para probar el funcionamiento del algoritmo. Aunque se debe considerar, segun
-la cantidad de datos introducidos, que en este caso seria la longitud de la señal segun el tiempo transcurrido, utilizar
+Para este proyecto se usara la FPGA Artix-7 en la placa Basys3 para probar el funcionamiento del algoritmo. Aunque se debe considerar, según
+la cantidad de datos introducidos, que en este caso sería la longitud de la señal según el tiempo transcurrido, utilizar
 una FPGA cuyo hardware pueda soportar dicha cantidad de datos.
 
 
-\section{Objetivos del proyecto y organización}
-Los objetivos de este proyecto es tener una solucion para detectar contracciones prematuras ventriculares a tiempo real en
-un largo periodo de tiempo y optimizar el algoritmo para que se ejecute de una forma mas eficiente y menos costosa en una FPGA
+\section{Objetivos del proyecto}
 
-Para ello la organizacion de este proyecto comienza con la creacion de el prototipado del algoritmo en software para facilitar
-la manera de probar el algoritmo con la solucion proporcionada por la base de datos y poder ver resultados graficos, para mejorar
-la velocidad de compilacion y depuracion del algoritmo, para aumentar la claridad del algoritmo que se quiere conseguir en el
-prototipado y para validar la funcionalidad y eficacia del algoritmo.
-\section{Analisis y optimizacion del algoritmo}
-Para lograr los objetivos del algoritmo se centra en tres funciones.
+El objetivo principal del proyecto es crear un algoritmo que detecte arritmias en los pacientes y que dicho algoritmo sea capaz de ejecutarse en un dispositivo portable 
+que tenga un bajo consumo y que funcione a tiempo real.
+Para conseguir el objetivo principal es necesario alcanzar una serie de objetivos que son los siguentes:
 \begin{enumerate}
-	\item Filtrado de la señal original: Lo que hace que la señal sea mas facil de procesar para encontrar los picos QRS.
-	 Esto se realiza multiplicando los valores de la señal original por los valores de filtrado.
-	\item Deteccion de picos sobre la señal filtrada: Se analiza cada señal y comparandola con otras señales anteriores se
-	 deduce si puede ser un posible pico y si lo es, se comprueba si es un pico QRS.
-	\item Deteccion de arritmias comparando la posicion de los picos: una vez se tienen los picos QRS se calcula la distancia
-	 de el pico actual con el pico anterior y dependiendo de las otras distancias se calcula si hay una arritmia.
+	\item Averiguar que son las arritmias, como se producen, que arritmias podría detectar el programa y que patrón siguen la mayoria de ellas.
+
+	\item La creación de un algoritmo en software que sea capaz de leer y filtrar la señal original de los pacientes de la base de datos, la realización de
+	un algoritmo que se encargue de detectar los picos donde se produce la contraccion ventricular según aparecen en la señal filtrada, por ultimo la creación 
+	de un algoritmo encargado de detectar las arritmias segun el patrón hallado en el objetivo anterior.
+	
+	\item La replicación del programa en hardware según el prototipo creado anteriormente en software. Utilizando el hardware necesario para que el algoritmo funcione en una FPGA 
+	y el hardware necesario para poder hacer pruebas en simulación y sobre la placa.  
+
+	\item La observación de los resultados experimentales de la cantidad de recursos hardware empleados, el consumo causado por el algoritmo y el tiempo que tarda en 
+	llevarse a cabo adecuándose a la llegada de la señal del paciente. Dichos resultados experimentales deberian tener una coherencia con lo que se buscaba en el objetivo principal.
+\end{enumerate}
+
+\section{Análisis y optimizacion del algoritmo}
+El algoritmo se centra en tres funciones principales.
+\begin{enumerate}
+	\item Filtrado de la señal original: Lo que hace que la señal sea mas fácil de procesar para encontrar los picos QRS.
+	 Esto se realiza multiplicando los valores de la señal original por los valores de filtrado almacenados en una memoria.
+	\item Detección de picos sobre la señal filtrada: Se analiza cada valor de la señal filtrada y si dicho valor es mayor que
+	 sus anteriores, se considera un posible pico, si después de 72 valores se mantiene como el valor más alto, entonces ese valor
+	 se considera un pico QRS.
+	\item Detección de arritmias comparando la posición de los picos: Una vez obtenidos los picos QRS se calcula la distancia
+	 del pico actual con el pico anterior y dependiendo de las distancias anteriores, se calcula si hay una arritmia.
 \end{enumerate}
 
 
 \section{Implementacion en la FPGA}
-Para implementar el codigo en la FPGA se implementaran varios modulos para tratar de imitar el proyecto creado en software 
-los modulos mas importantes son.
+Para implementar el código en la FPGA se implementarán varios módulos que por lo general, tratan de replicar las funcionalidades que realiza
+el algoritmo de software y se convertirán en la parte más importante de dicho programa.  
+
+Los módulos mas importantes son.
 
 	\begin{enumerate}
-		\item Modulo de filtrado: Se guardan los valores del filtrado en una memoria y se van multiplicando los valores que van llegando 
-		al modulo. estos valores multiplicados a su vez se almacenan en memoria hasta que pasan al siguente módulo
-		\item Deteccion de picos sobre la señal filtrada: Se analiza cada señal que pasa del modulo de filtrado y mediante una maquina de estados
-		se busca el pico mas alto dentro de los limites del cutoff, si se encuentra se comprueba si es un pico QRS.
-		\item Deteccion de arritmias comparando la posicion de los picos: una vez se tienen los picos QRS se implementa una maquina de estados que
-		sea capaz de hallar la distancia entre 2 picos, meterla en un buffer y calcular el porcentaje de el tamaño de la distancia con las demas.
+		\item Módulo de filtrado: Se guardan los valores del filtrado en un módulo de memoria ROM y los valores de la señal original en una memoria RAM 
+		cuando los valores de la RAM son multiplicados, se escribe en la RAM y se pasan los valores al siguiente módulo principal.
+		\item Módulo de detección de picos sobre la señal filtrada: Se implementa una máquina de estados que analiza cada valor de
+		 la señal filtrada y calcula si es un posible pico, o un pico QRS. Como los valores de la señal son números reales, se implementan varios modulos para
+		 poder operar con los valores de la señal. 
+		\item Módulo de detección de arritmias: Se implementa una máquina de estados con el que recibiendo un pico QRS como entrada, sea capaz de almacenar las
+		 distancias mas recientes, calcular segun la diferencia de estas distancias, si se ha producido una arritmia y mostrar como salida un flag indicandolo.
 	\end{enumerate}
-
-	Estos modulos tratan de replicar las funcionalidades que realiza el algoritmo de software y se convertiran en la parte esencial
-	de dicho programa. 
 	
-	Además de estos modulos se debe de crear un modulo que acompase a estos tres y un testbench para probar el funcionamiento
-	del programa en la simulación.
+	Además de estos módulos se debe de crear un módulo que los acompase y un testbench para probar el funcionamiento del programa en la simulación.
