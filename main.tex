@@ -46,6 +46,8 @@
 %for adding dummy text
 \usepackage[math]{blindtext}
 
+\usepackage{placeins} % Para que las figuras no se salgan de la sección en la que están
+
 \usepackage{titlesec}
 
 \usepackage{listings}
@@ -57,7 +59,7 @@
 	%\pagenumbering{gobble} 
 	
 	%Place TOP COVER 
-	%\input{Others/top_cover.tex}
+	\input{Others/top_cover.tex}
 	\clearpage
 
 	%Place authorship declaration
@@ -67,7 +69,7 @@
 
 	%Start numbering pages with roman numbers
 	\pagenumbering{roman}
-	%\input{Others/abstract.tex}
+	% \input{Others/abstract.tex}
 	\clearpage
 
 

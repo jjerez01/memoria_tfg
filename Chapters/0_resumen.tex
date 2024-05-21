@@ -1,24 +1,25 @@
-\chapter{Resumen}
+\chapter*{Resumen}
 
 	La caracterización automática de la señal ECG es de importancia crítica 
 	en el monitoreo y diagnóstico del paciente, Por ello, en este trabajo 
-	lo que se pretende es detectar arritmias partiendo de una señal analizable.
+	lo que se pretende es detectar arritmias partiendo de una señal analizable. \cite{desai2021low}
     
-    Esto se realizará con un algoritmo previamente prototipado y probado en software, funcional a tiempo real y cuyo próposito, es detectar
+    Esto se realizará con un algoritmo previamente prototipado y probado en software, funcional a tiempo real y cuyo propósito, es detectar
     los picos QRS de un paciente y con ello detectar arritmias, para ello el algoritmo compara las distancias que tienen los picos actuales con la distancia que formaron los picos anteriores.
     
     Para el diseño hardware el programa se organizará en distintos módulos. Este diseño cuenta con unos módulos principales que desempeñaran sus funciones para 
-    seguir los pasos del prototipo en software y asi poder realizar las tareas de filtrado de señal, detección de picos y detección de arritmias.
-    Estos módulos están contenidos en un módulo principal y a su vez se incluye en un testbench para realizar pruebas. Las pruebas se 
+    seguir los pasos del prototipo en software y así poder realizar las tareas de filtrado de señal, detección de picos y detección de arritmias.
+    Estos módulos están contenidos en un módulo principal y a su vez se incluye en un \textit{testbench} para realizar pruebas. Las pruebas se 
     realizarán introduciendo señales del electrocardiograma de un paciente en un módulo de memoria para que el programa las procese, a su vez en otra memoria se introducirán unas anotaciones 
     realizadas por expertos para comprobar si se han producido arritmias y así poder comprobar la eficacia de la replicación del programa a partir del prototipado en software.  Además, la FPGA 
     que se utiliza para probar el algoritmo en hardware es la Basys3.
     
-    Para concluir, en los resultados experimentales, se especifica la frecuencia ideal, el reporte de timing y el 
+    Para concluir, en los resultados experimentales, se especifica la frecuencia ideal, el reporte de \textit{timing} y el 
     consumo en W necesarios para el programa. Según los datos obtenidos, este proyecto utiliza muy pocos recursos para el desempeño que tiene 
     y por ello, cumple con los objetivos de ser un algoritmo que puede llegar a ser personalizable, para un dispositivo portable que detecte arritmias a tiempo real.
+    \textbf{Palabras clave}: electrocardiograma, picos, arritmias, FPGA, frecuencia.
 
-\section{Abstract}
+\chapter*{Abstract}
 
 The automatic characterization of the ECG signal is of critical importance in patient monitoring and diagnosis. 
 	in the monitoring and diagnosis of the patient. 
@@ -37,3 +38,4 @@ The automatic characterization of the ECG signal is of critical importance in pa
     To conclude, in the experimental results, we specify the ideal frequency, the timing report and the 
     consumption in W needed for the program. According to the data obtained, this project uses very few resources for the performance that has 
     and therefore, it fulfills the objectives of being an algorithm that can become customizable, for a portable device that detects arrhythmias in real time.
+    \textbf{Keywords}: electrocardiogram, peaks, arrhythmias, FPGA, frequency.
