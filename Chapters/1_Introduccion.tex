@@ -3,15 +3,12 @@
 \titlespacing*{\chapter}{0pt}{-1.25cm}{25pt}
 \chapter{Introducción}
 \section{Concepto de arritmia}
-Las enfermedades cardiovasculares son la primera causa de muerte en el mundo y una de las causas más comunes
-de estas enfermedades son las arritmias.
+Las enfermedades cardiovasculares son la primera causa de muerte en el mundo y una de las causas más comunes de estas enfermedades son las arritmias.
 
-Una arritmia cardiaca es una alteración en el ritmo normal del corazón. Si se produce una arritmia, el corazón 
-puede latir demasiado rápido, demasiado lento o de manera irregular. Esto puede provocar síntomas como palpitaciones,
-mareos, falta de aire e incluso desmayos y estas pueden llegar a ser mortales.
+Una arritmia cardiaca es una alteración en el ritmo normal del corazón. Si se produce una arritmia, el corazón puede latir demasiado rápido, demasiado lento o de manera irregular. Esto puede provocar síntomas como palpitaciones, mareos, falta de aire e incluso desmayos y estas pueden llegar a ser mortales.
 
-Los cardiólogos utilizan dispositivos como un \textit{Holter} para generar electrocardiogramas (ECG), que son 
-diagramas que representan los latidos del corazón y con ellos son capaces de analizarlos y encontrar anomalías cardiacas.
+Los cardiólogos utilizan dispositivos como un \textit{Holter} para generar electrocardiogramas (ECG), que son diagramas que representan los latidos del corazón y con ellos son capaces de analizarlos y encontrar anomalías cardiacas.
+
 Entre esas anomalías están las contracciones prematuras del corazón, un tipo de arritmia que este proyecto se encargará de detectar. 
 
 \begin{figure}[h!]
@@ -25,9 +22,7 @@ Entre esas anomalías están las contracciones prematuras del corazón, un tipo 
 El algoritmo de detección de arritmias que sigue este proyecto se basa en la detección de 
 los picos QRS producidos en el electrocardiograma.
 
-Un pico QRS, como se muestra en la \Cref{fig:complejoQRS} en un electrocardiograma es causado por la contracción del ventrículo al bombear 
-la sangre por las arterias. Este es el impulso eléctrico más fuerte que el corazón produce en cada latido. En este proyecto utilizaremos estos picos
-para comparar la distancia entre ellos y poder determinar si se ha producido una arritmia. 
+Un pico QRS, como se muestra en la \Cref{fig:complejoQRS} en un electrocardiograma es causado por la contracción del ventrículo al bombear la sangre por las arterias. Este es el impulso eléctrico más fuerte que el corazón produce en cada latido. En este proyecto utilizaremos estos picos para comparar la distancia entre ellos y poder determinar si se ha producido una arritmia. 
 
 \begin{figure}[h]
 	\centering
@@ -37,12 +32,9 @@ para comparar la distancia entre ellos y poder determinar si se ha producido una
 \end{figure}
 
 \subsection{Filtrado}
-Como se puede observar en la \Cref{fig:102filtradoysinfiltrar} es conveniente hacer un filtrado de las tiras de ritmo para poder detectar mejor
-los picos QRS, ya que el filtrado centra la onda en el valor 0 y evita fallos en el algoritmo de detección de picos del 
-que se hablará más adelante. 
+Como se puede observar en la \Cref{fig:102filtradoysinfiltrar} es conveniente hacer un filtrado de las tiras de ritmo para poder detectar mejor los picos QRS, ya que el filtrado centra la onda en el valor 0 y evita fallos en el algoritmo de detección de picos del que se hablará más adelante. 
 
-En la creación del proyecto se ha intentado no filtrar la onda para comprobar si se obtienen mejores resultados que
-sin dicho filtrado, pero no se ha dado el caso por las irregularidades de la misma.
+En la creación del proyecto se ha intentado no filtrar la onda para comprobar si se obtienen mejores resultados que sin dicho filtrado, pero no se ha dado el caso por las irregularidades de la misma.
 
 \begin{figure}[h!]
 	\centering
@@ -52,15 +44,12 @@ sin dicho filtrado, pero no se ha dado el caso por las irregularidades de la mis
 \end{figure}
 
 \section{Datos de referencia}
-Los datos de referencia para probar el algoritmo han sido obtenidos de un estudio realizado en el Instituto de Tecnología de Massachusetts (MIT)
-en el que se han realizado pruebas de media hora a varios pacientes con edades diversas y algunos de ellos llevaban implantado un marcapasos.
+Los datos de referencia para probar el algoritmo han sido obtenidos de un estudio realizado en el Instituto de Tecnología de Massachusetts (MIT) en el que se han realizado pruebas de media hora a varios pacientes con edades diversas y algunos de ellos llevaban implantado un marcapasos.
 
-Los datos consisten en electrocardiogramas que previamente han sido analizados por cardiólogos y cuyas anotaciones indican cuando un paciente ha padecido 
-una arritmia, cuando el ritmo es normal y cuando se ha producido un fallo en la lectura de la señal. También se muestra información menos relevante para nuestro 
-estudio como cuando se ha producido un error en la lectura de la señal y la activación del marcapasos.
+Los datos consisten en electrocardiogramas que previamente han sido analizados por cardiólogos y cuyas anotaciones indican cuando un paciente ha padecido una arritmia, cuando el ritmo es normal y cuando se ha producido un fallo en la lectura de la señal. También se muestra información menos relevante para nuestro 
+estudio como cuando se ha producido un error en la lectura de la señal y la activación del marcapasos\footnote{\textbf{Marcapasos}: Dispositivo que se implanta en el corazón que actúa cuando el corazón no bombea la sangre lo suficientemente fuerte, es decir que el pico QRS no es tan prominente
+y se necesita la ayuda de dicho dispositivo para proporcionar el impulso eléctrico necesario}.
 
-\footnote{\textbf{Marcapasos}: Dispositivo que se implanta en el corazón que actúa cuando el corazón no bombea la sangre lo suficientemente fuerte, es decir que el pico QRS no es tan prominente
-y se necesita la ayuda de dicho dispositivo para proporcionar el impulso eléctrico necesario}
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=0.6\textwidth]{./Images/img_introduccion/Paciente_pruebas_MIT.png}
@@ -69,13 +58,10 @@ y se necesita la ayuda de dicho dispositivo para proporcionar el impulso eléctr
 \end{figure}
 
 \section{Utilización de las FPGAs}
-Este programa ha sido pensado para ejecutarse en un dispositivo pequeño, poco pesado y portable, es por ello, que es conveniente ejecutarlo en 
-una FPGA, esto de debe a que una FPGA con una placa pequeña tiene el hardware suficiente para poder llegar a ejecutar este programa y por ello pueden
+Este programa ha sido pensado para ejecutarse en un dispositivo pequeño, poco pesado y portable, es por ello, que es conveniente ejecutarlo en una FPGA, esto de debe a que una FPGA con una placa pequeña tiene el hardware suficiente para poder llegar a ejecutar este programa y por ello pueden
 ser llevados con facilidad, además el consumo producido por una FPGA al ejecutar el algoritmo es bastante bajo como se comprobará posteriormente.
 
-Para este proyecto se usará la FPGA Artix-7 en la placa Basys3 para probar el funcionamiento del algoritmo. Aunque se debe considerar, según
-la cantidad de datos introducidos, que en este caso sería la longitud de la señal según el tiempo transcurrido, utilizar
-una FPGA cuyo hardware pueda soportar dicha cantidad de datos.
+Para este proyecto se usará la FPGA Artix-7 en la placa Basys3 para probar el funcionamiento del algoritmo. Aunque se debe considerar, según la cantidad de datos introducidos, que en este caso sería la longitud de la señal según el tiempo transcurrido, utilizar una FPGA cuyo hardware pueda soportar dicha cantidad de datos.
 
 
 \section{Objetivos del proyecto}

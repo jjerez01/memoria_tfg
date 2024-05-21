@@ -8,8 +8,7 @@ la señal original del electrocardiograma de cada paciente y asi hacer un filtra
  Véase
   \Cref{fig:esquemaGeneral}.
 
- \FloatBarrier
- \begin{figure}[h!]
+\begin{figure}[h!]
     \centering
     \includegraphics[width=0.7\textwidth]{./Images/img_algoritmo/esquemaGeneral.jpg}
     \caption[Representación del trascurso del prototipo]{Representación del trascurso del algoritmo durante las distintas etapas de su desarrollo}
@@ -116,8 +115,7 @@ haber ruido el algoritmo podría detectar falsos picos QRS, por ello se debe imp
 
 El \textit{cutoff} es representado como una función descendente que parte de cada pico localizado y mientras no se haya
 encontrado ningún pico, el valor de dicha función va decreciendo. La principal función del \textit{cutoff} es evitar que
-el algoritmo detecte picos con el ruido y por ello se ha ajustado para que no ocurra el problema anterior y 
-ser capaz de detectar todos los picos QRS.\@
+el algoritmo detecte picos con el ruido y por ello se ha ajustado para que no ocurra el problema anterior y ser capaz de detectar todos los picos QRS.\@
 
 La función del \textit{cutoff} es la siguiente.
     \[cutoff = cutoff - cutoff/(256 - 64)\]
@@ -288,7 +286,7 @@ falsos negativos (referido a las arritmias que el algoritmo considera un ritmo n
 
 Para desarrollar estas pruebas, se crea una clase Pair que contenga por cada iteración de la detección de arritmias, el carácter 
 por el algoritmo y la posición del sample en la que se encuentre dicho pico QRS.
-
+\newpage
 \lstset{language=python, breaklines=true, basicstyle=\footnotesize}
 \begin{lstlisting}[frame=single]
 class Pair:
@@ -348,8 +346,8 @@ Por ello en este proyecto solo se prestará atención a la anotación A y a la a
 las contracciones prematuras de la aurícula y el ventrículo, las demás anotaciones sobre el pico QRS serán 
 consideradas como ritmos normales.
 
-Para poder ver donde se pueden producir posibles errores y el tipo de estos se ha creado un buffer donde en 
-cada iteración se hace push de un \textit{string} con el resultado de la señal filtrada y la señal original.
+Para ver donde se pueden producir posibles errores y el tipo de estos se ha creado un buffer donde en 
+cada iteración se hace push de un \textit{string} con el resultado de la señal filtrada y original.
 
 Si por otro lado, el pico no se ha detectado donde tendría que haber un pico QRS puesto en la señal original, 
 se pone doble guion para simbolizarlo.
@@ -364,7 +362,7 @@ Como se ve en la figura \Cref{fig:estadisticas_algoritmos_1}.
 
 \begin{figure}[h!]
 	\centering
-    \includegraphics[width=0.99\textwidth]{./Images/img_algoritmo/estadisticas_arritmias_1.png}
+    \includegraphics[width=0.9\textwidth]{./Images/img_algoritmo/estadisticas_arritmias_1.png}
     \caption{Métricas de detección de arritmias}
     \label{fig:estadisticas_algoritmos_1}
 \end{figure} 
@@ -377,7 +375,7 @@ arritmias según todas las arritmias contando falsos positivos y negativos. Esto
 
 \begin{figure}[h!]
 	\centering
-    \includegraphics[width=0.99\textwidth]{./Images/img_algoritmo/estadisticas_arritmias_2.png}
+    \includegraphics[width=0.9\textwidth]{./Images/img_algoritmo/estadisticas_arritmias_2.png}
     \caption{Porcentajes de detección de arritmias}
     \label{fig:estadisticas_algoritmos_2}
 \end{figure} 

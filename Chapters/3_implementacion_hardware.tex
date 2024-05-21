@@ -83,17 +83,18 @@ En este programa se necesitan 5 tipos de módulos de operaciones.
 
     \item Módulo divisor y resta: se utilizan en conjunto para calcular el cutoff que tiene la operacion:
     \[cutoff = cutoff - cutoff/192\]
+
     \begin{figure}[h!]
         \centering
-        \includegraphics[width=0.9\textwidth]{./Images/img_implementacion_hw/DiagramaDivisorrestador.png}
+        \includegraphics[width=0.6\textwidth]{./Images/img_implementacion_hw/DiagramaDivisorrestador.png}
         \caption{Funcionamiento de la conexión de los módulos de divisor y restador}
         \label{fig:divisorrestador}
     \end{figure}   
-    \item Módulo multiplicación y suma: Se usa para poder multiplicar los valores de las muestras con los valores 
-    de los coeficientes en el módulo de filtrado.
+
+    \item Módulo multiplicación y suma: Se usa para poder multiplicar los valores de las muestras con los valores de los coeficientes en el módulo de filtrado.
     \begin{figure}[h!]
         \centering
-        \includegraphics[width=0.8\textwidth]{./Images/img_implementacion_hw/diagramamodulomultiplicacionysuma.png}
+        \includegraphics[width=0.6\textwidth]{./Images/img_implementacion_hw/diagramamodulomultiplicacionysuma.png}
         \caption{Diagrama de Módulo de multiplicación y suma.}
         \label{fig:diagramamodulomultiplicacionysuma}
     \end{figure}
@@ -128,7 +129,7 @@ Las señales de salida son:
 
 \begin{figure}[h!]
     \centering
-    \includegraphics[width=0.8\textwidth]{./Images/img_implementacion_hw/diagramamodulofiltrado.png}
+    \includegraphics[width=0.6\textwidth]{./Images/img_implementacion_hw/diagramamodulofiltrado.png}
     \caption{Entradas y salidas del módulo de filtrado}
     \label{fig:modfiltrado}
 \end{figure} 
@@ -148,7 +149,7 @@ Las señales de salida son:
     \caption{Diagrama ASM de Módulo de filtrado de señal}
     \label{fig:Diagramaasmfiltrado2}
 \end{figure} 
-
+\FloatBarrier
 El envio de datos al output se realiza de forma combinacional, se pasa a \lstinline{output_data} el 
 valor del acumulado y el índice a su respectivo output.
 \begin{itemize}
@@ -240,7 +241,7 @@ Este módulo se encarga de detectar los picos de la señal filtrada.
     \caption{Diagrama ASM de Módulo de detección de picos}
     \label{fig:Diagramaasmpicos2}
 \end{figure} 
-
+\FloatBarrier
 De manera combinacional se pasa como output last index pero el módulo de deteccion de arritmias se activa cuando input\_valid
 se activa usando así el \lstinline{last_index} correspondiente 
 
@@ -323,7 +324,7 @@ Se calcula el porcentaje del gap entre las 2 distancias con una distancia normal
     \caption{Diagrama asm de Módulo de filtrado de señal}
     \label{fig:Diagramaasmarritmias2}
 \end{figure} 
-
+\FloatBarrier
 \section {Módulos input y output}
 Estos módulos se componen de un estado de lectura y uno de escritura donde uno lee el dato y el otro se encarga de esperar a que se lea el dato y actualizar 
 el contador para que se pueda leer de la siguiente posicion de la ROM

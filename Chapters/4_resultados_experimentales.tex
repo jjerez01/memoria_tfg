@@ -3,7 +3,9 @@
 
 \section{Entorno de pruebas}
 Para hacer las pruebas en la placa se ha utilizado la Basys3 de virtex ya que se utiliza la misma en el estudio en el que se basa el proyecto.
+
 El problema que se encontró con el uso de la placa es que la ROM no podría almacenar 650000 filas de valores de punto flotante por lo que se probo un dieciseisavo de las pruebas totales que equivale a 40625.
+
 Por lo que, para hacer la prueba con todos los samples, se requiere utilizar una FPGA con mas recursos como la Virtex-7 VC709 Evaluation Platform.
 
 \begin{figure}[h]
@@ -14,19 +16,21 @@ Por lo que, para hacer la prueba con todos los samples, se requiere utilizar una
 \end{figure}
 
 \section{Consumo}
-	Para evaluar el consumo se tendra en cuenta los resultados sacados del análisis de síntesis, del reporte de timing y de el reporte de power de el modulo principal que contiene el modulo de filtrado de señal,
+	Para evaluar el consumo se tendrá en cuenta los resultados sacados del análisis de síntesis, del reporte de timing y de el reporte de potencia de el modulo principal que contiene el modulo de filtrado de señal,
 	el módulo de deteccion de picos y el modulo de deteccion de arritmias. 
 	
 	\begin{figure}[h!]
 		\centering
 		\includegraphics[width=0.99\textwidth]{./Images/img_res_experimentales/diagramaGeneral.png}
-		\caption{Diagrama principal de todos los modulos a evaluar}
+		\caption{Diagrama principal de todos los módulos a evaluar}
 		\label{fig:Diagramaasmfiltrado}
 	\end{figure} 
 
+\FloatBarrier
+
 \subsection{Análisis de síntesis}
 
-	En el análisis de síntesis podemos ver las sigueintes caracteristicas:
+	En el análisis de síntesis podemos ver las siguientes caracteristicas:
 
 	\begin{itemize}
 		\item Luts as logic: 195
@@ -73,12 +77,12 @@ El waveform oscila desde 0 a 926 para que sea simétrico.
 	\begin{figure}[h!]
 		\centering
 		\includegraphics[width=0.6\textwidth]{./Images/img_res_experimentales/reportepower.png}
-		\caption{Imagen que muestra el reporte de power generado}
-		\label{fig:reportePower}
+		\caption{Imagen que muestra el reporte de potencia generado}
+		\label{fig:reportepotencia}
 	\end{figure} 
 
-	Comparando este proyecto con otros estudios, por ejemplo con el de caracterizacion de señales usando polinomios de hermite presentan unos resultados de dynamic power de 28mW.
-	Sin embargo, el dynamic power de este proyecto es menor que 0,001W.
+	Comparando este proyecto con otros estudios, por ejemplo con el de caracterizacion de señales usando polinomios de hermite presentan unos resultados de dynamic potencia de 28mW.
+	Sin embargo, el dynamic potencia de este proyecto es menor que 0,001W.
 
 
 
