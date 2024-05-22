@@ -1,31 +1,31 @@
 \chapter*{Conclusión}
-Este proyecto trata de buscar una solucion simple para la deteccion de 
-arritmias de una señal de un electrocardiograma, Para la elaboracion de este proyecto, 
+Este proyecto trata de buscar una solución simple para la detección de 
+arritmias de una señal de un electrocardiograma, Para la elaboración de este proyecto, 
 se ha estudiado el comportamiento de las arritmias, viendo la base de datos de MIT y estudiando
-el comportamiento de las arritmias anotadas se observo que la inmensa mayoria de las arritmias 
-que ocurrian eran dadas por una contraccion prematura del corazon, por tanto el proyecto, aunque
-inicialmente se penso detectar el mayor tipo de arritmias posibles, al no ver ningun ejemplo claro
-de arritmia no producida por una contraccion prematura el proyecto solo se centro en detectar dichas arritmias.
+el comportamiento de las arritmias anotadas se observó que la inmensa mayoría de las arritmias 
+que ocurrían eran dadas por una contracción prematura del corazón, por tanto el proyecto, aunque
+inicialmente se pensó detectar el mayor tipo de arritmias posibles, al no ver ningún ejemplo claro
+de arritmia no producida por una contracción prematura el proyecto solo se centró en detectar dichas arritmias.
 
-Se realizo un prototipo en python que sirvio para crear el algoritmo y probarlo con facilidad. Este prototipo inicia
+Se realizó un prototipo en python que sirvió para crear el algoritmo y probarlo con facilidad. Este prototipo inicia
 con un filtrado de la señal original aplicando el filtrado IIR. Seguidamente se aplica un algoritmo de detección de 
-picos QRS sobre la señal filtrada que busca el pico mas alto que además sobrepase el cutoff dinámico establecido. Finalmente
-se aplica el algoritmo de deteccion de arritmias calculando la distancia entre el pico actual con el anterior y comparandola con una
+picos QRS sobre la señal filtrada que busca el pico más alto que además sobrepase el cutoff dinámico establecido. Finalmente
+se aplica el algoritmo de detección de arritmias calculando la distancia entre el pico actual con el anterior y comparándola con una
 distancia anterior de un ritmo normal.
 
-Para la implementacion de hardware se usaran 3 modulos principales que son el modulo de filtado, el modulo de deteccion de picos 
-y el modulo de deteccion de arritmias. Ademas estos modulos estan contenidos en un modulo principal. Para hacer las pruebas sobre
-estos modulos, se añaden 2 modulos adicionales de input de señal y output donde se comparan los resultados de las anotaciones. Ademas 
-se evaluan los resultados mediante una simulacion al crear un testbench.
+Para la implementación de hardware se usarán 3 módulos principales que son el módulo de filtrado, el módulo de detección de picos 
+y el módulo de detección de arritmias. Además estos módulos están contenidos en un módulo principal. Para hacer las pruebas sobre
+estos módulos, se añaden 2 módulos adicionales de input de señal y output donde se comparan los resultados de las anotaciones. Además 
+se evalúan los resultados mediante una simulación al crear un testbench.
 
-Para las pruebas en hardware se utiliza la FPGA Basys3 ya que es la FPGA que se usa en el estudio y aunque no sea capaz de 
+Para las pruebas en hardware se utiliza la FPGA Virtex 7 en la placa Basys3, ya que es la FPGA que se usa en el estudio y aunque no sea capaz de 
 albergar los 30 minutos de pruebas en la RAM, con menos pruebas tiene un buen desempeño.
 
-En el fichero .xdc se ha establecido un periodo especifico teniendo en cuenta la frecuencia de las muestras que es de 365 sps y da un periodo 
-de 1852 ns. Gracias al reporte de timing se halla que la minima frecuencia de funcionamiento es de 6,49 ns.
+En el fichero .xdc se ha establecido un periodo específico teniendo en cuenta la frecuencia de las muestras que es de 365 sps y da un periodo 
+de 1852 ns. Gracias al reporte de timing se halla que la mínima frecuencia de funcionamiento es de 6,49 ns.
 
-Segun el reporte de power el consumo de la placa es de 0,069 W lo que resulta en un consumo bajo incluso para un uso continuo de este.
-Comparandolo con otros proyectos similares, el consumo dinámico es menor.
+Según el reporte de potencia el consumo de la placa es de 0,069 W lo que resulta en un consumo bajo incluso para un uso continuo de este.
+Comparándolo con otros proyectos similares, el consumo dinámico es menor.
 
 \chapter*{Conclusion}
 

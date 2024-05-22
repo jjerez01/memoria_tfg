@@ -2,9 +2,9 @@
 
 \section{Trascurso del algoritmo}
 Como se ha explicado anteriormente el algoritmo realizará una recopilación de datos, para obtener 
-la señal original del electrocardiograma de cada paciente y asi hacer un filtrado de dicha señal para eliminar
- el ruido y centrarla, seguidamente se realizara la deteccion de picos con algunos metodos como establecer 
- el cutoff dinámico y por último detectar las arritmias y comparar las anotaciones de la señal original con las generadas.
+la señal original del electrocardiograma de cada paciente y así hacer un filtrado de dicha señal para eliminar
+ el ruido y centrarla, seguidamente se realizara la detección de picos con algunos métodos como establecer 
+ el \textit{cutoff} dinámico y por último detectar las arritmias y comparar las anotaciones de la señal original con las generadas.
  Véase
   \Cref{fig:esquemaGeneral}.
 
@@ -16,7 +16,7 @@ la señal original del electrocardiograma de cada paciente y asi hacer un filtra
 \end{figure}
 
 \section{Recopilación de los datos}
-Para la recopilación de los datos se utilizará la librería wfdb que se encarga de proporcionar
+Para la recopilación de los datos se utilizará la librería \textit{wfdb} \cite{WFDB} que se encarga de proporcionar
 funciones para leer y escribir archivos de diferentes formatos que contienen señales biomédicas,
 como archivos de registro de señales (por ejemplo, formato .dat), archivos de anotaciones
 (por ejemplo, formato .atr) y archivos de cabecera (por ejemplo, formato .hea).
@@ -24,7 +24,7 @@ como archivos de registro de señales (por ejemplo, formato .dat), archivos de a
 Los pacientes vienen identificados por un identificador (por ejemplo, 101) y hay 3 ficheros por paciente, 
 con extensiones .dat, .atr y .hea
 
-Se descarga la base de datos con la función de la librería de wfdb, dldatabase que recoge 
+Se descarga la base de datos con la función de la librería de \textit{wfdb}, \textit{dldatabase} que recoge 
 la señal del paciente y las anotaciones de los cardiólogos sobre cada pico QRS.
 
 
@@ -37,8 +37,8 @@ else:
 	wfdb.dl_database('mitdb', 'mitdb')
 \end{lstlisting}
 
-Los pacientes de la base de datos se han hecho una prueba de 30 mins lo que en la señal 
-equivale a 650000 samples.
+Los pacientes de la base de datos se han hecho una prueba de 30 minutos, lo que en la señal 
+equivale a 650000 \textit{samples}.
 
 \lstset{language=python, breaklines=true, basicstyle=\footnotesize}
 \begin{lstlisting}[frame=single]
@@ -49,7 +49,7 @@ annotation = wfdb.rdann('mitdb/102', 'atr', sampfrom=sampfrom, sampto=sampto)
 \end{lstlisting}
 
 Por último, para visualizar esta señal con las anotaciones de los cardiólogos y poder comparar 
-con las anotaciones que realiza el algoritmo se usará la librería matplotlib.pyplot.
+con las anotaciones que realiza el algoritmo se usará la librería \lstinline{matplotlib.pyplot} \cite{Matplotlib}.
 
 Con esto se mostrará la señal original con las anotaciones y la señal filtrada con las anotaciones
 del algoritmo como en \Cref{fig:102filtradoysinfiltrar}
@@ -69,7 +69,7 @@ Siendo b son los coeficientes del filtrado y x los valores de la señal original
 Los coeficientes se almacenan en una lista de 99 valores en punto flotante simétricos que se iteran de forma 
 circular, con lo que después de ejecutar el último valor vuelve de nuevo al primero.  
 
-Para el filtrado se usa la función lfilter de la librería scipy.signal
+Para el filtrado se usa la función lfilter de la librería lstinline{scipy.signal} \cite{SciPy}.
 
 \lstset{language=python, breaklines=true, basicstyle=\footnotesize}
 \begin{lstlisting}[frame=single]
@@ -87,14 +87,14 @@ donde en el 4.1.2 muestran una máquina de estados del proceso que realizan.
 \begin{figure}[h!]
     \centering
     \includegraphics[width=0.6\textwidth]{./Images/img_algoritmo/fsm_mdpi.png}
-    \caption{Máquina de estados de algoritmo de detección de picos de estudio de caracterización de señales usando polinomios de Hermite}
+    \caption{Máquina de estados de algoritmo de detección de picos de estudio de caracterización de señales usando polinomios de Hermite \cite{desai2021low}}
     \label{fig:fsm_mpdi}
 \end{figure}
 
 El algoritmo realizado es distinto a este, ya que es una versión simplificada de un algoritmo de detección de picos y no llega a ser tan 
-funcional por la falta de un cutoff dinámico. Esto se debe a que a veces hay una distancia entre los picos QRS superior a 72 muestras 
+funcional por la falta de un \textit{cutoff} dinámico. Esto se debe a que a veces hay una distancia entre los picos QRS superior a 72 muestras 
 por lo que cause que en algunas ocasiones detecte el ruido como un pico QRS, ya que después de las 72 muestras no se ha encontrado una señal.
-Es por eso que, en un proyecto en el que se sabe que los picos QRS van a estar a distancias distintas entre si, este algoritmo no sirve y 
+Es por eso que, en un proyecto en el que se sabe que los picos QRS van a estar a distancias distintas entre sí, este algoritmo no sirve y 
 hay que modernizarlo.
 
 Aun así, si bien el algoritmo creado es distinto a ese, se replica el tener que esperar a 72 muestras
@@ -102,7 +102,7 @@ para asegurarse de que no se encuentra un pico superior y así poder considerarl
 
 Es por ello que definimos la variable \lstinline|samples_around_peak| como 72 para comparar dicha condición.
 
-Para hallar el pico más alto se necesita definir un pico en \lstinline|last_peak| y si se encuentra otro pico se produce
+Para hallar el pico más alto se necesita definir un pico en \lstinline{last_peak} y si se encuentra otro pico se produce
 
 \lstset{language=python, breaklines=true, basicstyle=\footnotesize}
 \begin{lstlisting}[frame=single]
@@ -110,7 +110,7 @@ last_peak = max(last_peak,signal[i])
 \end{lstlisting}
 
 Sin embargo hay un problema y es que cuando se detecte un pico QRS, es decir cuando se haya detectado el pico 
-más alto después de haber pasado 72 samples se restauran los valores para empezar a detectar nuevos picos y al
+más alto después de haber pasado 72 \textit{samples} se restauran los valores para empezar a detectar nuevos picos y al
 haber ruido el algoritmo podría detectar falsos picos QRS, por ello se debe implementar un \textit{cutoff}.
 
 El \textit{cutoff} es representado como una función descendente que parte de cada pico localizado y mientras no se haya
@@ -124,43 +124,20 @@ La función del \textit{cutoff} es la siguiente.
 Esta función es llamada cuando no se ha encontrado un nuevo pico y decrementa su valor, cuando se localiza un
 nuevo pico, el \textit{cutoff} pasa a tener el valor del pico localizado.
 
-Se han dado los valores (256 - 64) a la formula para que fuese más facil la divison en hardware pero como al final 
-se acabo haciendo en un módulo de division en punto flotante cualquier valor es valido para la division aunque debido 
-al buen desempeño del valor en el programa se decidio dejar asi.
+Se han dado los valores (256 - 64) a la fórmula para que fuese más fácil la división en hardware, pero como al final 
+se terminó haciendo en un módulo de división en punto flotante cualquier valor es válido para la división aunque debido 
+al buen desempeño del valor en el programa se decidió mantener el valor.
 
-\lstset{language=python, breaklines=true, basicstyle=\footnotesize}
-\begin{lstlisting}[frame=single]
-    def extract_peak_indices(signal, total_samples):
-        samples_around_peak = total_samples // 2
-        last_peak = None
-        last_index = None
-        peak_indices = []
-        cutoff = 0
-        for i in range(samples_around_peak-1, len(signal)):
-            if last_peak == None:
-                last_peak = signal[i]
-                last_index = i
-                cutoff = calcular_cutoff(cutoff)
-            else:
-                if signal[i] > last_peak and signal[i] > cutoff:
-                    last_peak = signal[i]
-                    last_index = i
-                    cutoff= signal[i]
-                else:
-                    if (i - last_index) >= samples_around_peak and last_peak > cutoff:
-                        peak_indices.append(last_index)
-                        cutoff = calcular_cutoff(cutoff)
-                        last_peak = None
-                        last_index = None         
-                    else:
-                        cutoff = calcular_cutoff(cutoff)
-            cutoff_plot.append(cutoff)
-        ax[1].plot(range(samples_around_peak-1, len(signal)),cutoff_plot)
-        return peak_indices
-\end{lstlisting}
+\begin{figure}[h!]
+	\centering
+    \includegraphics[width=0.9\textwidth]{./Images/img_algoritmo/Diagramapicos.pdf}
+    \caption{Diagrama ASM del algoritmo de detección de picos QRS}
+    \label{fig:diagramapicos}
+\end{figure} 
 
-La salida de dicha función es un buffer de samples que sirven como indices para indicar donde se han encontrado
-los picos QRS y asi poder pasar al módulo de detección de arritmias.
+\FloatBarrier
+La salida de dicha función es un buffer de \textit{samples} que sirven como indices para indicar donde se han encontrado
+los picos QRS y así poder pasar al módulo de detección de arritmias.
 
 \section{Detección de arritmias}
 
@@ -175,14 +152,14 @@ El algoritmo va almacenando distancias entre los picos QRS (es por ello que en l
 y se declaran varias variables.
 
 \begin{itemize}
-    \item last\_distance: se utiliza para almacenar la ultima distancia recogida y asi poder compararla con la distancia 
-    actual en calculos posteriores
+    \item last\_distance: se utiliza para almacenar la última distancia recogida y así poder compararla con la distancia 
+    actual en cálculos posteriores
     \item counter\_buffer: utilizado para tener el valor de la posición del buffer donde se escribe.
     \item counter\_arrythmia: utilizado para indicar si la distancia anterior fue una arritmia.
     \item TNRange: Se utiliza para indicar si hay una distancia más grande de lo normal entre 2 picos QRS producido
     por una arritmia. Es importante tener esta distancia en cuenta, ya que si el ritmo del paciente vuelve a la
-    normalidad se compararia la distancia entre el ritmo normal del paciente con el ritmo extendido por la arritmia,
-    ya que de no tenerlo en cuenta el algoritmo lo clasificaria como arritmia como se puede ver en la \cref{fig:senial_explicacion_TNRANGE}, por ello se compara con un valor anterior
+    normalidad se compararía la distancia entre el ritmo normal del paciente con el ritmo extendido por la arritmia,
+    ya que de no tenerlo en cuenta el algoritmo lo clasificaría como arritmia como se puede ver en la \cref{fig:senial_explicacion_TNRANGE}, por ello se compara con un valor anterior
     que sea el ritmo normal del paciente.
 \end{itemize}
 
@@ -197,58 +174,32 @@ Por ello si se ha detectado una arritmia, la siguiente distancia se compara con
 la tercera última distancia escrita en el buffer que posiblemente sea una distancia causada por un ritmo normal. 
 Si no se da el caso, se compara con last\_distance.
 
-la función que compara las distancias devuelve un carácter que va a ser el que se vaya a mostrar en la gráfica, 
-si el caracter es "N" significa que se ha detectado un ritmo normal y por tanto solo se muestra. Sin embargo si el 
+La función que compara las distancias devuelve un carácter que va a ser el que se vaya a mostrar en la gráfica, 
+si el carácter es "N" significa que se ha detectado un ritmo normal y por tanto solo se muestra. Sin embargo si el 
 resultado es "T" significa que la distancia es más corta de lo normal, se detecta la arritmia y se ponen
 counter\_arritmia a 1 para saber que la distancia es más corta y TNRange a true para que el algoritmo sepa 
 que la distancia que venga después puede ser una ampliada. 
 
-\lstset{language=python, breaklines=true, basicstyle=\footnotesize}
-\begin{lstlisting}[frame=single]
-    #init the first distance, the first beat doesn't count
-    posant = peaks[0]
-    last_distance = peaks[1] - peaks[0]
+\begin{figure}[h!]
+	\centering
+    \includegraphics[width=0.9\textwidth]{./Images/img_algoritmo/Diagramaarritmias.pdf}
+    \caption{Diagrama ASM del algoritmo de detección de arritmias}
+    \label{fig:diagramaarritmias}
+\end{figure} 
 
-    pos_buffer = [last_distance]
-    counterBuffer = 0
-    #this var refers to the distance left in between an arrythmia and normal rythm 
-    # which tends to be longer. To avoid detection problems we will not compare this distance so the detection can be more precise
-    TNRange = False
-    counter_arrrythmia = 0
-    for pos in peaks[1:]:
-        act_distance = pos - posant
-        pos_buffer.append(act_distance)
-        counterBuffer += 1
-    
-        if(TNRange==True and counter_arrrythmia == 0):
-            sym = get_frecuency_in_char(pos_buffer[counterBuffer - 3],act_distance)
-    
-            TNRange=False
-        else:
-            if(TNRange == True):
-                counter_arrrythmia -= 1
-            sym = get_frecuency_in_char(last_distance,act_distance)
-        
-    
-        if(sym == "N"):
-            ax[1].plot(pos, filtered_signal[pos], 'go', markersize=4, markerfacecolor='green')
-            ax[1].text(pos-30, filtered_signal[pos], sym, color='green')       
-        elif(sym == "T"):
-            ax[1].plot(pos, filtered_signal[pos], 'go', markersize=4, markerfacecolor='red')
-            ax[1].text(pos-30, filtered_signal[pos], sym, color='red')
-            TNRange = True
-            counter_arrrythmia = 1
-        
-        posant = pos
-        last_distance = act_distance
-\end{lstlisting}
+\FloatBarrier
 
-La función get\_frecuency\_in\_char() se encarga de calcular las distancias entre el ritmo actual y un ritmo normal. 
+La función \lstinline{get_frecuency_in_char()} se encarga de calcular las distancias entre el ritmo actual y un ritmo normal. 
 Para ello recibe como entrada ambas distancias.
 
-Para empezar se calcula el gap que es simplemente la diferencia que tiene el la distancia anterior con la actual.
+Para empezar se calcula el gap que es simplemente la diferencia que tiene la distancia anterior con la actual.
+
+\[gap = last distance - actual distance\]
+
 Acto seguido, se calcula el porcentaje de la diferencia de distancia con la distancia anterior que se sabe que va a ser 
 un ritmo normal.
+
+\[percentaje = (gap / last distance) * 100\]
 
 Si ese porcentaje es mayor que el 15\% entonces se considera que la distancia normal es mucho mayor que la actual
 y por tanto como la distancia actual entre 2 picos es pequeña, se da por hecho que hay una arritmia.
@@ -257,22 +208,6 @@ Nótese que no se le da importancia si el gap da como resultado un número negat
 a que este proyecto solo está pensado para detectar contracciones prematuras del corazón, por ende solo necesitamos 
 saber si la distancia actual es menor que la anterior. Además ningún paciente parece padecer ninguna arritmia de otro
 tipo.
-
-\lstset{language=python, breaklines=true, basicstyle=\footnotesize}
-\begin{lstlisting}[frame=single]
-def get_frecuency_in_char(last_distance,act_distance): 
-
-    gap = last_distance - act_distance
-
-    percentaje = (gap / last_distance) * 100
-
-    if(percentaje > 15):
-        ret = "T"
-    else:
-        ret = "N"
-    return ret
-
-\end{lstlisting}
 
 \section{Pruebas con el algoritmo}
 
@@ -285,7 +220,7 @@ falsos positivos, (referido a los ritmos normales que el algoritmo considera arr
 falsos negativos (referido a las arritmias que el algoritmo considera un ritmo normal).
 
 Para desarrollar estas pruebas, se crea una clase Pair que contenga por cada iteración de la detección de arritmias, el carácter 
-por el algoritmo y la posición del sample en la que se encuentre dicho pico QRS.
+por el algoritmo y la posición del \textit{sample} en la que se encuentre dicho pico QRS.
 \newpage
 \lstset{language=python, breaklines=true, basicstyle=\footnotesize}
 \begin{lstlisting}[frame=single]
@@ -311,7 +246,7 @@ if(sym == "N" or sym == "T"):
 Una vez se rellena todo el buffer de Pares, se comprueban 2 cosas.
 \begin{enumerate}
 	\item Si se ha detectado un pico QRS en la señal filtrada y se
-     corresponde con el pico de la señal original situado en un sample de una posición aproximada.
+     corresponde con el pico de la señal original situado en un \textit{sample} de una posición aproximada.
 	\item Si en el caso de que se haya detectado el pico, las anotaciones de los cardiólogos coinciden
      con las generadas por el algoritmo
 \end{enumerate} 
@@ -352,13 +287,13 @@ cada iteración se hace push de un \textit{string} con el resultado de la señal
 Si por otro lado, el pico no se ha detectado donde tendría que haber un pico QRS puesto en la señal original, 
 se pone doble guion para simbolizarlo.
 
-Como se mencionó anteriormente la detección de picos sobre a señal filtrada es aproximado, por lo que se cuenta
+Como se mencionó anteriormente, la detección de picos sobre a señal filtrada es aproximado, por lo que se cuenta
 si se ha detectado un pico 50 \textit{samples} antes del pico de la señal original y 50 picos después. El número de aproximación 
 es moderadamente más amplio para evitar problemas con las posibles imprecisiones del filtrado.  
 
 Otra prueba que se realiza es un conteo de las anotaciones correctas en total, las anotaciones incorrectas en total, las anotaciones
-correctas solo de los picos detectados como arritmia, las incorrectas de ese mismo tipo, y los picos no registrados. 
-Como se ve en la figura \Cref{fig:estadisticas_algoritmos_1}.
+correctas solo de los picos detectados como arritmia, las incorrectas de ese mismo tipo, y los picos no registrados, 
+como se ve en la figura \Cref{fig:estadisticas_algoritmos_1}.
 
 \begin{figure}[h!]
 	\centering
@@ -371,7 +306,7 @@ Con el conteo de las anotaciones se pueden sacar varias conclusiones aparte de l
 anteriormente como los picos totales que tiene la señal original, el porcentaje de picos 
 detectados, el porcentaje de picos no detectados, el porcentaje de arritmias detectadas 
 correctamente, el porcentaje de falsos positivos o falsos negativos, y el porcentaje de éxito de detección de 
-arritmias según todas las arritmias contando falsos positivos y negativos. Esto esta representado en la figura \Cref{fig:estadisticas_algoritmos_2}.
+arritmias según todas las arritmias contando falsos positivos y negativos. Esto está representado en la figura \Cref{fig:estadisticas_algoritmos_2}.
 
 \begin{figure}[h!]
 	\centering

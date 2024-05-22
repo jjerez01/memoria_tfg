@@ -153,15 +153,15 @@ Las señales de salida son:
 El envio de datos al output se realiza de forma combinacional, se pasa a \lstinline{output_data} el 
 valor del acumulado y el índice a su respectivo output.
 \begin{itemize}
-    \item Estado de espera: En el estado de espera se activa la señal de ready y se espera a que se envie un valor de la
+    \item Estado de espera: En el estado de espera se activa la señal de \textit{ready} y se espera a que se envíe un valor de la
     señal sin filtrar, se borra el valor de la solución de la multiplicación anterior en caso de haberla, se activan las
     señales de escritura de la RAM y se establece el índice donde se va a escribir la muestra.
     \item Estado de lectura: Se activa la lectura de los coeficientes y de las muestras.
-    \item Estado para ordenar el cálculo: en este estado se activa el flag del módulo de multiplicacion.
-    \item Estado de espera del cálculo: se espera a que termine el módulo de multiplicacion esperando la señal de ready\_muladd
-    y se almacena el resultado, tambien se actualiza el contador de los coeficientes, de las muestras y dependiendo de si el 
+    \item Estado para ordenar el cálculo: en este estado se activa el flag del módulo de multiplicación y suma.
+    \item Estado de espera del cálculo: se espera a que termine el módulo de multiplicación y suma esperando la señal de ready\_muladd
+    y se almacena el resultado, también se actualiza el contador de los coeficientes, de las muestras y dependiendo de si el 
     índice de coeficientes es menor que 98 se va al estado de lectura o el estado de enviar un nuevo dato al siguiente módulo.
-    \item Estado de envio de nuevo dato: este estado sincroniza el siguientemódulo, activa el bit de valid a 1 y espera el bit
+    \item Estado de envío de nuevo dato: este estado sincroniza el siguiente módulo, activa el bit de valid a 1 y espera el bit
     de ready del siguiente módulo para poder enviar el dato.
 \end{itemize}
 
@@ -194,32 +194,32 @@ Este módulo se encarga de detectar los picos de la señal filtrada.
     
     \begin{itemize}
         \item output\_peak\_index: saca los índices de los picos detectados
-        \item output\_valid y output\_ready: Se encargan de sincronizar el módulo de deteccion de picos 
+        \item output\_valid y output\_ready: Se encargan de sincronizar el módulo de detección de picos 
         con el módulo de deteccion de arritmias.
     \end{itemize}
 
 \subsection{Máquina de estados}
 
 \begin{itemize}
-    \item Estado de espera: En el estado de espera se activa la señal de ready y se espera a que se envie un valor de la
-    señal sin filtrar, se borra el valor de la solucion de la multiplicacion anterior en caso de haberla, se activan las
-    señales de escritura de la RAM y se establece el indice donde se va a escribir la muestra.
-    \item Estado de comprobar indice: si no hay pico, o lo que es lo mismo que la señal de last\_peak este a 0 este se asigna
-     a la señal y ademas se registra el indice, despues pasa al estado de actualizar el cutoff activando por tanto la señal de 
+    \item Estado de espera: En el estado de espera se activa la señal de ready y se espera a que se envíe un valor de la
+    señal sin filtrar, se borra el valor de la solución de la multiplicación anterior en caso de haberla, se activan las
+    señales de escritura de la RAM y se establece el índice donde se va a escribir la muestra.
+    \item Estado de comprobar índice: si no hay pico, o lo que es lo mismo que la señal de last\_peak este a 0 este se asigna
+     a la señal y ademas se registra el índice, después pasa al estado de actualizar el cutoff activando por tanto la señal de 
      division para que empiecen los módulos de division y resta de valores en punto flotante a calcular el valor. Si por otro
      lado si que hay pico, se ordena hacer la comparación \lstinline{signal_data > last_peak} pasando las señales correspondientes al módulo de comparacion en 
      punto flotante. Además se anticipa y se hace la comparación \lstinline{last_peak > cutoff} para en dado caso de que no se cumpla la 
-     condicion anterior ya esta la comparacion hecha y se pude pasar directamente al estado siguiente. Tambien activamos las señales
-     del módulo de comparacion correspondiente. El siguiente estado es el estado de espera a la condicion en la que la señal es mayor 
+     condición anterior ya esta la comparacion hecha y se pude pasar directamente al estado siguiente. Tambien activamos las señales
+     del módulo de comparacion correspondiente. El siguiente estado es el estado de espera a la condición en la que la señal es mayor 
      que el pico maximo.
     \item Estado de actualizar cutoff: este estado espera a la señal ready del módulo de la resta ya que es la ultima operacion que se realiza para 
     calcular el cutoff. Primero se ejecuta el módulo de la division para calcular cutoff/192 y luego la resta cutoff - cutoff/192. cuando la señal
     ready\_sub sea '1' se actualiza el cutoff y pasa al estado de espera terminando la iteracion. 
-    \item Estado de espera a la condicion en la que la señal es mayor que el pico maximo: cuando las señales ready de los comparadores esten a '1' 
-    se podra ejecutar las funcionalidades del estado. este tiene 3 condiciones:
+    \item Estado de espera a la condición en la que la señal es mayor que el pico maximo: cuando las señales ready de los comparadores esten a '1' 
+    se podra ejecutar las funcionalidades del estado. este tiene 3 condiciónes:
     \begin{itemize}
         \item si se ha encontrado un valor mas alto que last\_index, este pico pasa a ser el nuevo last\_peak y el nuevo cutoff, el index tambien se actualiza. 
-        \item la señal result\_signal\_index\_sub\_last\_index\_gt\_or\_eq\_samples\_around\_peak se calcula de forma combinacional, por lo que si esa condicion que
+        \item la señal result\_signal\_index\_sub\_last\_index\_gt\_or\_eq\_samples\_around\_peak se calcula de forma combinacional, por lo que si esa condición que
          indica que han pasado 72 muestras sin encontrar un valor mas alto que last\_peak y ademas last\_peak es mayor que el cutoff, se pasa directamente al estado
          de envio de nuevo pico para enviar el pico QRS.
         \item Sino simplemente se ordena la actualizacion del cutoff activando el enable del módulo de la division y pasando al estado correspondiente.
@@ -277,29 +277,29 @@ Las señales de salida son:
 \subsection{Máquina de estados}
 
 \begin{itemize}
-    \item Estado de espera: En el estado de espera se activa la señal de ready y se espera a que se envie un pico QRS, despues pasa al estado S0
+    \item Estado de espera: En el estado de espera se activa la señal de ready y se espera a que se envíe un pico QRS, después pasa al estado S0
     \item Estado S0: Si el contador es 0 significa que se recibe el primer pico registrado por lo que se guarda para mas tarde y se pasa al estado de espera.
-    Si el contador es 1 significa que se recibe el segundo pico y por tanto se compara con el anterior hallando la primera distancia despues pasa al estado S1.
+    Si el contador es 1 significa que se recibe el segundo pico y por tanto se compara con el anterior hallando la primera distancia después pasa al estado S1.
     Si no se cumple ninguna condición se pasa al estado S1.    
     \item Estado S1: aumenta el contador en 1, y se calcula la distancia actual.
-    \item Estado S2: se actualizan las variables que crean un buffer ficticio y los valores se mueven una posicion cuando se añade la distancia actual como si fuese una cola.
-    \item Estado S3: Como ya se explicó en la parte de la implementación del algoritmo TNRange es una señal que simbiliza la distancia entre el pico detectado como arritmia y 
-    el pico normal actual, este flag se activa cuando ha habido una arritmia ya que last\_distance puede ser mas grande de lo normal, es por eso que para calcular el gap cuando este flag esta activo
-     y el de arritmia detectada no, se compara la distancia actual con la ultima distancia sino con una 3 veces anterior a la última. Si esta condicion no se cumple, para calcular el gap se compara 
-     con la ultima distancia, además si justo la anterior distancia era la de una arritmia, se desactiva el flag de arritmia detectada.
-    \item Estado S4: Se calcula el procentaje de forma combinacional, si el flag de porcentaje es igual a 1 significa que el porcentaje calculado es mayor de lo esperado y por tanto se activan las flags
-    de TNRange y counter\_arrythmias. Independientemente despues el indice y la distancia actual pasan a ser last\_distance y last\_index
-    \item Estado S5: Se activa la señal de valid y se espera a la señal de ready para que se envie el dato al módulo de output.
+    \item Estado S2: se actualizan las variables que crean un buffer ficticio y los valores se mueven una posición cuando se añade la distancia actual como si fuese una cola.
+    \item Estado S3: Como ya se explicó en la parte de la implementación del algoritmo TNRange es una señal que simboliza la distancia entre el pico detectado como arritmia y 
+    el pico normal actual, este flag se activa cuando ha habido una arritmia, ya que last\_distance puede ser mas grande de lo normal, es por eso que para calcular el gap cuando este flag esta activo
+     y el de arritmia detectada no, se compara la distancia actual con la última distancia sino con una 3 veces anterior a la última. Si esta condición no se cumple, para calcular el gap se compara 
+     con la última distancia, además si justo la anterior distancia era la de una arritmia, se desactiva el flag de arritmia detectada.
+    \item Estado S4: Se calcula el porcentaje de forma combinacional, si el flag de porcentaje es igual a 1 significa que el porcentaje calculado es mayor de lo esperado y por tanto se activan las flags
+    de TNRange y counter\_arrythmias. Independientemente después el índice y la distancia actual pasan a ser last\_distance y last\_index
+    \item Estado S5: Se activa la señal de valid y se espera a la señal de ready para que se envíe el dato al módulo de output.
 \end{itemize}
 
 Se calcula el porcentaje del gap entre las 2 distancias con una distancia normal de forma combinacional.
 
 \begin{itemize}
-    \item Estas señales estan en complemento A2 por ello al salir numeros negativos, el bit mas significativo se cambia a 1, es por ello que como solo se consideran los numeros positivos, se
-     considera solamente los numeros cuyo bit mas significativo sea 0
-    \item como al principio la señal de la ultima distancia es x"00000000" al comparar esta distancia con la actual saldra una distancia enorme que activara el bit del porcentaje que se calcula 
-    de forma combinacional asiq ue quitramos ese caso especifico de por medio.
-    \item en vez de hacer una division del gap entre distance\_for\_calc se sigue esta fórmula:
+    \item Estas señales están en complemento A2 por ello al salir números negativos, el bit mas significativo se cambia a 1, es por ello que como solo se consideran los números positivos, se
+     considera solamente los números cuyo bit más significativo sea 0
+    \item Como al principio la señal de la última distancia es x"00000000" al comparar esta distancia con la actual saldrá una distancia enorme que activara el bit del porcentaje que se calcula 
+    de forma combinacional, por lo que se quita ese caso específico de por medio.
+    \item En vez de hacer una división del gap entre distance\_for\_calc se sigue esta fórmula:
     \[ gap/distanceforcalc > 0.15\] 
     \[gap > 0.15 \cdot distanceforcalc \] 
     \[gap > distanceforcalc>> 5 + distanceforcalc>> 3 + distanceforcalc\] 
@@ -327,7 +327,7 @@ Se calcula el porcentaje del gap entre las 2 distancias con una distancia normal
 \FloatBarrier
 \section {Módulos input y output}
 Estos módulos se componen de un estado de lectura y uno de escritura donde uno lee el dato y el otro se encarga de esperar a que se lea el dato y actualizar 
-el contador para que se pueda leer de la siguiente posicion de la ROM
+el contador para que se pueda leer de la siguiente posición de la ROM
 
 \subsection{Módulo input}
 \begin{itemize}
@@ -341,21 +341,21 @@ Este módulo cuenta con una ROM con los valores de la señal original, valores q
 \subsection{Módulo output}
 \begin{itemize}
     \item Estado de lectura: Primero se asegura de que el contador no hay llegado a la cantidad de muestras máximas en este caso 144, después pone el bit de enable a 1 
-    y pasa al estado de espera. Si se han leido todas las muestras pasa al estado correcto.
-    \item Estado de espera: pone el bit de valid a 1 y espera al bit de ready para que el siguiente módulo lea el dato, actualiza el contador y se comprueba si la anotacion
-    del pico coincide con la anotacion de la BRAM que es la anotacion original. Ademas se asegura que la anotacion pertenece al indice correcto, si esta condicion se cumple
-    sigue con la ejecucion, si no pasa al estado de error.
-    \item Estado error: pone la señal de error a 1 y se para la ejecucion ya que un resultado no coincide.
-    \item Estado correcto: pone la señal de correcto a 0 que indica que el programa ha sido replicado con exito.
+    y pasa al estado de espera. Si se han leído todas las muestras pasa al estado correcto.
+    \item Estado de espera: pone el bit de valid a 1 y espera al bit de ready para que el siguiente módulo lea el dato, actualiza el contador y se comprueba si la anotación
+    del pico coincide con la anotación de la BRAM que es la anotación original. Además se asegura que la anotación pertenece al índice correcto, si esta condición se cumple
+    sigue con la ejecución, si no pasa al estado de error.
+    \item Estado error: pone la señal de error a 1 y se para la ejecucion, ya que un resultado no coincide.
+    \item Estado correcto: pone la señal de correcto a 0 que indica que el programa ha sido replicado con éxito.
 \end{itemize}
 
-Este módulo cuenta con una ROM con las anotaciones de los cardiologos de casa pico QRS, valores que se van leyendo cundo la señal de valid se activa.
+Este módulo cuenta con una ROM con las anotaciones de los cardiólogos de casa pico QRS, valores que se van leyendo cundo la señal de valid se activa.
 
 \section{Módulo principal y testbench}
 
-El módulo principal se encarga de sincronizar los módulos pasando los datos de un módulo al siguiente asi como la señal de valid y transferir de vuelta la señal de ready.
+El módulo principal se encarga de sincronizar los módulos pasando los datos de un módulo al siguiente así como la señal de valid y transferir de vuelta la señal de ready.
 
-Tambien se ha definido un testbench donde se definen los ciclos de reloj, ademas del reset al principio de la ejecucion. Como salida tiene los estados correcto y error para 
-ver los resultados de la ejecucion.
+También se ha definido un testbench donde se definen los ciclos de reloj, además del reset al principio de la ejecución. Como salida tiene los estados de correcto y error para 
+ver los resultados de la ejecución.
 
 

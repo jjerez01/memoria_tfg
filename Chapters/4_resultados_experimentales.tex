@@ -2,11 +2,11 @@
 
 
 \section{Entorno de pruebas}
-Para hacer las pruebas en la placa se ha utilizado la Basys3 de virtex ya que se utiliza la misma en el estudio en el que se basa el proyecto.
+Para hacer las pruebas en la placa se ha utilizado la FPGA virtex-7 con placa Basys3, ya que se utiliza la misma en el estudio en el que se basa el proyecto\cite{desai2021low}.
 
 El problema que se encontró con el uso de la placa es que la ROM no podría almacenar 650000 filas de valores de punto flotante por lo que se probo un dieciseisavo de las pruebas totales que equivale a 40625.
 
-Por lo que, para hacer la prueba con todos los samples, se requiere utilizar una FPGA con mas recursos como la Virtex-7 VC709 Evaluation Platform.
+Por lo que, para hacer la prueba con todos los samples, se requiere utilizar una FPGA con más recursos como la Virtex-7 VC709 Evaluation Platform.
 
 \begin{figure}[h]
 	\centering
@@ -16,8 +16,8 @@ Por lo que, para hacer la prueba con todos los samples, se requiere utilizar una
 \end{figure}
 
 \section{Consumo}
-	Para evaluar el consumo se tendrá en cuenta los resultados sacados del análisis de síntesis, del reporte de timing y de el reporte de potencia de el modulo principal que contiene el modulo de filtrado de señal,
-	el módulo de deteccion de picos y el modulo de deteccion de arritmias. 
+	Para evaluar el consumo se tendrá en cuenta los resultados sacados del análisis de síntesis, del reporte de timing y del reporte de potencia del módulo principal que contiene el módulo de filtrado de señal,
+	el módulo de detección de picos y el módulo de detección de arritmias. 
 	
 	\begin{figure}[h!]
 		\centering
@@ -43,10 +43,10 @@ Por lo que, para hacer la prueba con todos los samples, se requiere utilizar una
 		\item La frecuencia de funcionamiento configurada en el .xdc es de 640800 pero para las pruebas se usara una frecuencia de 540000
 	\end{itemize}
 
-	La frecuencia de funcionamiento se ha calculado segun la referencia de el articulo \cite{desai2021low} que nos indica que las muestras van a 360sps (samples per second) 
-	por lo que es equivalente a 360Hz. Tambien se calcula el numero de ciclos que tarda en ejecutarse el modulo de filtrado que resulta ser el mas critico 
-	de todos, este da un total de 1780 ciclos pero para hacer las pruebas se usaran 1500 ciclos. Si se multiplican ambos valores da una frecuencia de 540000 
-	cuyo periodo es de 1851,85 que redondeando es de 1852. En el xdc se pone lo siguiente:
+	La frecuencia de funcionamiento se ha calculado según la referencia del artículo \cite{desai2021low} que nos indica que las muestras van a 360sps (samples per second) 
+	por lo que es equivalente a 360Hz. También se calcula el número de ciclos que tarda en ejecutarse el módulo de filtrado que resulta ser el más critico 
+	de todos, este da un total de 1780 ciclos, pero para hacer las pruebas se usaran 1500 ciclos. Si se multiplican ambos valores da una frecuencia de 540000 
+	cuyo periodo es de 1851,85 que redondeando es de 1852. En el fichero .xdc se cambian los siguientes valores:
 
 \lstset{language=VHDL, breaklines=true, basicstyle=\footnotesize}
 \begin{lstlisting}[frame=single]
@@ -59,7 +59,7 @@ set_property PACKAGE_PIN W5 [get_ports clk]
 El waveform oscila desde 0 a 926 para que sea simétrico.
 
 \subsection{Análisis de timing}
-	En el análisis de timing se vera cual es el worst negative slack y se calculara la frecuencia minima necesaria. Este reporte de timing muestra lo siguiente.
+	En el análisis de timing se comprobará cuál es el worst negative slack y se calculará la frecuencia mínima necesaria. Este reporte de timing muestra lo siguiente.
 
 	\begin{figure}[h!]
 		\centering
@@ -68,11 +68,11 @@ El waveform oscila desde 0 a 926 para que sea simétrico.
 		\label{fig:reporteTiming}
 	\end{figure} 
 
-	Para calcular la frecuencia minima necesaria se resta la frecuencia actual menos el worst negative slack dando como resultado 6,49 ns de frecuencia mínima de funcionamiento. 
+	Para calcular la frecuencia mínima necesaria se resta la frecuencia actual menos el worst negative slack dando como resultado 6,49 ns de frecuencia mínima de funcionamiento. 
 
 \subsection{Análisis de potencia}
 
-	En el análisis de potencia se evalua la potencia que necesita la FPGA para poder llevar a cabo las instrucciones.
+	En el análisis de potencia se evalúa la potencia que necesita la FPGA para poder llevar a cabo las instrucciones.
 
 	\begin{figure}[h!]
 		\centering
@@ -81,7 +81,7 @@ El waveform oscila desde 0 a 926 para que sea simétrico.
 		\label{fig:reportepotencia}
 	\end{figure} 
 
-	Comparando este proyecto con otros estudios, por ejemplo con el de caracterizacion de señales usando polinomios de hermite presentan unos resultados de dynamic potencia de 28mW.
+	Comparando este proyecto con otros estudios, por ejemplo con el de caracterización de señales usando polinomios de Hermite presentan unos resultados de dynamic potencia de 28mW.
 	Sin embargo, el dynamic potencia de este proyecto es menor que 0,001W.
 
 

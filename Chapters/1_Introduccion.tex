@@ -7,14 +7,14 @@ Las enfermedades cardiovasculares son la primera causa de muerte en el mundo y u
 
 Una arritmia cardiaca es una alteración en el ritmo normal del corazón. Si se produce una arritmia, el corazón puede latir demasiado rápido, demasiado lento o de manera irregular. Esto puede provocar síntomas como palpitaciones, mareos, falta de aire e incluso desmayos y estas pueden llegar a ser mortales.
 
-Los cardiólogos utilizan dispositivos como un \textit{Holter} para generar electrocardiogramas (ECG), que son diagramas que representan los latidos del corazón y con ellos son capaces de analizarlos y encontrar anomalías cardiacas.
+Los cardiólogos utilizan dispositivos como un \textit{Holter} \footnote{\textbf{Holter}: Dispositivo médico portátil que se utiliza para monitorear y registrar la actividad eléctrica del corazón durante un período prolongado} para generar electrocardiogramas (ECG), que son diagramas que representan los latidos del corazón y con ellos son capaces de analizarlos y encontrar anomalías cardiacas.
 
 Entre esas anomalías están las contracciones prematuras del corazón, un tipo de arritmia que este proyecto se encargará de detectar. 
 
 \begin{figure}[h!]
 	\centering
 	\includegraphics[width=0.7\textwidth]{./Images/img_introduccion/electrocardiograma.png}
-	\caption{Imagen de varios electrocardiogramas recopilados por un \textit{Holter}.}
+	\caption{Imagen de varios electrocardiogramas recopilados por un \textit{Holter} \cite{fotoElectrocardiograma}}.
 	\label{fig:electrocardiogramas}
 \end{figure}
 
@@ -44,7 +44,7 @@ En la creación del proyecto se ha intentado no filtrar la onda para comprobar s
 \end{figure}
 
 \section{Datos de referencia}
-Los datos de referencia para probar el algoritmo han sido obtenidos de un estudio realizado en el Instituto de Tecnología de Massachusetts (MIT) en el que se han realizado pruebas de media hora a varios pacientes con edades diversas y algunos de ellos llevaban implantado un marcapasos.
+Los datos de referencia para probar el algoritmo han sido obtenidos de un estudio realizado en el Instituto de Tecnología de Massachusetts (MIT) \cite{MIT} en el que se han realizado pruebas de media hora a varios pacientes con edades diversas y algunos de ellos llevaban implantado un marcapasos.
 
 Los datos consisten en electrocardiogramas que previamente han sido analizados por cardiólogos y cuyas anotaciones indican cuando un paciente ha padecido una arritmia, cuando el ritmo es normal y cuando se ha producido un fallo en la lectura de la señal. También se muestra información menos relevante para nuestro 
 estudio como cuando se ha producido un error en la lectura de la señal y la activación del marcapasos\footnote{\textbf{Marcapasos}: Dispositivo que se implanta en el corazón que actúa cuando el corazón no bombea la sangre lo suficientemente fuerte, es decir que el pico QRS no es tan prominente
