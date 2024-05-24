@@ -15,51 +15,61 @@ Por lo que, para hacer la prueba con todos los samples, se requiere utilizar una
 	\label{fig:Basys3}
 \end{figure}
 
-\section{Consumo}
-	Para evaluar el consumo se tendrá en cuenta los resultados sacados del análisis de síntesis, del reporte de timing y del reporte de potencia del módulo principal que contiene el módulo de filtrado de señal,
+\section{Recursos necesarios}
+	Para evaluar los recursos necesarios, se tendrán en cuenta los resultados sacados del análisis de síntesis, del reporte de timing y del reporte de potencia del módulo principal que contiene el módulo de filtrado de señal,
 	el módulo de detección de picos y el módulo de detección de arritmias. 
 	
-	\begin{figure}[h!]
-		\centering
-		\includegraphics[width=0.99\textwidth]{./Images/img_res_experimentales/diagramaGeneral.png}
-		\caption{Diagrama principal de todos los módulos a evaluar}
-		\label{fig:Diagramaasmfiltrado}
-	\end{figure} 
+\subsection{Análisis de utilización}
+En este reporte nos encontramos con los siguientes datos:
 
-\FloatBarrier
+\begin{itemize}
+    \item Slice LUTs: Se utilizan 2016 de un total de 20800 disponibles. La mayoría de los LUTs se asignan a la parte de detección de picos, específicamente al módulo de división seguido del módulo de multiplicación en la parte del filtrado. El módulo de detección de arritmias apenas necesita LUTs en comparación con los otros módulos.
+    \item Slice registers: Se utilizan 3086 de un total de 41600 disponibles, y al igual que los LUTs, la mayoría se asignan a los módulos de división y multiplicación.
+    \item Bloque RAM tile: Se utiliza 1 tile de los 50 disponibles. La mitad se utiliza para la ROM de coeficientes y la otra mitad para la RAM de los valores de la señal original.
+    \item Se utilizan 4 DSPs de los 90 disponibles. Dos de ellos se utilizan en el módulo de multiplicación y dos en el módulo restador.
+    \item Se utilizan todos los multiplexores F7, asignados exclusivamente al módulo de multiplicación.
+\end{itemize}
 
-\subsection{Análisis de síntesis}
 
-	En el análisis de síntesis podemos ver las siguientes caracteristicas:
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.99\textwidth]{./Images/img_res_experimentales/utilization1.png}
+	\caption{Reporte total de utilización}
+	\label{fig:utilization1}
+\end{figure}
 
-	\begin{itemize}
-		\item Luts as logic: 195
-		\item Luts as memory: 0
-		\item Slice registers: Hay 279 slice registers de los cuales todos son flip flops y no hay ningun latch por la arquitectura 
-		seguida en la creacion del programa haciendo que al pasar de estado se cambien todas las señales nuevas por las actuales
-		\item No se ha usado ningún DSP
-		\item No se ha usado ninguna block RAM tile
-		\item Hay un total de 474 total slices
-		\item La frecuencia de funcionamiento configurada en el .xdc es de 640800 pero para las pruebas se usara una frecuencia de 540000
-	\end{itemize}
+En total no se ha usado ni un 10\% del hardware disponible para cada tipo.
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.6\textwidth]{./Images/img_res_experimentales/utilization2.png}
+	\caption{Porcentaje del reporte total de utilización}
+	\label{fig:utilization2}
+\end{figure}
 
-	La frecuencia de funcionamiento se ha calculado según la referencia del artículo \cite{desai2021low} que nos indica que las muestras van a 360sps (samples per second) 
-	por lo que es equivalente a 360Hz. También se calcula el número de ciclos que tarda en ejecutarse el módulo de filtrado que resulta ser el más critico 
-	de todos, este da un total de 1780 ciclos, pero para hacer las pruebas se usaran 1500 ciclos. Si se multiplican ambos valores da una frecuencia de 540000 
-	cuyo periodo es de 1851,85 que redondeando es de 1852. En el fichero .xdc se cambian los siguientes valores:
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.6\textwidth]{./Images/img_res_experimentales/utilization3.png}
+	\caption{Reporte total de utilización}
+	\label{fig:utilization3}
+\end{figure}
+
+
+\subsection{Análisis de timing}
+
+La frecuencia de funcionamiento se ha calculado según la referencia del artículo \cite{desai2021low}, que indica que las muestras se toman a 360 sps (samples per second), lo que equivale a 360 Hz. Con esta información, sabemos que una muestra llega cada \( \frac{1}{360 Hz} = 2.777 ms\).
+
+También se calcula el número de ciclos que tarda en ejecutarse el módulo de filtrado, que resulta ser el más crítico de todos. Este módulo requiere un total de 1780 ciclos, por lo que \( \frac{2.777  ms}{1780 ciclos} = 1.56  µs \) por ciclo. Por lo tanto, en waveform se establecerá un periodo de 1500 ns con una oscilación desde 0 a 750 ns para que sea simétrico.
+
 
 \lstset{language=VHDL, breaklines=true, basicstyle=\footnotesize}
 \begin{lstlisting}[frame=single]
 ## Clock signal
 set_property PACKAGE_PIN W5 [get_ports clk]							
 	set_property IOSTANDARD LVCMOS33 [get_ports clk]
-	create_clock -add -name sys_clk_pin -period 1852.00 -waveform {0 926} [get_ports clk]
+	create_clock -add -name sys_clk_pin -period 1500.00 -waveform {0 750} [get_ports clk]
 \end{lstlisting}
 
-El waveform oscila desde 0 a 926 para que sea simétrico.
-
-\subsection{Análisis de timing}
-	En el análisis de timing se comprobará cuál es el worst negative slack y se calculará la frecuencia mínima necesaria. Este reporte de timing muestra lo siguiente.
+	En el análisis de timing se comprobará cuál es el worst negative slack y se calculará la frecuencia mínima necesaria. Este reporte de timing muestra lo siguiente. La frecuencia alcanzada con ese periodo es de 0,540 MHz
 
 	\begin{figure}[h!]
 		\centering
@@ -68,7 +78,11 @@ El waveform oscila desde 0 a 926 para que sea simétrico.
 		\label{fig:reporteTiming}
 	\end{figure} 
 
-	Para calcular la frecuencia mínima necesaria se resta la frecuencia actual menos el worst negative slack dando como resultado 6,49 ns de frecuencia mínima de funcionamiento. 
+	Para calcular la frecuencia mínima necesaria se resta la frecuencia actual menos el worst negative slack dando como resultado 6,775 ns de frecuencia mínima de funcionamiento.  
+	\[f - wns = f{min}\]
+	\[1500 - 1493,225 = 6,775\]
+
+	
 
 \subsection{Análisis de potencia}
 
@@ -81,8 +95,54 @@ El waveform oscila desde 0 a 926 para que sea simétrico.
 		\label{fig:reportepotencia}
 	\end{figure} 
 
-	Comparando este proyecto con otros estudios, por ejemplo con el de caracterización de señales usando polinomios de Hermite presentan unos resultados de dynamic potencia de 28mW.
-	Sin embargo, el dynamic potencia de este proyecto es menor que 0,001W.
+	En este análisis la potencia alcanzada es de 0,069 W, pero casi todo el consumo es causado por la placa en sí (Device static), este algoritmo no gasta más de un 0,001W \cref*{fig:hierarchical}del hardware utilizado A temperatura ambiente como se define en la \cref*{fig:temperaturaambiente}
+
+	\begin{figure}[h!]
+		\centering
+		\includegraphics[width=0.6\textwidth]{./Images/img_res_experimentales/temperaturaambientereportepower.png}
+		\caption{Imagen que muestra la temperatura con la que desempeña el consumo generado}
+		\label{fig:temperaturaambiente}
+	\end{figure} 
+
+	\begin{figure}[h!]
+		\centering
+		\includegraphics[width=0.99\textwidth]{./Images/img_res_experimentales/hierarchical.png}
+		\caption{Muestra el total consumo de todos los componentes generados en Hardware}
+		\label{fig:hierarchical}
+	\end{figure} 
+
+	\begin{figure}[h!]
+		\centering
+		\includegraphics[width=0.9\textwidth]{./Images/img_res_experimentales/powersupply.png}
+		\caption{Muestra el power supply}
+		\label{fig:powersupply}
+	\end{figure} 
+	\FloatBarrier
+
+	Analizando más a fondo el consumo, se puede comprobar que el signal rate de la lógica no traspasa los 0,5 Mtr/s, el de la BRAM y los DSP también son bajos.
+	
+	\begin{figure}[h!]
+		\centering
+		\includegraphics[width=0.6\textwidth]{./Images/img_res_experimentales/signalratelogic.png}
+		\caption{Imagen que muestra la el signal rate de la lógica}
+		\label{fig:signalratelogic}
+	\end{figure} 
+
+	\begin{figure}[h!]
+		\centering
+		\includegraphics[width=0.6\textwidth]{./Images/img_res_experimentales/signalrateBRAM.png}
+		\caption{Imagen que muestra la el signal rate de BRAM}
+		\label{fig:signalrateBRAM}
+	\end{figure} 
+
+	\begin{figure}[h!]
+		\centering
+		\includegraphics[width=0.6\textwidth]{./Images/img_res_experimentales/signalrateDSP.png}
+		\caption{Imagen que muestra la el signal rate de los DSP}
+		\label{fig:signalrateDSP}
+	\end{figure} 
+
+	Comparando este proyecto con otros estudios, por ejemplo con el de caracterización de señales usando polinomios de Hermite \cite{desai2021low} presentan unos resultados de potencia de 28mW. Lo que hace nuestro algoritmo significativamente mejor en términos de consumo.
 
 
 

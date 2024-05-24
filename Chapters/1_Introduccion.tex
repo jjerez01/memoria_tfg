@@ -3,9 +3,9 @@
 \titlespacing*{\chapter}{0pt}{-1.25cm}{25pt}
 \chapter{Introducción}
 \section{Concepto de arritmia}
-Las enfermedades cardiovasculares son la primera causa de muerte en el mundo y una de las causas más comunes de estas enfermedades son las arritmias.
+Las enfermedades cardiovasculares son la primera causa de muerte en el mundo \cite{who_top_10_causes} y una de las causas más comunes de estas enfermedades son las arritmias.
 
-Una arritmia cardiaca es una alteración en el ritmo normal del corazón. Si se produce una arritmia, el corazón puede latir demasiado rápido, demasiado lento o de manera irregular. Esto puede provocar síntomas como palpitaciones, mareos, falta de aire e incluso desmayos y estas pueden llegar a ser mortales.
+Una arritmia cardiaca es una alteración en el ritmo normal del corazón. Si se produce una arritmia, el corazón puede latir demasiado rápido, demasiado lento o de manera irregular. Esto puede provocar síntomas como palpitaciones, mareos, falta de aire e incluso desmayos, y estas pueden llegar a ser mortales.
 
 Los cardiólogos utilizan dispositivos como un \textit{Holter} \footnote{\textbf{Holter}: Dispositivo médico portátil que se utiliza para monitorear y registrar la actividad eléctrica del corazón durante un período prolongado} para generar electrocardiogramas (ECG), que son diagramas que representan los latidos del corazón y con ellos son capaces de analizarlos y encontrar anomalías cardiacas.
 
@@ -39,7 +39,7 @@ En la creación del proyecto se ha intentado no filtrar la onda para comprobar s
 \begin{figure}[h!]
 	\centering
 	\includegraphics[width=0.99\textwidth]{./Images/img_introduccion/102filtrado_y_sin_filtrar.png}
-	\caption{Ejemplo de electrocardiograma original y filtrado de paciente 102 (Elaboración propia)}
+	\caption{Ejemplo de electrocardiograma original y filtrado de paciente 102}
 	\label{fig:102filtradoysinfiltrar}
 \end{figure}
 
@@ -58,72 +58,91 @@ y se necesita la ayuda de dicho dispositivo para proporcionar el impulso eléctr
 \end{figure}
 
 \section{Utilización de las FPGAs}
-Este programa ha sido pensado para ejecutarse en un dispositivo pequeño, poco pesado y portable, es por ello, que es conveniente ejecutarlo en una FPGA, esto de debe a que una FPGA con una placa pequeña tiene el hardware suficiente para poder llegar a ejecutar este programa y por ello pueden
-ser llevados con facilidad, además el consumo producido por una FPGA al ejecutar el algoritmo es bastante bajo como se comprobará posteriormente.
+Este algoritmo ha sido pensado para ejecutarse en un dispositivo pequeño, poco pesado y portable, es por ello que es conveniente ejecutarlo en una FPGA. Esto de debe a que hay FPGAs pequeñas que tienen el hardware suficiente para poder llegar a ejecutar este algoritmo, además el consumo producido por una FPGA al ejecutar este algoritmo es bastante bajo como se comprobará posteriormente.
 
-Para este proyecto se usará la FPGA Artix-7 en la placa Basys3 para probar el funcionamiento del algoritmo. Aunque se debe considerar, según la cantidad de datos introducidos, que en este caso sería la longitud de la señal según el tiempo transcurrido, utilizar una FPGA cuyo hardware pueda soportar dicha cantidad de datos.
+Para este proyecto se usó la FPGA Artix-7 en la placa Basys3 para probar el funcionamiento del algoritmo. Sin embargo, para las pruebas, debido a la cantidad de valores de prueba sacados de la base de datos por cada paciente, se ha considerado utilizar otra FPGA cuyo hardware pueda soportar dicha cantidad de datos.
 
 
 \section{Objetivos del proyecto}
 
-El objetivo principal del proyecto es crear un algoritmo que detecte arritmias en los pacientes y que dicho algoritmo sea capaz de ejecutarse en un dispositivo portable 
-que tenga un bajo consumo y que funcione a tiempo real.
-Para conseguir el objetivo principal es necesario alcanzar una serie de objetivos que son los siguientes:
+El objetivo principal del proyecto es crear un algoritmo basado en el estudio de caracterización de señales usando polinomios de Hermite \cite{desai2021low} que detecte arritmias en los pacientes y que dicho algoritmo sea capaz de ejecutarse en un dispositivo portátil, que tenga un bajo consumo y que funcione en tiempo real. Para lograr el objetivo principal es necesario alcanzar una serie de objetivos que son los siguientes:
+
 \begin{enumerate}
-	\item Averiguar que son las arritmias, como se producen, que arritmias podría detectar el programa y que patrón siguen la mayoría de ellas.
+    \item Averiguar qué son las arritmias, cómo se producen, qué arritmias podría detectar el programa y qué patrón siguen la mayoría de ellas.
+    \item La creación de un algoritmo en software que sea capaz de leer y filtrar la señal original de los pacientes de la base de datos, la realización de un algoritmo que se encargue de detectar los picos donde se produce la contracción ventricular según aparecen en la señal filtrada y, por último, la creación de un algoritmo encargado de detectar las arritmias según el patrón hallado en el objetivo anterior.
+    \item La replicación del programa en hardware según el prototipo creado anteriormente en software. Utilizando el hardware necesario para que el algoritmo funcione en una FPGA y el hardware necesario para poder hacer pruebas en simulación y sobre la placa.
+    \item La observación de los resultados experimentales de la cantidad de recursos hardware empleados, el consumo utilizado por el algoritmo y el tiempo que tarda en llevarse a cabo adecuándose a la llegada de la señal del paciente. Dichos resultados experimentales deberían tener coherencia con lo que se buscaba en el objetivo principal.
+\end{enumerate}
 
-	\item La creación de un algoritmo en software que sea capaz de leer y filtrar la señal original de los pacientes de la base de datos, la realización de
-	un algoritmo que se encargue de detectar los picos donde se produce la contracción ventricular según aparecen en la señal filtrada, por último la creación 
-	de un algoritmo encargado de detectar las arritmias según el patrón hallado en el objetivo anterior.
+
+\section{Plan de trabajo}
+\begin{enumerate}
+	\item Investigación y Fundamentación Teórica:
 	
-	\item La replicación del programa en hardware según el prototipo creado anteriormente en software. Utilizando el hardware necesario para que el algoritmo funcione en una FPGA 
-	y el hardware necesario para poder hacer pruebas en simulación y sobre la placa.  
+	\begin{enumerate}
+		\item Consulta el libro\cite{velez} y consulta con un médico especialista en primeros auxilios para comprender qué son las arritmias y cómo se producen.
+	
+		\item Utiliza la información obtenida para establecer la base médica del proyecto.
+	\end{enumerate}
 
-	\item La observación de los resultados experimentales de la cantidad de recursos hardware empleados, el consumo causado por el algoritmo y el tiempo que tarda en 
-	llevarse a cabo adecuándose a la llegada de la señal del paciente. Dichos resultados experimentales deberían tener una coherencia con lo que se buscaba en el objetivo principal.
+	\item Obtención y Preparación de Datos:
+	\begin{enumerate}
+		\item Localiza y adquiere la base de datos del proyecto utilizada en el estudio de caracterización de señales usando polinomios de Hermite \cite{desai2021low}.
+
+		\item Representa las señales en Python y realiza el filtrado según lo descrito en el estudio mencionado.
+	\end{enumerate}
+	\item Desarrollo de Algoritmos:
+	\begin{enumerate}
+		\item Implementa el algoritmo de detección de picos QRS y el algoritmo de detección de arritmias.
+
+		\item Realiza pruebas y ajustes en los algoritmos para obtener resultados satisfactorios.
+	\end{enumerate}
+	
+	\item Implementación en Hardware: 
+	\begin{enumerate}
+		\item Diseña los módulos principales para cada parte del algoritmo (detección de picos, detección de arritmias, filtrado y un módulo principal.).
+
+		\item Crea módulos adicionales para realizar simulaciones en Vivado y verifica el funcionamiento del programa.
+		\item Desarrolla un testbench para generar la frecuencia de reloj y las señales necesarias para simular el sistema.
+	\end{enumerate}
+
+	\item Análisis de Resultados Experimentales:
+	\begin{enumerate}
+		\item Evalúa los resultados obtenidos de los análisis realizados en Vivado.
+
+		\item Extrae conclusiones relevantes en función de los objetivos del proyecto.
+	\end{enumerate}
 \end{enumerate}
 
 \section{Análisis y optimización del algoritmo}
-El algoritmo se centra en tres funciones principales.
+El algoritmo se centra en tres funciones principales:
 \begin{enumerate}
-	\item Filtrado de la señal original: Lo que hace que la señal sea más fácil de procesar para encontrar los picos QRS.
-	 Esto se realiza multiplicando los valores de la señal original por los valores de filtrado almacenados en una memoria.
-	\item Detección de picos sobre la señal filtrada: Se analiza cada valor de la señal filtrada y si dicho valor es mayor que
-	 sus anteriores, se considera un posible pico, si después de 72 valores se mantiene como el valor más alto, entonces ese valor
-	 se considera un pico QRS.
-	\item Detección de arritmias comparando la posición de los picos: Una vez obtenidos los picos QRS se calcula la distancia
-	 del pico actual con el pico anterior y dependiendo de las distancias anteriores, se calcula si hay una arritmia.
+	\item Filtrado de la señal original: Se utiliza el filtrado FIR, lo que hace que la señal sea más fácil de procesar para encontrar los picos QRS. Esto se realiza multiplicando los valores de la señal original por los coeficientes de filtrado almacenados en una memoria.
+	\item Detección de picos sobre la señal filtrada: Se analiza cada valor de la señal filtrada y si dicho valor es mayor que sus anteriores, se considera un posible pico. Si después de 72 valores se mantiene como el valor más alto y, entonces ese valor se considera un pico QRS. Adicionalmente se establece un \textit{cutoff} dinámico en el que si los picos de la señal no superan ese valor no se tienen en cuenta.
+	\item Detección de arritmias comparando la posición de los picos: Una vez obtenidos los picos QRS se calcula la distancia del pico actual con el pico anterior y dependiendo de las distancias anteriores, se determina si hay una arritmia.
 \end{enumerate}
 
 
 \section{Implementación en la FPGA}
-Para implementar el código en la FPGA se implementarán varios módulos que por lo general, tratan de replicar las funcionalidades que realiza
-el algoritmo de software y se convertirán en la parte más importante de dicho programa.  
+Para implementar el código en la FPGA se implementarán varios módulos que por lo general, tratan de replicar las funcionalidades que realiza el algoritmo de software y se convertirán en la parte más importante de dicho programa.  
 
-Los módulos más importantes son.
+Los módulos principales son.
 
 	\begin{enumerate}
-		\item Módulo de filtrado: Se guardan los valores del filtrado en un módulo de memoria ROM y los valores de la señal original en una memoria RAM 
-		cuando los valores de la RAM son multiplicados, se escribe en la RAM y se pasan los valores al siguiente módulo principal.
-		\item Módulo de detección de picos sobre la señal filtrada: Se implementa una máquina de estados que analiza cada valor de
-		 la señal filtrada y calcula si es un posible pico, o un pico QRS. Como los valores de la señal son números reales, se implementan varios módulos para
-		 poder operar con los valores de la señal. 
-		\item Módulo de detección de arritmias: Se implementa una máquina de estados con el que recibiendo un pico QRS como entrada, sea capaz de almacenar las
-		 distancias más recientes, calcular según la diferencia de estas distancias, si se ha producido una arritmia y mostrar como salida un flag indicándolo.
+		\item Módulo de filtrado: Se guardan los coeficientes del filtrado en un módulo de memoria ROM y los valores de la señal original en una memoria RAM posteriormente, se multiplica cada muestra por si correspondiente coeficiente y se acumula el resultado. Una vez terminada el proceso de multiplicación y acumulación, el valor calculado se transmite al siguiente módulo principal
+		\item Módulo de detección de picos sobre la señal filtrada: Se implementa una máquina de estados que analiza cada valor de la señal filtrada y calcula si es un posible pico, o un pico QRS. Como los valores de la señal son números reales, se implementan varios módulos para poder operar con los valores de la señal en punto flotante. 
+		\item Módulo de detección de arritmias: Se implementa una máquina de estados con el que recibiendo un pico QRS como entrada, sea capaz de almacenar las distancias más recientes, determinar según la diferencia de estas distancias, si se ha producido una arritmia y mostrar como salida un flag indicándolo.
 	\end{enumerate}
 	
-	Además de estos módulos se debe de crear un módulo que los acompase y un testbench para probar el funcionamiento del programa en la simulación.
+	Además de estos módulos se debe crear un módulo que los encapsule y un \textit{testbench} para probar el funcionamiento del programa con las señales de la base de datos\cite{desai2021low}.
 
 \section{Organización de la memoria}
-Para empezar se verá como se ha realizado el prototipado del algoritmo en software. Se indicarán las librerías usadas para la recopilación de datos,
-El tipo de filtrado que se ha usado para el filtro de la señal original, El algoritmo de la detección de picos QRS y las metodologías que se han seguido,
-el algoritmo de detección de arritmias y el algoritmo de pruebas seguido para probar el algoritmo original en su totalidad y para poder sacar estadísticas 
-de las pruebas realizadas.
+En el capítulo 2 se verá como se ha realizado el prototipado del algoritmo en software. En la sección 1 se muestra el trascurso del algoritmo En la sección 2, se indicarán las librerías usadas para la recopilación de datos En la sección 3, se explicará
+el tipo de filtrado que se ha usado para el filtro de la señal original. En la sección 4, se expondrá el algoritmo de la detección de picos QRS y las metodologías que se han seguido. De igual forma, en la sección 5, se explicará el algoritmo de detección de arritmias y en la sección 6, el algoritmo que se ha utilizado para probar el prototipo en su totalidad y poder sacar estadísticas de las pruebas realizadas.
 
-Para continuar se hablará de los distintos módulos creados para la implementación hardware. Se especificarán los módulos para las operaciones en punto
-flotante, los módulos para las memorias utilizadas. Se profundizará sobre los módulos principales basados en el prototipo del software y por último la creación 
-del módulo principal y el testbench utilizado.
+Para continuar, en el capítulo 3, se hablará de los distintos módulos creados para la implementación hardware. En la sección 1, se especificarán los módulos para las operaciones en punto
+flotante y los módulos para las memorias utilizadas. De la sección 2 a la 4, se explicará como funciona el módulo de filtrado de la señal, el módulo de detección de picos y el módulo de detección de arritmias. Y por último en la sección 5 la creación del módulo principal y el \textit{testbench} utilizado.
 
-Seguidamente se mostrarán los resultados experimentales obtenidos, la FPGA utilizado, el análisis de síntesis, el análisis de timing y el consumo.
+Seguidamente, en el capítulo 4, se mostrarán los resultados experimentales obtenidos como la FPGA utilizada, el análisis de síntesis, el análisis de timing y el consumo.
 
-Finalmente se dará una conclusión de la realización de este proyecto y unos trabajos futuros por si se desea ampliar el proyecto.
+Finalmente, en el capítulo 5, se dará una conclusión de la realización de este proyecto y unos trabajos futuros por si se desea ampliar el proyecto.

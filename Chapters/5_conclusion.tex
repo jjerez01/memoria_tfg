@@ -8,7 +8,7 @@ inicialmente se pensó detectar el mayor tipo de arritmias posibles, al no ver n
 de arritmia no producida por una contracción prematura el proyecto solo se centró en detectar dichas arritmias.
 
 Se realizó un prototipo en python que sirvió para crear el algoritmo y probarlo con facilidad. Este prototipo inicia
-con un filtrado de la señal original aplicando el filtrado IIR. Seguidamente se aplica un algoritmo de detección de 
+con un filtrado de la señal original aplicando el filtrado FIR. Seguidamente se aplica un algoritmo de detección de 
 picos QRS sobre la señal filtrada que busca el pico más alto que además sobrepase el cutoff dinámico establecido. Finalmente
 se aplica el algoritmo de detección de arritmias calculando la distancia entre el pico actual con el anterior y comparándola con una
 distancia anterior de un ritmo normal.
@@ -38,7 +38,7 @@ initially intended to detect as many arrhythmias as possible, but did not see an
 of arrhythmia not caused by premature contraction, the project only focused on detecting these arrhythmias.
 
 A prototype was made in Python which was used to create the algorithm and test it easily. This prototype starts
-with a filtering of the original signal by applying the IIR filtering. Next, a QRS peak detection algorithm is applied to the filtered signal. 
+with a filtering of the original signal by applying the FIR filtering. Next, a QRS peak detection algorithm is applied to the filtered signal. 
 QRS peak detection algorithm is then applied to the filtered signal to find the highest peak that also exceeds the established dynamic cutoff.
 Finally, the arrhythmia detection algorithm is applied by calculating the distance between the current peak and the previous peak and comparing it with a previous distance of a normal rhythm.
 previous distance of a normal rhythm.
@@ -56,3 +56,12 @@ Thanks to the timing report we found that the minimum operating frequency is 6.4
 
 According to the power report the power consumption of the board is 0.069 W which results in a low power consumption even for a continuous use of the board.
 Compared to other similar projects, the dynamic power consumption is lower.
+
+
+\chapter*{Trabajo futuro}
+
+Como trabajo futuro, se ha propuesto sincronizar el proyecto con un dispositivo capaz de detectar latidos del corazón para mostrar pruebas en tiempo real y demostrar la eficacia del proyecto en cualquier persona. Además, se considera la posibilidad de implementar todo lo anterior en un dispositivo similar a un reloj para crear un producto que cumpla todos los objetivos mencionados en el proyecto.
+
+También se ha pensado en realizar un trabajo de investigación para explorar alternativas en el ámbito médico y compararlas en términos de consumo y eficacia. Este trabajo de investigación proporcionaría información valiosa para mejorar y optimizar el proyecto actual, así como para identificar oportunidades para futuras investigaciones y desarrollos.
+
+Por último, se ha contemplado la posibilidad de ampliar el proyecto para detectar más tipos de arritmias siguiendo los patrones que estas presentan, lo que permitiría desarrollar un algoritmo más completo y versátil para la detección de arritmias cardíacas.
