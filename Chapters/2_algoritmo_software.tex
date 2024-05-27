@@ -40,7 +40,7 @@ record = wfdb.rdsamp('mitdb/102', sampfrom=sampfrom, sampto=sampto)
 annotation = wfdb.rdann('mitdb/102', 'atr', sampfrom=sampfrom, sampto=sampto)
 \end{lstlisting}
 
-Por último, para visualizar esta señal con las anotaciones de los cardiólogos y poder comparar con las anotaciones que realiza el algoritmo se usará la librería \lstinline{matplotlib.pyplot} \cite{Matplotlib}. Con esto se mostrará la señal original con las anotaciones y la señal filtrada con las anotaciones del algoritmo como en \Cref{fig:102filtradoysinfiltrar}
+Por último, para visualizar esta señal con las anotaciones de los cardiólogos y poder comparar con las anotaciones que realiza el algoritmo se usará la librería \texttt{matplotlib.pyplot} \cite{Matplotlib}. Con esto se mostrará la señal original con las anotaciones y la señal filtrada con las anotaciones del algoritmo como en \Cref{fig:102filtradoysinfiltrar}
 
 \section{Filtrado de la señal original}
 Este filtrado es llevado a cabo por el filtrado FIR\cite{FIR}. El filtrado FIR, que significa \textit{Finite Impulse Response} (respuesta finita al impulso), es un tipo de filtro utilizado en el procesamiento de señales digitales y analógicas. La fórmula que se utilizará para el filtrado es la siguiente:
@@ -51,7 +51,7 @@ Siendo $b$ son los coeficientes del filtrado y $x$ los valores de la señal orig
 
 Los coeficientes se almacenan en una lista de 99 valores en punto flotante simétricos que se iteran de forma circular, con lo que después de ejecutar el último valor vuelve de nuevo al primero.  
 
-Para el filtrado se usa la función \lstinline{lfilter} de la librería \lstinline{scipy.signal} \cite{SciPy}.
+Para el filtrado se usa la función \texttt{lfilter} de la librería \texttt{scipy.signal} \cite{SciPy}.
 
 \lstset{language=python, breaklines=true, basicstyle=\footnotesize}
 \begin{lstlisting}[frame=single]
@@ -73,7 +73,7 @@ Este algoritmo está basado en el que se usa en el documento \cite{desai2021low}
 
 El algoritmo implementado difiere del que se describe en el documento, ya que el del documento es una versión simplificada de un algoritmo de detección de picos y no es tan funcional debido a la falta de un \textit{cutoff} dinámico, el cual sí está presente en este proyecto. Esta solución es necesaria porque a veces hay una distancia entre los picos QRS superior a 72 muestras, lo que ocasiona que en algunas ocasiones se detecte el ruido como un pico QRS, ya que después de las 72 muestras no se ha encontrado una señal. Por esta razón, en un proyecto en el que se sabe que los picos QRS estarán a distancias distintas entre sí, este algoritmo no es adecuado y debe modernizarse.
 
-Aun así, si bien el algoritmo creado es distinto a ese, se replica el tener que esperar a 72 muestras para asegurarse de que no se encuentra un pico superior y así poder considerarlo como un pico QRS. Es por ello que definimos la variable \lstinline|samples_around_peak| como 72 para comparar dicha condición. Para hallar el pico más alto se necesita definir un pico en \lstinline{last_peak} y si se encuentra otro pico se realiza el máximo entre el pico encontrado y el de \lstinline{last_peak}.
+Aun así, si bien el algoritmo creado es distinto a ese, se replica el tener que esperar a 72 muestras para asegurarse de que no se encuentra un pico superior y así poder considerarlo como un pico QRS. Es por ello que definimos la variable \texttt{samples\_around\_peak} como 72 para comparar dicha condición. Para hallar el pico más alto se necesita definir un pico en \texttt{last\_peak} y si se encuentra otro pico se realiza el máximo entre el pico encontrado y el de \texttt{last\_peak}.
 
 \lstset{language=python, breaklines=true, basicstyle=\footnotesize}
 \begin{lstlisting}[frame=single]
@@ -127,11 +127,11 @@ El algoritmo va almacenando distancias entre los picos QRS (es por ello que en l
 y se declaran varias variables:
 
 \begin{itemize}
-    \item last\_distance: se utiliza para almacenar la última distancia recogida y así poder compararla con la distancia 
+    \item \texttt{last\_distance}: se utiliza para almacenar la última distancia recogida y así poder compararla con la distancia 
     actual en cálculos posteriores.
-    \item counter\_buffer: utilizado para tener el valor de la posición del buffer donde se escribe.
-    \item counter\_arrythmia: utilizado para indicar si la distancia anterior fue una arritmia.
-    \item TNRange: Se utiliza para indicar si hay una distancia más grande de lo normal entre 2 picos QRS producido
+    \item \texttt{counter\_buffer}: utilizado para tener el valor de la posición del buffer donde se escribe.
+    \item \texttt{counter\_arrythmia}: utilizado para indicar si la distancia anterior fue una arritmia.
+    \item \texttt{TNRange}: Se utiliza para indicar si hay una distancia más grande de lo normal entre 2 picos QRS producido
     por una arritmia. Es importante tener esta distancia en cuenta, ya que si el ritmo del paciente vuelve a la
     normalidad se compararía la distancia entre el ritmo normal del paciente con el ritmo extendido por la arritmia,
     ya que de no tenerlo en cuenta el algoritmo lo clasificaría como arritmia como se puede ver en la \cref{fig:senial_explicacion_TNRANGE}, por ello se compara con un valor anterior
@@ -147,7 +147,7 @@ y se declaran varias variables:
 
 Por ello si se ha detectado una arritmia, la siguiente distancia se compara con
 la tercera última distancia escrita en el buffer que posiblemente sea una distancia causada por un ritmo normal. 
-Si no se da el caso, se compara con last\_distance.
+Si no se da el caso, se compara con \texttt{last\_distance}.
 
 La función que compara las distancias devuelve un carácter que va a ser el que se vaya a mostrar en la gráfica. 
 Si el carácter es ``N'' significa que se ha detectado un ritmo normal y por tanto solo se muestra. Sin embargo, si el 
@@ -164,7 +164,7 @@ que la distancia que venga después puede ser una ampliada.
 
 \FloatBarrier
 
-La función \lstinline{get_frecuency_in_char()} se encarga de calcular las distancias entre el ritmo actual y un ritmo normal. 
+La función \texttt{get\_frecuency\_in\_char()} se encarga de calcular las distancias entre el ritmo actual y un ritmo normal. 
 Para ello recibe como entrada ambas distancias.
 
 Para empezar se calcula el  \textit{gap}  que es simplemente la diferencia que tiene la distancia anterior con la actual.
@@ -273,7 +273,7 @@ Dichas pruebas mostradas se aplican solo para un paciente, pero es posible aplic
 Para ello se ha creado un nuevo programa de \textit{python} que se encarga de realizar la misma prueba para los pacientes cuyo id está
 almacenado en un buffer.
 
-Este programa tiene 2 modos, uno procesa un paciente individualmente y el otro itera sobre una lista con los identificadores de los pacientes para procesarlos a todos. La lógica del algoritmo visto anteriormente está contenida en una nueva función llamada \lstinline{calculations()}.
+Este programa tiene 2 modos, uno procesa un paciente individualmente y el otro itera sobre una lista con los identificadores de los pacientes para procesarlos a todos. La lógica del algoritmo visto anteriormente está contenida en una nueva función llamada \texttt{calculations()}.
 
 Las pruebas que se realizan para este algoritmo son iguales que en el programa anterior, pero también
 se han realizado las siguientes estadísticas.

@@ -251,7 +251,7 @@ Este módulo se encarga de detectar los picos QRS de la señal filtrada.
     \label{fig:Diagramaasmpicos2}
 \end{figure} 
 \FloatBarrier
-De manera combinacional se pasa como output last index pero el módulo de detección de arritmias se activa cuando input\_valid
+De manera combinacional se pasa como output \texttt{last\_index} pero el módulo de detección de arritmias se activa cuando \texttt{input\_valid}
 se activa usando así el \texttt{last\_index} correspondiente.
 
 \subsection{Módulos utilizados}
@@ -364,14 +364,14 @@ Este módulo cuenta con una ROM con los valores de la señal original, valores q
 
 \subsection{Módulo de salida}
 \begin{itemize}
-\item Estado de lectura: Primero, se asegura de que el contador no ha llegado a la cantidad máxima de muestras, que en este caso es 144. Luego, se pone el bit de enable a 1 y se pasa al estado de espera. Si se han leído todas las muestras, pasa al estado correcto.
+\item Estado de lectura: Primero, se asegura de que el contador no ha llegado a la cantidad máxima de muestras, que en este caso es 144. Luego, se pone el bit de \texttt{enable} a 1 y se pasa al estado de espera. Si se han leído todas las muestras, pasa al estado correcto.
 \item Estado de espera: Pone el bit de \textit{valid} a 1 y espera al bit de \textit{ready} para que el siguiente módulo lea el dato, actualiza el contador y se comprueba si la anotación del pico coincide con la anotación de la ROM, que es la anotación original. Además, se asegura de que la anotación pertenece al índice correcto. Si esta condición se cumple, sigue con la ejecución; de lo contrario, pasa al estado de error.
-\item Estado de error: Pone la señal de error a 1 y detiene la ejecución, ya que un resultado no coincide.
-\item Estado correcto: Pone la señal de correcto a 1, indicando que el programa ha sido replicado con éxito.
+\item Estado de error: Pone la señal de \texttt{error} a 1 y detiene la ejecución, ya que un resultado no coincide.
+\item Estado correcto: Pone la señal de \texttt{correcto} a 1, indicando que el programa ha sido replicado con éxito.
 \end{itemize}
 
 Este módulo cuenta con una ROM que contiene los valores de la señal original, los cuales se van leyendo cuando la señal de \textit{ready} se activa.
-\section{Módulo principal y testbench}
+\section{Módulo principal y \textit{testbench}}
 
 El módulo principal se encarga de sincronizar los módulos pasando los datos de un módulo al siguiente así como la señal de \textit{valid} y transferir de vuelta la señal de \textit{ready}.
 
