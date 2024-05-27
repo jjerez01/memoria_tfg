@@ -37,7 +37,7 @@ En este reporte nos encontramos con los siguientes datos:
 	\label{fig:utilization1}
 \end{figure}
 
-Se han utilizado menos de un 10\% del hardware disponible para cada recurso.
+Se han utilizado menos de un 10\% del  \textit{hardware}  disponible para cada recurso.
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=0.6\textwidth]{./Images/img_res_experimentales/utilization2.png}
@@ -68,7 +68,7 @@ set_property PACKAGE_PIN W5 [get_ports clk]
 	create_clock -add -name sys_clk_pin -period 1500.00 -waveform {0 750} [get_ports clk]
 \end{lstlisting}
 
-	En el análisis de  \textit{timing}  se comprobará cuál es el worst negative slack y se calculará la frecuencia mínima necesaria. Este reporte de  \textit{timing}  muestra lo siguiente. La frecuencia alcanzada con ese periodo es de 0,540 MHz
+	En el análisis de  \textit{timing}  se comprobará cuál es el worst negative slack y se calculará el periodo mínimo necesario. Este reporte de  \textit{timing}  muestra lo siguiente. La frecuencia alcanzada con ese periodo es de 0,540 MHz
 
 	\begin{figure}[h!]
 		\centering
@@ -77,7 +77,7 @@ set_property PACKAGE_PIN W5 [get_ports clk]
 		\label{fig:reporteTiming}
 	\end{figure} 
 
-	Para calcular la frecuencia mínima necesaria se resta la frecuencia actual menos el worst negative slack dando como resultado 6,775 ns de frecuencia mínima de funcionamiento.  
+	Para calcular el periodo mínimo necesario se resta el periodo actual menos el worst negative slack dando como resultado 6,775 ns de periodo mínimo de funcionamiento.  
 	\[f - wns = f{min}\]
 	\[1500 - 1493,225 = 6,775\]
 
@@ -94,7 +94,7 @@ set_property PACKAGE_PIN W5 [get_ports clk]
 		\label{fig:reportepotencia}
 	\end{figure} 
 
-	En este análisis la potencia alcanzada es de 0,069 W, pero casi todo el consumo es causado por la placa en sí (Device static), este algoritmo no gasta más de un 0,001W como se puede ver en la figura \cref*{fig:hierarchical} del hardware utilizado a temperatura ambiente como se ve en la \cref*{fig:temperaturaambiente}
+	En este análisis la potencia alcanzada es de 0,069 W, pero casi todo el consumo es causado por la placa en sí (Device static), este algoritmo no gasta más de un 0,001 Vatios como se puede ver en la figura \cref*{fig:hierarchical} del  \textit{hardware}  utilizado a temperatura ambiente como se ve en la \cref*{fig:temperaturaambiente}
 
 	\begin{figure}[h!]
 		\centering
@@ -106,7 +106,7 @@ set_property PACKAGE_PIN W5 [get_ports clk]
 	\begin{figure}[h!]
 		\centering
 		\includegraphics[width=0.99\textwidth]{./Images/img_res_experimentales/hierarchical.png}
-		\caption{Muestra el total consumo de todos los componentes generados en Hardware}
+		\caption{Muestra el total consumo de todos los componentes generados en  \textit{hardware} }
 		\label{fig:hierarchical}
 	\end{figure} 
 
@@ -118,7 +118,7 @@ set_property PACKAGE_PIN W5 [get_ports clk]
 	\end{figure} 
 	\FloatBarrier
 
-	Analizando más a fondo el consumo, se puede comprobar que el signal rate de la lógica no traspasa los 0,5 Mtr/s, el de la BRAM y los DSP también son bajos.
+	Analizando más a fondo el consumo, se puede comprobar que el \textit{signal rate} de la lógica no traspasa los 0,5 Mtr/s, el de la BRAM y los DSP también son bajos.
 	
 	\begin{figure}[h!]
 		\centering

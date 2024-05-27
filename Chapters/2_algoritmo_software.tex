@@ -87,7 +87,7 @@ Debido a la variación de las señales entre pacientes y la variación producida
 El \textit{cutoff} dinámico recoge ese nombre, ya que su valor depende si se ha encontrado un pico o no, ya que cuando se encuentra un pico por encima del \textit{cutoff} anterior, el valor del \textit{cutoff} pasa a ser el del pico, por otro lado, cada vez que no se encuentre ningún pico La función del \textit{cutoff} pasa a ser la siguiente.
 \[cutoff = cutoff - cutoff/(256 - 64)\]
 
-Se han dado los valores (256 - 64) a la fórmula para que, a la hora de replicar el programa en hardware, fuese más fácil la división, ya que solo habría que desplazar los bits. Sin embargo, como al final se terminó haciendo en un módulo de división en punto flotante cualquier valor es válido para la división aunque debido al buen desempeño del valor en el programa se decidió mantener el valor.
+Se han dado los valores (256 - 64) a la fórmula para que, a la hora de replicar el programa en  \textit{hardware} , fuese más fácil la división, ya que solo habría que desplazar los bits. Sin embargo, como al final se terminó haciendo en un módulo de división en punto flotante cualquier valor es válido para la división aunque debido al buen desempeño del valor en el programa se decidió mantener el valor.
 
 \begin{figure}[h!]
     \centering
@@ -167,7 +167,7 @@ que la distancia que venga después puede ser una ampliada.
 La función \lstinline{get_frecuency_in_char()} se encarga de calcular las distancias entre el ritmo actual y un ritmo normal. 
 Para ello recibe como entrada ambas distancias.
 
-Para empezar se calcula el gap que es simplemente la diferencia que tiene la distancia anterior con la actual.
+Para empezar se calcula el  \textit{gap}  que es simplemente la diferencia que tiene la distancia anterior con la actual.
 
 \[gap = last\_distance - actual\_distance\]
 
@@ -179,7 +179,7 @@ un ritmo normal.
 Si ese porcentaje es mayor que el 15\% entonces se considera que la distancia normal es mucho mayor que la actual
 y por tanto como la distancia actual entre 2 picos es pequeña, se da por hecho que hay una arritmia.
 
-Nótese que no se le da importancia si el gap da como resultado un número negativo de cualquier tamaño, esto se debe
+Nótese que no se le da importancia si el  \textit{gap}  da como resultado un número negativo de cualquier tamaño, esto se debe
 a que este proyecto solo está pensado para detectar contracciones prematuras del corazón, por ende solo necesitamos 
 saber si la distancia actual es menor que la anterior. Además, ningún paciente parece padecer ninguna arritmia de otro
 tipo.

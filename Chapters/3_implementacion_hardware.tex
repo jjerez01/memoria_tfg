@@ -1,6 +1,6 @@
-\chapter{Implementación hardware}
+\chapter{Implementación  \textit{hardware} }
 
-Para implementar el algoritmo en hardware dividimos en módulos el algoritmo de filtrado, el algoritmo
+Para implementar el algoritmo en  \textit{hardware}  dividimos en módulos el algoritmo de filtrado, el algoritmo
 de detección de picos y el algoritmo de detección de arritmias, estos los unificamos en un módulo principal 
 y probamos la simulación con un \textit{testbench}. Véase \Cref{fig:diagramaGeneral}
 
@@ -16,7 +16,7 @@ y probamos la simulación con un \textit{testbench}. Véase \Cref{fig:diagramaGe
 
 \section{Módulos adicionales} 
 
-Como los valores de las señales están en punto flotante y como se necesitan almacenar valores en una memoria, para poder operar con ellos, es necesario utilizar módulos hardware que permitan hacer dichas operaciones. Para ello, se utilizarán los \textit{IP cores} (\textit{Intelectual Property cores}) de Vivado \cite{xilinx_ip_cores}. Estos \textit{IP cores} son bloques que pueden realizar funciones específicas de hardware, optimizando así el diseño y facilitando la implementación de operaciones complejas. En este proyecto utilizaremos módulos de multiplicación y suma, resta, división y comparación de números en punto flotante, aprovechando las capacidades de los \textit{IP cores} de Vivado para manejar estos cálculos de manera eficiente y precisa.
+Como los valores de las señales están en punto flotante y como se necesitan almacenar valores en una memoria, para poder operar con ellos, es necesario utilizar módulos  \textit{hardware}  que permitan hacer dichas operaciones. Para ello, se utilizarán los \textit{IP cores} (\textit{Intelectual Property cores}) de Vivado \cite{xilinx_ip_cores}. Estos \textit{IP cores} son bloques que pueden realizar funciones específicas de  \textit{hardware} , optimizando así el diseño y facilitando la implementación de operaciones complejas. En este proyecto utilizaremos módulos de multiplicación y suma, resta, división y comparación de números en punto flotante, aprovechando las capacidades de los \textit{IP cores} de Vivado para manejar estos cálculos de manera eficiente y precisa.
 \subsection{Módulos ROM y RAM}
  Se necesitan módulos de ROM y RAM para las pruebas y para el módulo de filtrado.
 
@@ -313,7 +313,7 @@ Las señales de salida son:
     \item Estado compara distancia actual: 
     \begin{itemize}
         \item Según lo explicado en la implementación del algoritmo, la señal \texttt{TNRange} simboliza la distancia entre el pico detectado como arritmia y el pico normal actual. Este flag se activa cuando se ha detectado una arritmia, ya que \texttt{last\_distance} puede ser mayor de lo normal.
-        \item Para calcular el gap, cuando el flag de \texttt{TNRange} está activo y el de arritmia detectada no lo está, se compara la distancia actual con la distancia de hace tres ciclos (\texttt{last\_distance - 3}).
+        \item Para calcular el  \textit{gap} , cuando el flag de \texttt{TNRange} está activo y el de arritmia detectada no lo está, se compara la distancia actual con la distancia de hace tres ciclos (\texttt{last\_distance - 3}).
         \item Si esta condición no se cumple, el gap se calcula comparando con la \texttt{last\_distance}.
         \item Además, si la distancia anterior correspondía a una arritmia, se desactiva el flag de arritmia detectada.
     \end{itemize}
@@ -326,12 +326,12 @@ Las señales de salida son:
     \item Estado envío bit: Se activa la señal de \textit{valid} y se espera a la señal de \textit{ready} para enviar el dato al módulo de salida.
 \end{itemize}
 
-Además, se calcula el porcentaje del gap entre las 2 distancias con una distancia normal de forma combinacional.
+Además, se calcula el porcentaje del  \textit{gap}  entre las 2 distancias con una distancia normal de forma combinacional.
 
 \begin{itemize}
     \item Estas señales están en complemento a 2, por lo que cuando los números son negativos, el bit más significativo se cambia a 1. Dado que solo se consideran los números positivos, solo se toman en cuenta los números cuyo bit más significativo sea 0.
     \item Al inicio, la señal de la última distancia es x"00000000". Al comparar esta distancia con la actual, el resultado será una distancia muy grande que activará el bit del porcentaje calculado de forma combinacional. Este caso específico se ignora en las comparaciones.
-    \item En lugar de dividir el gap entre \texttt{distance\_for\_calc},  siendo g = gap y d = \texttt{distance\_for\_calc}, se utiliza la siguiente fórmula:
+    \item En lugar de dividir el  \textit{gap}  entre \texttt{distance\_for\_calc},  siendo g =  \textit{gap}  y d = \texttt{distance\_for\_calc}, se utiliza la siguiente fórmula:
     \[ g/d > 0.15\] 
     \[g > 0.15 \cdot d \] 
     \[g > d>> 5 + d>> 3 + d\] 

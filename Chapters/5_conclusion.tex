@@ -8,12 +8,12 @@ picos QRS sobre la señal filtrada que busca el pico más alto que además sobre
 se aplica el algoritmo de detección de arritmias calculando la distancia entre el pico actual con el anterior y comparándola con una
 distancia anterior de un ritmo normal.
 
-Para la implementación de hardware se utilizaron 3 módulos principales que son el módulo de filtrado, el módulo de detección de picos 
+Para la implementación de  \textit{hardware}  se utilizaron 3 módulos principales que son el módulo de filtrado, el módulo de detección de picos 
 y el módulo de detección de arritmias. Además estos módulos están contenidos en un módulo principal. Para hacer las pruebas sobre
 estos módulos, se añaden 2 módulos adicionales de input de señal y output donde se comparan los resultados de las anotaciones. Además 
 se evalúan los resultados mediante una simulación al crear un \textit{testbench}.
 
-Para las pruebas en hardware se utiliza la FPGA \textit{Artix 7} en la placa \textit{Basys3}, ya que es la FPGA que se usa en el estudio y aunque no sea capaz de albergar los 30 minutos de pruebas en la RAM, con menos pruebas tiene un buen desempeño.
+Para las pruebas en  \textit{hardware}  se utiliza la FPGA \textit{Artix 7} en la placa \textit{Basys3}, ya que es la FPGA que se usa en el estudio y aunque no sea capaz de albergar los 30 minutos de pruebas en la RAM, con menos pruebas tiene un buen desempeño.
 
 En el fichero .xdc se ha establecido un periodo específico teniendo en cuenta la frecuencia de las muestras que es de 360 sps y da un periodo de 1852 ns. Gracias al reporte de \textit{timing} se halla que el mínimo periodo de funcionamiento es de 6,49 ns.
 

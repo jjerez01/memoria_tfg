@@ -60,9 +60,9 @@ y se necesita la ayuda de dicho dispositivo para proporcionar el impulso eléctr
 \end{figure}
 
 \section{Utilización de las FPGAs}
-Este algoritmo ha sido pensado para ejecutarse en un dispositivo pequeño, poco pesado y portable, es por ello que es conveniente ejecutarlo en una FPGA\cite{mdpi_sensors_2014}. Esto de debe a que hay FPGAs pequeñas que tienen el hardware suficiente para poder llegar a ejecutar este algoritmo, además el consumo producido por una FPGA al ejecutar este algoritmo es bastante bajo como se comprobará posteriormente.
+Este algoritmo ha sido pensado para ejecutarse en un dispositivo pequeño, poco pesado y portable, es por ello que es conveniente ejecutarlo en una FPGA\cite{mdpi_sensors_2014}. Esto de debe a que hay FPGAs pequeñas que tienen el  \textit{hardware}  suficiente para poder llegar a ejecutar este algoritmo, además el consumo producido por una FPGA al ejecutar este algoritmo es bastante bajo como se comprobará posteriormente.
 
-Para este proyecto se usó la FPGA Artix-7 \cite{xilinx_artix7} en la placa Basys3 para probar el funcionamiento del algoritmo. Sin embargo, para las pruebas, debido a la cantidad de valores de prueba sacados de la base de datos por cada paciente, se ha considerado utilizar otra FPGA cuyo hardware pueda soportar dicha cantidad de datos.
+Para este proyecto se usó la FPGA Artix-7 \cite{xilinx_artix7} en la placa Basys3 para probar el funcionamiento del algoritmo. Sin embargo, para las pruebas, debido a la cantidad de valores de prueba sacados de la base de datos por cada paciente, se ha considerado utilizar otra FPGA cuyo  \textit{hardware}  pueda soportar dicha cantidad de datos.
 
 
 \section{Objetivos del proyecto}
@@ -72,8 +72,8 @@ El objetivo principal del proyecto es crear un algoritmo basado en el estudio de
 \begin{enumerate}
     \item Averiguar qué son las arritmias, cómo se producen, qué arritmias podría detectar el programa y qué patrón siguen la mayoría de ellas.
     \item La creación de un algoritmo en software que sea capaz de leer y filtrar la señal original de los pacientes de la base de datos, la realización de un algoritmo que se encargue de detectar los picos donde se produce la contracción ventricular según aparecen en la señal filtrada y, por último, la creación de un algoritmo encargado de detectar las arritmias según el patrón hallado en el objetivo anterior.
-    \item La replicación del programa en hardware según el prototipo creado anteriormente en software. Utilizando el hardware necesario para que el algoritmo funcione en una FPGA y el hardware necesario para poder hacer pruebas en simulación y sobre la placa.
-    \item La observación de los resultados experimentales de la cantidad de recursos hardware empleados, el consumo utilizado por el algoritmo y el tiempo que tarda en llevarse a cabo adecuándose a la llegada de la señal del paciente. Dichos resultados experimentales deberían tener coherencia con lo que se buscaba en el objetivo principal.
+    \item La replicación del programa en  \textit{hardware}  según el prototipo creado anteriormente en software. Utilizando el  \textit{hardware}  necesario para que el algoritmo funcione en una FPGA y el  \textit{hardware}  necesario para poder hacer pruebas en simulación y sobre la placa.
+    \item La observación de los resultados experimentales de la cantidad de recursos  \textit{hardware}  empleados, el consumo utilizado por el algoritmo y el tiempo que tarda en llevarse a cabo adecuándose a la llegada de la señal del paciente. Dichos resultados experimentales deberían tener coherencia con lo que se buscaba en el objetivo principal.
 \end{enumerate}
 
 
@@ -100,7 +100,7 @@ El objetivo principal del proyecto es crear un algoritmo basado en el estudio de
 		\item Realizar pruebas y ajustes en los algoritmos para obtener resultados satisfactorios.
 	\end{enumerate}
 	
-	\item Implementación en hardware: 
+	\item Implementación en  \textit{hardware} : 
 	\begin{enumerate}
 		\item Diseñar los módulos principales para cada parte del algoritmo (detección de picos, detección de arritmias, filtrado y un módulo principal.).
 
@@ -140,8 +140,8 @@ Los módulos principales son.
 \section{Organización de la memoria}
 En el capítulo 2 se verá cómo se ha realizado el prototipado del algoritmo en software. En la sección 1 se muestra el transcurso del algoritmo. En la sección 2, se indicarán las librerías usadas para la recopilación de datos. En la sección 3, se explicará el tipo de filtrado que se ha usado para la señal original. En la sección 4, se expondrá el algoritmo de detección de picos QRS y las metodologías seguidas. En la sección 5, se explicará el algoritmo de detección de arritmias y en la sección 6, el algoritmo para probar el prototipo y obtener estadísticas de las pruebas realizadas.
 
-En el capítulo 3, se hablará de los distintos módulos creados para la implementación hardware. En la sección 1, se especificarán los módulos para las operaciones en punto flotante y las memorias utilizadas. De la sección 2 a la 4, se explicará el funcionamiento del módulo de filtrado de la señal, el módulo de detección de picos y el módulo de detección de arritmias. En la sección 5, se tratará la creación del módulo principal y el \textit{testbench} utilizado.
+En el capítulo 3, se hablará de los distintos módulos creados para la implementación  \textit{hardware} . En la sección 1, se especificarán los módulos para las operaciones en punto flotante y las memorias utilizadas. De la sección 2 a la 4, se explicará el funcionamiento del módulo de filtrado de la señal, el módulo de detección de picos y el módulo de detección de arritmias. En la sección 5, se tratará la creación del módulo principal y el \textit{testbench} utilizado.
 
-En el capítulo 4, se mostrarán los resultados experimentales obtenidos, como la FPGA utilizada, el análisis de utilización de hardware, el análisis de  \textit{timing}  y el consumo.
+En el capítulo 4, se mostrarán los resultados experimentales obtenidos, como la FPGA utilizada, el análisis de utilización de  \textit{hardware} , el análisis de  \textit{timing}  y el consumo.
 
 Finalmente, en el capítulo 5, se dará una conclusión sobre la realización de este proyecto y se sugerirán trabajos futuros por si se desea ampliar el proyecto.
