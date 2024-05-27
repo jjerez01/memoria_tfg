@@ -1,17 +1,17 @@
-\chapter*{Resumen}
+\chapter{Resumen}
 
-La caracterización automática de la señal del electrocardiograma (ECG) es de importancia crítica en el monitoreo y diagnóstico del paciente. Por ello, en este trabajo lo que se pretende es detectar arritmias partiendo de una señal analizable. 
+La caracterización automática de la señal del electrocardiograma (ECG) es de importancia crítica en el monitorización y el diagnóstico del paciente. Por ello, en este trabajo lo que se pretende es detectar arritmias partiendo de una señal analizable. 
 
-Esto se realizará con un algoritmo previamente prototipado y probado en software, cuyo propósito, es detectar los picos QRS de un paciente y con ello detectar arritmias. Para ello el algoritmo compara las distancias que tienen los picos actuales con la distancia que formaron los picos anteriores.
+Esto se realizará con un algoritmo previamente prototipado y probado en software, cuyo propósito, es detectar los picos QRS de un paciente y con ello detectar arritmias. Para ello, el algoritmo compara las distancias que tienen los picos actuales con la distancia que formaron los picos anteriores.
 
 Para el diseño hardware el programa se organizará en distintos módulos. Este diseño cuenta con unos módulos principales que desempeñaran sus funciones para seguir los pasos del prototipo en software y así poder realizar las tareas de filtrado de señal, detección de picos y detección de arritmias.
-Estos módulos están contenidos en un módulo principal y a su vez se incluye en un \textit{testbench} para realizar pruebas. Las pruebas se realizarán introduciendo señales del electrocardiograma de un paciente en un módulo de memoria para que el programa las procese. A su vez, en otra memoria se introducirán las anotaciones realizadas por expertos para comprobar si coinciden con las arritmias detectadas por el algoritmo y así poder comprobar la eficacia de la replicación del programa a partir del prototipado en software. Para ello, la FPGA que se utiliza para probar el algoritmo en hardware es la Virtex 7.
+Estos módulos están contenidos en un módulo principal y a su vez se incluye en un \textit{testbench} para realizar pruebas. Las pruebas se realizarán introduciendo señales del electrocardiograma de un paciente en un módulo de memoria para que el programa las procese. A su vez, en otra memoria se introducirán las anotaciones realizadas por expertos para comprobar si coinciden con las arritmias detectadas por el algoritmo y así poder comprobar la eficacia de la replicación del programa a partir del prototipado en software. Para ello, la FPGA que se utiliza para probar el algoritmo en hardware es la Artix 7 de la placa Basys3.
 
 Para concluir, en los resultados experimentales, se especifica la frecuencia ideal, el reporte de \textit{timing} y el consumo en vatios necesarios para el programa. Según los datos obtenidos, este proyecto utiliza muy pocos recursos para el desempeño que tiene y por ello, cumple con los objetivos de ser un algoritmo que puede llegar a ser personalizable, para un dispositivo portable que detecte arritmias a tiempo real.
 
 \noindent\textbf{Palabras clave}: electrocardiograma, picos, arritmias, FPGA, frecuencia.
 
-\chapter*{Abstract}
+\chapter{Abstract}
 
 The automatic characterization of the ECG signal is of critical importance in patient monitoring and diagnosis.
 in the monitoring and diagnosis of the patient.
@@ -22,7 +22,7 @@ QRS peaks of a patient and thus detect arrhythmias, for this the algorithm compa
 
 For the hardware design the program will be organized in different modules. This design has some main modules that will perform their functions to follow the steps of the prototype in software.
 The software prototype will follow the steps of the prototype and thus be able to perform the tasks of signal filtering, peak detection and arrhythmia detection.
-These modules are contained in a main module and in turn are included in a testbench for testing. 
+These modules are contained in a main module and in turn are included in a \textit{testbench} for testing. 
 The tests will be performed by introducing electrocardiogram signals of a patient in a memory module for the program to process them, and in turn in another memory, annotations made by experts will be introduced to check if the tests have been performed.
 The tests will be performed by inserting electrocardiogram signals from a patient's electrocardiogram into a memory module for the program to process, while another memory module will be used to enter annotations made by experts to check whether arrhythmias have occurred and thus verify the effectiveness of the program replication from the software prototype.  In addition, the FPGA used to test the algorithm in hardware is the Basys3.
 

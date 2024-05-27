@@ -16,7 +16,7 @@ Para la recopilación de los datos se utilizará la librería \textit{wfdb} \cit
 Los pacientes vienen identificados por un identificador (por ejemplo, 101) y hay 3 ficheros por paciente, 
 con extensiones .dat, .atr y .hea
 
-Se descarga la base de datos \cite{desai2021low} con la función de la librería de \textit{wfdb}, \textit{dldatabase} que recoge 
+Se descarga la base de datos \cite{mitdb} con la función de la librería de \textit{wfdb}, \textit{dldatabase} que recoge 
 la señal del paciente y las anotaciones de los cardiólogos sobre cada pico QRS.
 
 
@@ -29,7 +29,7 @@ else:
 	wfdb.dl_database('mitdb', 'mitdb')
 \end{lstlisting}
 
-Los pacientes de la base de datos se han hecho una prueba de 30 minutos con una frecuencia de muestreo de 263 sps (\textit{samples per second}), lo que en la señal 
+Los pacientes de la base de datos se han hecho una prueba de 30 minutos con una frecuencia de muestreo de 360 sps (\textit{samples per second}), lo que en la señal 
 equivale a 650000 \textit{samples}.
 
 \lstset{language=python, breaklines=true, basicstyle=\footnotesize}
@@ -43,7 +43,7 @@ annotation = wfdb.rdann('mitdb/102', 'atr', sampfrom=sampfrom, sampto=sampto)
 Por último, para visualizar esta señal con las anotaciones de los cardiólogos y poder comparar con las anotaciones que realiza el algoritmo se usará la librería \lstinline{matplotlib.pyplot} \cite{Matplotlib}. Con esto se mostrará la señal original con las anotaciones y la señal filtrada con las anotaciones del algoritmo como en \Cref{fig:102filtradoysinfiltrar}
 
 \section{Filtrado de la señal original}
-Este filtrado es llevado a cabo por el filtrado FIR. El filtrado FIR, que significa \textit{Finite Impulse Response} (respuesta finita al impulso), es un tipo de filtro utilizado en el procesamiento de señales digitales y analógicas. La fórmula que se utilizará para el filtrado es la siguiente:
+Este filtrado es llevado a cabo por el filtrado FIR\cite{FIR}. El filtrado FIR, que significa \textit{Finite Impulse Response} (respuesta finita al impulso), es un tipo de filtro utilizado en el procesamiento de señales digitales y analógicas. La fórmula que se utilizará para el filtrado es la siguiente:
 
 \[ Y[i] = \sum_{k=0}^{N_x -1} b_k \cdot x[i-k] \]
 
@@ -62,7 +62,7 @@ Para el filtrado se usa la función \lstinline{lfilter} de la librería \lstinli
 
 El algoritmo de detección de picos está representado en esta función que recibe la señal filtrada y trata de detectar los picos QRS.
 
-Este algoritmo está basado en el que se usa en el documento \cite{desai2021low} donde en el 4.1.2 muestran una máquina de estados del proceso que realizan.
+Este algoritmo está basado en el que se usa en el documento \cite{desai2021low} donde en el apartado 4.1.2 muestran una máquina de estados del proceso que realizan.
 
 \begin{figure}[h!]
     \centering
@@ -71,7 +71,7 @@ Este algoritmo está basado en el que se usa en el documento \cite{desai2021low}
     \label{fig:fsm_mpdi}
 \end{figure}
 
-El algoritmo realizado es distinto a este, ya que es una versión simplificada de un algoritmo de detección de picos y no llega a ser tan funcional por la falta de un \textit{cutoff} dinámico. Esto se debe a que a veces hay una distancia entre los picos QRS superior a 72 muestras por lo que cause que en algunas ocasiones detecte el ruido como un pico QRS, ya que después de las 72 muestras no se ha encontrado una señal. Es por eso que, en un proyecto en el que se sabe que los picos QRS van a estar a distancias distintas entre sí, este algoritmo no sirve y hay que modernizarlo.
+El algoritmo implementado difiere del que se describe en el documento, ya que el del documento es una versión simplificada de un algoritmo de detección de picos y no es tan funcional debido a la falta de un \textit{cutoff} dinámico, el cual sí está presente en este proyecto. Esta solución es necesaria porque a veces hay una distancia entre los picos QRS superior a 72 muestras, lo que ocasiona que en algunas ocasiones se detecte el ruido como un pico QRS, ya que después de las 72 muestras no se ha encontrado una señal. Por esta razón, en un proyecto en el que se sabe que los picos QRS estarán a distancias distintas entre sí, este algoritmo no es adecuado y debe modernizarse.
 
 Aun así, si bien el algoritmo creado es distinto a ese, se replica el tener que esperar a 72 muestras para asegurarse de que no se encuentra un pico superior y así poder considerarlo como un pico QRS. Es por ello que definimos la variable \lstinline|samples_around_peak| como 72 para comparar dicha condición. Para hallar el pico más alto se necesita definir un pico en \lstinline{last_peak} y si se encuentra otro pico se realiza el máximo entre el pico encontrado y el de \lstinline{last_peak}.
 
@@ -87,7 +87,7 @@ Debido a la variación de las señales entre pacientes y la variación producida
 El \textit{cutoff} dinámico recoge ese nombre, ya que su valor depende si se ha encontrado un pico o no, ya que cuando se encuentra un pico por encima del \textit{cutoff} anterior, el valor del \textit{cutoff} pasa a ser el del pico, por otro lado, cada vez que no se encuentre ningún pico La función del \textit{cutoff} pasa a ser la siguiente.
 \[cutoff = cutoff - cutoff/(256 - 64)\]
 
-Se han dado los valores (256 - 64) a la fórmula para que, a la hora de replicar el programa en hardware, fuese más fácil la división, ya que solo habría que desplazar los bits, Sin embargo, como al final se terminó haciendo en un módulo de división en punto flotante cualquier valor es válido para la división aunque debido al buen desempeño del valor en el programa se decidió mantener el valor.
+Se han dado los valores (256 - 64) a la fórmula para que, a la hora de replicar el programa en hardware, fuese más fácil la división, ya que solo habría que desplazar los bits. Sin embargo, como al final se terminó haciendo en un módulo de división en punto flotante cualquier valor es válido para la división aunque debido al buen desempeño del valor en el programa se decidió mantener el valor.
 
 \begin{figure}[h!]
     \centering
@@ -111,7 +111,7 @@ Se han dado los valores (256 - 64) a la fórmula para que, a la hora de replicar
 \end{figure} 
 
 \FloatBarrier
-La salida de dicha función es un buffer de \textit{samples} que sirven como indices para indicar donde se han encontrado
+La salida de dicha función es un buffer de \textit{samples} que sirven como índices para indicar donde se han encontrado
 los picos QRS y así poder pasar al módulo de detección de arritmias.
 
 \section{Detección de arritmias}
@@ -121,7 +121,7 @@ distancia entre los picos.
 
 En la detección de arritmias es de vital importancia establecer un límite en la distancia entre los picos
 para poder considerar que ha habido una arritmia o no. Esta tarea solo se pudo hacer probando con diferentes
-rangos y viendo el índice de aciertos producidos en las pruebas a cada paciente de las que se hablara más adelante. 
+rangos y viendo el índice de aciertos producidos en las pruebas a cada paciente de las que se hablará más adelante. 
 
 El algoritmo va almacenando distancias entre los picos QRS (es por ello que en la primera iteración no se almacena nada)
 y se declaran varias variables:
@@ -260,12 +260,12 @@ correctamente. Esto está representado en la \Cref{fig:estadisticasporcentaje}.
     \label{fig:estadisticasporcentaje}
 \end{figure} 
 
-Adicionalmente se puede sacar una matríz de confusión como en la \Cref{fig:matrizdeconfusion}, donde se establece como verdadero la aparición de arritmias en la señal original y como positivo a la detección de arritmias sobre la señal procesada por el algoritmo. En el caso del paciente 102, no ha habido arritmias en 2136 picos, ha habido 4 arritmias detectadas correctamente y un falso positivo que indica que el algoritmo ha detectado una arritmia, pero no era.
+Adicionalmente se puede sacar una matriz de confusión como en la \Cref{fig:matrizdeconfusion}, donde se establece como verdadero la aparición de arritmias en la señal original y como positivo a la detección de arritmias sobre la señal procesada por el algoritmo. En el caso del paciente 102, no ha habido arritmias en 2136 picos, ha habido 4 arritmias detectadas correctamente y un falso positivo que indica que el algoritmo ha detectado una arritmia, pero no era.
 
 \begin{figure}[h!]
 	\centering
     \includegraphics[width=0.9\textwidth]{./Images/img_algoritmo/matrizdeconfusion.png}
-    \caption[Matríz de confusión]{Matríz de confusión del funcionamiento del algoritmo sobre la señal del paciente 102}
+    \caption[Matriz de confusión]{Matriz de confusión del funcionamiento del algoritmo sobre la señal del paciente 102}
     \label{fig:matrizdeconfusion}
 \end{figure} 
 
@@ -282,3 +282,5 @@ se han realizado las siguientes estadísticas.
 	\item La media de los picos detectados de cada paciente.
 	\item La media de las arritmias correctas detectadas en cada paciente.
 \end{enumerate} 
+
+Al realizar pruebas con los demás pacientes de la base de datos, los resultados no son del todo favorables. Esto se debe a la variabilidad entre los pacientes: algunos presentan muchas más arritmias que otros, algunos tienen un marcapasos que cambia de ritmo y otros presentan muchos fallos causados por el sensor. Al final, la manera más efectiva de evaluar y mejorar el algoritmo fue observando su comportamiento en cada caso específico y analizando los motivos de su comportamiento frente a la señal original.

@@ -1,31 +1,23 @@
-\chapter*{Conclusión}
-Este proyecto trata de buscar una solución simple para la detección de 
-arritmias de una señal de un electrocardiograma, Para la elaboración de este proyecto, 
-se ha estudiado el comportamiento de las arritmias, viendo la base de datos de MIT y estudiando
-el comportamiento de las arritmias anotadas se observó que la inmensa mayoría de las arritmias 
-que ocurrían eran dadas por una contracción prematura del corazón, por tanto el proyecto, aunque
-inicialmente se pensó detectar el mayor tipo de arritmias posibles, al no ver ningún ejemplo claro
-de arritmia no producida por una contracción prematura el proyecto solo se centró en detectar dichas arritmias.
+\chapter{Conclusión}
+Este proyecto trata de buscar una solución simple para la detección de arritmias de una señal de un electrocardiograma, Para la elaboración de este proyecto, 
+se ha estudiado el comportamiento de las arritmias, viendo la base de datos de MIT y estudiando el comportamiento de las arritmias anotadas se observó que la inmensa mayoría de las arritmias que ocurrían eran dadas por una contracción prematura del corazón, por tanto el proyecto, aunque inicialmente se pensó detectar el mayor tipo de arritmias posibles, al no ver ningún ejemplo claro de arritmia no producida por una contracción prematura el proyecto solo se centró en detectar dichas arritmias.
 
-Se realizó un prototipo en python que sirvió para crear el algoritmo y probarlo con facilidad. Este prototipo inicia
+Se realizó un prototipo en \textit{python} que sirvió para crear el algoritmo y probarlo con facilidad. Este prototipo inicia
 con un filtrado de la señal original aplicando el filtrado FIR. Seguidamente se aplica un algoritmo de detección de 
-picos QRS sobre la señal filtrada que busca el pico más alto que además sobrepase el cutoff dinámico establecido. Finalmente
+picos QRS sobre la señal filtrada que busca el pico más alto que además sobrepase el \textit{cutoff} dinámico establecido. Finalmente
 se aplica el algoritmo de detección de arritmias calculando la distancia entre el pico actual con el anterior y comparándola con una
 distancia anterior de un ritmo normal.
 
-Para la implementación de hardware se usarán 3 módulos principales que son el módulo de filtrado, el módulo de detección de picos 
+Para la implementación de hardware se utilizaron 3 módulos principales que son el módulo de filtrado, el módulo de detección de picos 
 y el módulo de detección de arritmias. Además estos módulos están contenidos en un módulo principal. Para hacer las pruebas sobre
 estos módulos, se añaden 2 módulos adicionales de input de señal y output donde se comparan los resultados de las anotaciones. Además 
-se evalúan los resultados mediante una simulación al crear un testbench.
+se evalúan los resultados mediante una simulación al crear un \textit{testbench}.
 
-Para las pruebas en hardware se utiliza la FPGA Virtex 7 en la placa Basys3, ya que es la FPGA que se usa en el estudio y aunque no sea capaz de 
-albergar los 30 minutos de pruebas en la RAM, con menos pruebas tiene un buen desempeño.
+Para las pruebas en hardware se utiliza la FPGA \textit{Artix 7} en la placa \textit{Basys3}, ya que es la FPGA que se usa en el estudio y aunque no sea capaz de albergar los 30 minutos de pruebas en la RAM, con menos pruebas tiene un buen desempeño.
 
-En el fichero .xdc se ha establecido un periodo específico teniendo en cuenta la frecuencia de las muestras que es de 365 sps y da un periodo 
-de 1852 ns. Gracias al reporte de timing se halla que la mínima frecuencia de funcionamiento es de 6,49 ns.
+En el fichero .xdc se ha establecido un periodo específico teniendo en cuenta la frecuencia de las muestras que es de 360 sps y da un periodo de 1852 ns. Gracias al reporte de \textit{timing} se halla que el mínimo periodo de funcionamiento es de 6,49 ns.
 
-Según el reporte de potencia el consumo de la placa es de 0,069 W lo que resulta en un consumo bajo incluso para un uso continuo de este.
-Comparándolo con otros proyectos similares, el consumo dinámico es menor.
+Según el reporte de potencia el consumo de la placa es de 0,069 vatios, y solamente el algoritmo consume menos de 0,001 vatios, lo que resulta en un consumo bajo incluso para un uso continuo de este. Comparándolo con otros proyectos similares, el consumo dinámico es menor.
 
 \chapter*{Conclusion}
 
@@ -51,14 +43,14 @@ the results are evaluated through a simulation by creating a testbench.
 For the hardware tests, the Basys3 FPGA is used since it is the FPGA used in the study and although it is not capable of 
 Although it is not able to hold the 30 minutes of tests in RAM, with less tests it has a good performance.
 
-In the .xdc a specific period has been established taking into account the frequency of the samples which is 365 sps and gives a period of 1852 ns. Thanks to the .xdc, a period of 1852 ns has been established. 
+In the .xdc a specific period has been established taking into account the frequency of the samples which is 360 sps and gives a period of 1852 ns. Thanks to the .xdc, a period of 1852 ns has been established. 
 Thanks to the timing report we found that the minimum operating frequency is 6.49 ns.
 
 According to the power report the power consumption of the board is 0.069 W which results in a low power consumption even for a continuous use of the board.
 Compared to other similar projects, the dynamic power consumption is lower.
 
 
-\chapter*{Trabajo futuro}
+\chapter{Trabajo futuro}
 
 Como trabajo futuro, se ha propuesto sincronizar el proyecto con un dispositivo capaz de detectar latidos del corazón para mostrar pruebas en tiempo real y demostrar la eficacia del proyecto en cualquier persona. Además, se considera la posibilidad de implementar todo lo anterior en un dispositivo similar a un reloj para crear un producto que cumpla todos los objetivos mencionados en el proyecto.
 

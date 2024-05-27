@@ -2,7 +2,7 @@
 
 
 \section{Entorno de pruebas}
-Para hacer las pruebas en la placa se ha utilizado la FPGA virtex-7 con placa Basys3, ya que se utiliza la misma en el estudio en el que se basa el proyecto\cite{desai2021low}.
+Para hacer las pruebas en la placa se ha utilizado la FPGA Artix-7 con placa Basys3, ya que se utiliza la misma en el estudio en el que se basa el proyecto\cite{desai2021low}.
 
 El problema que se encontró con el uso de la placa es que la ROM no podría almacenar 650000 filas de valores de punto flotante por lo que se probo un dieciseisavo de las pruebas totales que equivale a 40625.
 
@@ -16,7 +16,7 @@ Por lo que, para hacer la prueba con todos los samples, se requiere utilizar una
 \end{figure}
 
 \section{Recursos necesarios}
-	Para evaluar los recursos necesarios, se tendrán en cuenta los resultados sacados del análisis de síntesis, del reporte de timing y del reporte de potencia del módulo principal que contiene el módulo de filtrado de señal,
+	Para evaluar los recursos necesarios, se tendrán en cuenta los resultados sacados del análisis de síntesis, del reporte de  \textit{timing}  y del reporte de potencia del módulo principal que contiene el módulo de filtrado de señal,
 	el módulo de detección de picos y el módulo de detección de arritmias. 
 	
 \subsection{Análisis de utilización}
@@ -27,7 +27,6 @@ En este reporte nos encontramos con los siguientes datos:
     \item Slice registers: Se utilizan 3086 de un total de 41600 disponibles, y al igual que los LUTs, la mayoría se asignan a los módulos de división y multiplicación.
     \item Bloque RAM tile: Se utiliza 1 tile de los 50 disponibles. La mitad se utiliza para la ROM de coeficientes y la otra mitad para la RAM de los valores de la señal original.
     \item Se utilizan 4 DSPs de los 90 disponibles. Dos de ellos se utilizan en el módulo de multiplicación y dos en el módulo restador.
-    \item Se utilizan todos los multiplexores F7, asignados exclusivamente al módulo de multiplicación.
 \end{itemize}
 
 
@@ -38,7 +37,7 @@ En este reporte nos encontramos con los siguientes datos:
 	\label{fig:utilization1}
 \end{figure}
 
-En total no se ha usado ni un 10\% del hardware disponible para cada tipo.
+Se han utilizado menos de un 10\% del hardware disponible para cada recurso.
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=0.6\textwidth]{./Images/img_res_experimentales/utilization2.png}
@@ -54,11 +53,11 @@ En total no se ha usado ni un 10\% del hardware disponible para cada tipo.
 \end{figure}
 
 
-\subsection{Análisis de timing}
+\subsection{Análisis de  \textit{timing} }
 
 La frecuencia de funcionamiento se ha calculado según la referencia del artículo \cite{desai2021low}, que indica que las muestras se toman a 360 sps (samples per second), lo que equivale a 360 Hz. Con esta información, sabemos que una muestra llega cada \( \frac{1}{360 Hz} = 2.777 ms\).
 
-También se calcula el número de ciclos que tarda en ejecutarse el módulo de filtrado, que resulta ser el más crítico de todos. Este módulo requiere un total de 1780 ciclos, por lo que \( \frac{2.777  ms}{1780 ciclos} = 1.56  µs \) por ciclo. Por lo tanto, en waveform se establecerá un periodo de 1500 ns con una oscilación desde 0 a 750 ns para que sea simétrico.
+También se calcula el número de ciclos que tarda en ejecutarse el módulo de filtrado, que resulta ser el más crítico de todos. Este módulo requiere un total de 1780 ciclos, por lo que \( \frac{2.777  ms}{1780 ciclos} = 1.56  microsegundos \) por ciclo. Por lo tanto, en waveform se establecerá un periodo de 1500 ns con una oscilación desde 0 a 750 ns para que sea simétrico.
 
 
 \lstset{language=VHDL, breaklines=true, basicstyle=\footnotesize}
@@ -69,12 +68,12 @@ set_property PACKAGE_PIN W5 [get_ports clk]
 	create_clock -add -name sys_clk_pin -period 1500.00 -waveform {0 750} [get_ports clk]
 \end{lstlisting}
 
-	En el análisis de timing se comprobará cuál es el worst negative slack y se calculará la frecuencia mínima necesaria. Este reporte de timing muestra lo siguiente. La frecuencia alcanzada con ese periodo es de 0,540 MHz
+	En el análisis de  \textit{timing}  se comprobará cuál es el worst negative slack y se calculará la frecuencia mínima necesaria. Este reporte de  \textit{timing}  muestra lo siguiente. La frecuencia alcanzada con ese periodo es de 0,540 MHz
 
 	\begin{figure}[h!]
 		\centering
 		\includegraphics[width=0.9\textwidth]{./Images/img_res_experimentales/reportetiming.png}
-		\caption{Imagen que muestra el reporte de timing generado}
+		\caption{Imagen que muestra el reporte de  \textit{timing}  generado}
 		\label{fig:reporteTiming}
 	\end{figure} 
 
@@ -86,7 +85,7 @@ set_property PACKAGE_PIN W5 [get_ports clk]
 
 \subsection{Análisis de potencia}
 
-	En el análisis de potencia se evalúa la potencia que necesita la FPGA para poder llevar a cabo las instrucciones.
+	En el análisis de potencia se evalúa la potencia que necesita la FPGA para poder llevar a cabo la ejecución.
 
 	\begin{figure}[h!]
 		\centering
@@ -95,7 +94,7 @@ set_property PACKAGE_PIN W5 [get_ports clk]
 		\label{fig:reportepotencia}
 	\end{figure} 
 
-	En este análisis la potencia alcanzada es de 0,069 W, pero casi todo el consumo es causado por la placa en sí (Device static), este algoritmo no gasta más de un 0,001W \cref*{fig:hierarchical}del hardware utilizado A temperatura ambiente como se define en la \cref*{fig:temperaturaambiente}
+	En este análisis la potencia alcanzada es de 0,069 W, pero casi todo el consumo es causado por la placa en sí (Device static), este algoritmo no gasta más de un 0,001W como se puede ver en la figura \cref*{fig:hierarchical} del hardware utilizado a temperatura ambiente como se ve en la \cref*{fig:temperaturaambiente}
 
 	\begin{figure}[h!]
 		\centering
