@@ -5,7 +5,7 @@
 \section{Concepto de arritmia}
 Las enfermedades cardiovasculares son la primera causa de muerte en el mundo \cite{roth2020global} y una de las causas más comunes de estas enfermedades son las arritmias.
 
-Una arritmia cardiaca es un resultado de una alteración en la iniciación o propagación del ritmo del corazón.\cite{velez} Si se produce una arritmia, el corazón puede tener un ritmo demasiado rápido, demasiado lento o irregular. Esto puede provocar síntomas como palpitaciones, mareos, falta de aire e incluso desmayos, y estas pueden llegar a ser mortales.
+Una arritmia cardiaca es un resultado de una alteración en la iniciación o propagación del ritmo del corazón \cite{velez}. Si se produce una arritmia, el corazón puede tener un ritmo demasiado rápido, demasiado lento o irregular. Esto puede provocar síntomas como palpitaciones, mareos, falta de aire e incluso desmayos, y estas pueden llegar a ser mortales.
 
 Los cardiólogos utilizan dispositivos como un \textit{Holter}\footnote{\textbf{Holter}: Dispositivo médico portátil que se utiliza para monitorear y registrar la actividad eléctrica del corazón durante un período prolongado} para generar electrocardiogramas (ECG), que son diagramas que representan los latidos del corazón y con ellos son capaces de analizarlos y encontrar anomalías cardiacas.
 
@@ -22,7 +22,7 @@ Entre esas anomalías están las contracciones prematuras del corazón, un tipo 
 El algoritmo de detección de arritmias que sigue este proyecto se basa en la detección de 
 los picos QRS producidos en el electrocardiograma.
 
-Un pico QRS, como se muestra en la \Cref{fig:complejoQRS}, en un electrocardiograma es causado por la contracción del ventrículo al bombear la sangre por las arterias. Este es el impulso eléctrico más fuerte que el corazón produce en cada latido\cite{wiki:QRS_complex}. En este proyecto utilizaremos estos picos para comparar la distancia entre ellos y poder determinar si se ha producido una arritmia. 
+Un pico QRS, como se muestra en la \Cref{fig:complejoQRS}, en un electrocardiograma es causado por la contracción del ventrículo al bombear la sangre por las arterias. Este es el impulso eléctrico más fuerte que el corazón produce en cada latido \cite{wiki:QRS_complex}. En este proyecto utilizaremos estos picos para comparar la distancia entre ellos y poder determinar si se ha producido una arritmia. 
 
 \begin{figure}[h]
 	\centering
@@ -48,7 +48,7 @@ En la creación del proyecto se ha intentado no filtrar la onda para comprobar s
 \section{Datos de referencia}
 Los datos de referencia para probar el algoritmo han sido obtenidos de un estudio realizado en el Instituto de Tecnología de Massachusetts (MIT) \cite{MIT} en el que se han realizado pruebas de media hora a varios pacientes con edades diversas y algunos de ellos llevaban implantado un marcapasos.
 
-Los datos consisten en electrocardiogramas que previamente han sido analizados por cardiólogos y cuyas anotaciones indican cuando un paciente ha padecido una arritmia, cuando el ritmo es normal y cuando se ha producido un fallo en la lectura de la señal. También se muestra información menos relevante para nuestro 
+Los datos consisten en electrocardiogramas que previamente han sido analizados por cardiólogos y cuyas anotaciones indican cuando un paciente ha padecido una arritmia, cuando el ritmo es normal y cuando se ha producido un fallo en la lectura de la señal, como se puede ver en la \cref{fig:Paciente_pruebas_MIT}. También se muestra información menos relevante para nuestro 
 estudio como cuando se ha producido un error en la lectura de la señal y la activación del marcapasos\footnote{\textbf{Marcapasos}: Dispositivo que se implanta en el corazón que actúa cuando el corazón no bombea la sangre lo suficientemente fuerte, es decir que el pico QRS no es tan prominente
 y se necesita la ayuda de dicho dispositivo para proporcionar el impulso eléctrico necesario}.
 
@@ -60,7 +60,7 @@ y se necesita la ayuda de dicho dispositivo para proporcionar el impulso eléctr
 \end{figure}
 
 \section{Utilización de las FPGAs}
-Este algoritmo ha sido pensado para ejecutarse en un dispositivo pequeño, poco pesado y portable, es por ello que es conveniente ejecutarlo en una FPGA\cite{mdpi_sensors_2014}. Esto de debe a que hay FPGAs pequeñas que tienen el  \textit{hardware}  suficiente para poder llegar a ejecutar este algoritmo, además el consumo producido por una FPGA al ejecutar este algoritmo es bastante bajo como se comprobará posteriormente.
+Este algoritmo ha sido pensado para ejecutarse en un dispositivo pequeño, poco pesado y portable, es por ello que es conveniente ejecutarlo en una FPGA \cite{mdpi_sensors_2014}. Esto de debe a que hay FPGAs pequeñas que tienen el  \textit{hardware}  suficiente para poder llegar a ejecutar este algoritmo, además el consumo producido por una FPGA al ejecutar este algoritmo es bastante bajo como se comprobará posteriormente.
 
 Para este proyecto se usó la FPGA Artix-7 \cite{xilinx_artix7} en la placa Basys3 para probar el funcionamiento del algoritmo. Sin embargo, para las pruebas, debido a la cantidad de valores de prueba sacados de la base de datos por cada paciente, se ha considerado utilizar otra FPGA cuyo  \textit{hardware}  pueda soportar dicha cantidad de datos.
 
@@ -72,8 +72,8 @@ El objetivo principal del proyecto es crear un algoritmo basado en el estudio de
 \begin{enumerate}
     \item Averiguar qué son las arritmias, cómo se producen, qué arritmias podría detectar el programa y qué patrón siguen la mayoría de ellas.
     \item La creación de un algoritmo en software que sea capaz de leer y filtrar la señal original de los pacientes de la base de datos, la realización de un algoritmo que se encargue de detectar los picos donde se produce la contracción ventricular según aparecen en la señal filtrada y, por último, la creación de un algoritmo encargado de detectar las arritmias según el patrón hallado en el objetivo anterior.
-    \item La replicación del programa en  \textit{hardware}  según el prototipo creado anteriormente en software. Utilizando el  \textit{hardware}  necesario para que el algoritmo funcione en una FPGA y el  \textit{hardware}  necesario para poder hacer pruebas en simulación y sobre la placa.
-    \item La observación de los resultados experimentales de la cantidad de recursos  \textit{hardware}  empleados, el consumo utilizado por el algoritmo y el tiempo que tarda en llevarse a cabo adecuándose a la llegada de la señal del paciente. Dichos resultados experimentales deberían tener coherencia con lo que se buscaba en el objetivo principal.
+    \item La replicación del programa en \textit{hardware} según el prototipo creado anteriormente en software. Utilizando el \textit{hardware} necesario para que el algoritmo funcione en una FPGA y el  \textit{hardware}  necesario para poder hacer pruebas en simulación y sobre la placa.
+    \item La observación de los resultados experimentales de la cantidad de recursos \textit{hardware} empleados, el consumo utilizado por el algoritmo y el tiempo que tarda en llevarse a cabo adecuándose a la llegada de la señal del paciente. Dichos resultados experimentales deberían tener coherencia con lo que se buscaba en el objetivo principal.
 \end{enumerate}
 
 
@@ -82,7 +82,7 @@ El objetivo principal del proyecto es crear un algoritmo basado en el estudio de
 	\item Investigación y fundamentación teórica:
 	
 	\begin{enumerate}
-		\item Revisión del libro\cite{velez} y consulta con un médico especialista en primeros auxilios para comprender qué son las arritmias y cómo se producen.
+		\item Revisión del libro \cite{velez} y consulta con un médico especialista en primeros auxilios para comprender qué son las arritmias y cómo se producen.
 	
 		\item Utilizar la información obtenida para establecer la base médica del proyecto.
 	\end{enumerate}
@@ -102,7 +102,7 @@ El objetivo principal del proyecto es crear un algoritmo basado en el estudio de
 	
 	\item Implementación en  \textit{hardware} : 
 	\begin{enumerate}
-		\item Diseñar los módulos principales para cada parte del algoritmo (detección de picos, detección de arritmias, filtrado y un módulo principal.).
+		\item Diseñar los módulos principales para cada parte del algoritmo: detección de picos, detección de arritmias, filtrado y un módulo principal.
 
 		\item Crear módulos adicionales para realizar simulaciones en Vivado y verificar el funcionamiento del programa.
 		\item Desarrollar un \textit{testbench} para generar la frecuencia de reloj y las señales necesarias para simular el sistema.
@@ -135,13 +135,13 @@ Los módulos principales son.
 		\item Módulo de detección de arritmias: Se implementa una máquina de estados con el que recibiendo un pico QRS como entrada, sea capaz de almacenar las distancias más recientes, determinar según la diferencia de estas distancias, si se ha producido una arritmia y mostrar como salida un flag indicándolo.
 	\end{enumerate}
 	
-	Además de estos módulos se debe crear un módulo que los encapsule y un \textit{testbench} para probar el funcionamiento del programa con las señales de la base de datos\cite{desai2021low}.
+	Además de estos módulos se debe crear un módulo que los encapsule y un \textit{testbench} para probar el funcionamiento del programa con las señales de la base de datos \cite{desai2021low}.
 
 \section{Organización de la memoria}
-En el capítulo 2 se verá cómo se ha realizado el prototipado del algoritmo en software. En la sección 1 se muestra el transcurso del algoritmo. En la sección 2, se indicarán las librerías usadas para la recopilación de datos. En la sección 3, se explicará el tipo de filtrado que se ha usado para la señal original. En la sección 4, se expondrá el algoritmo de detección de picos QRS y las metodologías seguidas. En la sección 5, se explicará el algoritmo de detección de arritmias y en la sección 6, el algoritmo para probar el prototipo y obtener estadísticas de las pruebas realizadas.
+En el capítulo 2 se verá cómo se ha realizado el prototipado del algoritmo en software. En la sección 2.1 se muestra el transcurso del algoritmo. En la sección 2.2, se indicarán las librerías usadas para la recopilación de datos. En la sección 2.3, se explicará el tipo de filtrado que se ha usado para la señal original. En la sección 2.4, se expondrá el algoritmo de detección de picos QRS y las metodologías seguidas. En la sección 2.5, se explicará el algoritmo de detección de arritmias y en la sección 2.6, el algoritmo para probar el prototipo y obtener estadísticas de las pruebas realizadas.
 
-En el capítulo 3, se hablará de los distintos módulos creados para la implementación  \textit{hardware} . En la sección 1, se especificarán los módulos para las operaciones en punto flotante y las memorias utilizadas. De la sección 2 a la 4, se explicará el funcionamiento del módulo de filtrado de la señal, el módulo de detección de picos y el módulo de detección de arritmias. En la sección 5, se tratará la creación del módulo principal y el \textit{testbench} utilizado.
+En el capítulo 3, se hablará de los distintos módulos creados para la implementación  \textit{hardware}. En la sección 1, se especificarán los módulos para las operaciones en punto flotante y las memorias utilizadas. De la sección 2 a la 4, se explicará el funcionamiento del módulo de filtrado de la señal, el módulo de detección de picos y el módulo de detección de arritmias. En la sección 5, se tratará la creación del módulo principal y el \textit{testbench} utilizado.
 
-En el capítulo 4, se mostrarán los resultados experimentales obtenidos, como la FPGA utilizada, el análisis de utilización de  \textit{hardware} , el análisis de  \textit{timing}  y el consumo.
+En el capítulo 4, se mostrarán los resultados experimentales obtenidos, como la FPGA utilizada, el análisis de utilización de  \textit{hardware}, el análisis de  \textit{timing} y el consumo.
 
 Finalmente, en el capítulo 5, se dará una conclusión sobre la realización de este proyecto y se sugerirán trabajos futuros por si se desea ampliar el proyecto.

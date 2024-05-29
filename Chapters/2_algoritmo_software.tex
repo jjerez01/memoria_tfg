@@ -40,14 +40,14 @@ record = wfdb.rdsamp('mitdb/102', sampfrom=sampfrom, sampto=sampto)
 annotation = wfdb.rdann('mitdb/102', 'atr', sampfrom=sampfrom, sampto=sampto)
 \end{lstlisting}
 
-Por último, para visualizar esta señal con las anotaciones de los cardiólogos y poder comparar con las anotaciones que realiza el algoritmo se usará la librería \texttt{matplotlib.pyplot} \cite{Matplotlib}. Con esto se mostrará la señal original con las anotaciones y la señal filtrada con las anotaciones del algoritmo como en \Cref{fig:102filtradoysinfiltrar}
+Por último, para visualizar esta señal con las anotaciones de los cardiólogos y poder comparar con las anotaciones que realiza el algoritmo se usará la librería \texttt{matplotlib.pyplot} \cite{Matplotlib}. Con esto se mostrará la señal original con las anotaciones y la señal filtrada con las anotaciones del algoritmo como en la \Cref{fig:102filtradoysinfiltrar}
 
 \section{Filtrado de la señal original}
-Este filtrado es llevado a cabo por el filtrado FIR\cite{FIR}. El filtrado FIR, que significa \textit{Finite Impulse Response} (respuesta finita al impulso), es un tipo de filtro utilizado en el procesamiento de señales digitales y analógicas. La fórmula que se utilizará para el filtrado es la siguiente:
+Este filtrado es llevado a cabo por el filtrado FIR \cite{FIR}. El filtrado FIR, que significa \textit{Finite Impulse Response} (respuesta finita al impulso), es un tipo de filtro utilizado en el procesamiento de señales digitales y analógicas. La fórmula que se utilizará para el filtrado es la siguiente:
 
 \[ Y[i] = \sum_{k=0}^{N_x -1} b_k \cdot x[i-k] \]
 
-Siendo $b$ son los coeficientes del filtrado y $x$ los valores de la señal original a filtrar.
+Siendo $b$ los coeficientes del filtrado y $x$ los 99 valores de la señal original a filtrar.
 
 Los coeficientes se almacenan en una lista de 99 valores en punto flotante simétricos que se iteran de forma circular, con lo que después de ejecutar el último valor vuelve de nuevo al primero.  
 
@@ -71,7 +71,7 @@ Este algoritmo está basado en el que se usa en el documento \cite{desai2021low}
     \label{fig:fsm_mpdi}
 \end{figure}
 
-El algoritmo implementado difiere del que se describe en el documento, ya que el del documento es una versión simplificada de un algoritmo de detección de picos y no es tan funcional debido a la falta de un \textit{cutoff} dinámico, el cual sí está presente en este proyecto. Esta solución es necesaria porque a veces hay una distancia entre los picos QRS superior a 72 muestras, lo que ocasiona que en algunas ocasiones se detecte el ruido como un pico QRS, ya que después de las 72 muestras no se ha encontrado una señal. Por esta razón, en un proyecto en el que se sabe que los picos QRS estarán a distancias distintas entre sí, este algoritmo no es adecuado y debe modernizarse.
+El algoritmo implementado difiere del que se describe en el documento, ya que el del documento es una versión simplificada de un algoritmo de detección de picos y no es tan funcional debido a la falta de un \textit{cutoff} dinámico, el cual sí está presente en este proyecto. Esta solución es necesaria porque a veces hay una distancia entre los picos QRS superior a 72 muestras, lo que ocasiona que en algunos casos se detecte el ruido como un pico QRS, ya que después de las 72 muestras no se ha encontrado una señal. Por esta razón, en un proyecto en el que se sabe que los picos QRS estarán a distancias distintas entre sí, este algoritmo no es adecuado y debe modernizarse.
 
 Aun así, si bien el algoritmo creado es distinto a ese, se replica el tener que esperar a 72 muestras para asegurarse de que no se encuentra un pico superior y así poder considerarlo como un pico QRS. Es por ello que definimos la variable \texttt{samples\_around\_peak} como 72 para comparar dicha condición. Para hallar el pico más alto se necesita definir un pico en \texttt{last\_peak} y si se encuentra otro pico se realiza el máximo entre el pico encontrado y el de \texttt{last\_peak}.
 
@@ -84,10 +84,10 @@ El \textit{cutoff} es un umbral bajo con el cual se ignora la señal. Solo cuand
 
 Debido a la variación de las señales entre pacientes y la variación producida por la activación del marcapasos, el uso de un \textit{cutoff} estático, como el que se representa en la \cref{fig:cutoffestatico}, se hizo inconsistente para la detección de picos, es por ello que finalmente se utilizó un \textit{cutoff} dinámico, como se puede ver en la \cref{fig:cutoffdinamico}. Este se adapta mejor a la amplitud de ondas en la señal y así no captar picos QRS de más o de menos.
 
-El \textit{cutoff} dinámico recoge ese nombre, ya que su valor depende si se ha encontrado un pico o no, ya que cuando se encuentra un pico por encima del \textit{cutoff} anterior, el valor del \textit{cutoff} pasa a ser el del pico, por otro lado, cada vez que no se encuentre ningún pico La función del \textit{cutoff} pasa a ser la siguiente.
-\[cutoff = cutoff - cutoff/(256 - 64)\]
+El \textit{cutoff} dinámico recoge ese nombre, ya que su valor depende de si se ha encontrado un pico o no, ya que cuando se encuentra un pico por encima del \textit{cutoff} anterior, el valor del \textit{cutoff} pasa a ser el del pico, por otro lado, cada vez que no se encuentre ningún pico La función del \textit{cutoff} pasa a ser la siguiente:
+\[cutoff = cutoff - cutoff/192\]
 
-Se han dado los valores (256 - 64) a la fórmula para que, a la hora de replicar el programa en  \textit{hardware} , fuese más fácil la división, ya que solo habría que desplazar los bits. Sin embargo, como al final se terminó haciendo en un módulo de división en punto flotante cualquier valor es válido para la división aunque debido al buen desempeño del valor en el programa se decidió mantener el valor.
+Se ha dado el valor de 192 a la fórmula debido al buen desempeño en el programa.
 
 \begin{figure}[h!]
     \centering

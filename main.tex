@@ -78,12 +78,13 @@
 	\newpage
 	\phantomsection\addcontentsline{toc}{chapter}{\listfigurename} %add LOF to index
 	\listoffigures
-	\newpage
-	\phantomsection\addcontentsline{toc}{chapter}{\listtablename} %add LOT to index
-	\listoftables
+	% \newpage
+	% \phantomsection\addcontentsline{toc}{chapter}{\listtablename} %add LOT to index
+	% \listoftables
 	\clearpage
 
-    
+    \phantomsection\addcontentsline{toc}{chapter}{Resumen}
+	\phantomsection\addcontentsline{toc}{chapter}{Abstract}
 	%capítulos
 	\pagenumbering{arabic} 
 	\input{Chapters/0_resumen.tex}
@@ -92,8 +93,8 @@
 	\input{Chapters/3_implementacion_hardware.tex}
 	\input{Chapters/4_resultados_experimentales.tex}
 	\input{Chapters/5_conclusion.tex}
-	
-	
+	\phantomsection\addcontentsline{toc}{chapter}{Introduction}
+	\phantomsection\addcontentsline{toc}{chapter}{Conclusion}
 	
 	%Compact bibliography style
 	\begin{multicols}{2}[\printbibheading]

@@ -23,9 +23,9 @@ Por lo que, para hacer la prueba con todos los samples, se requiere utilizar una
 En este reporte nos encontramos con los siguientes datos:
 
 \begin{itemize}
-    \item Slice LUTs: Se utilizan 2016 de un total de 20800 disponibles. La mayoría de los LUTs se asignan a la parte de detección de picos, específicamente al módulo de división seguido del módulo de multiplicación en la parte del filtrado. El módulo de detección de arritmias apenas necesita LUTs en comparación con los otros módulos.
-    \item Slice registers: Se utilizan 3086 de un total de 41600 disponibles, y al igual que los LUTs, la mayoría se asignan a los módulos de división y multiplicación.
-    \item Bloque RAM tile: Se utiliza 1 tile de los 50 disponibles. La mitad se utiliza para la ROM de coeficientes y la otra mitad para la RAM de los valores de la señal original.
+    \item \textit{Slice LUTs}: Se utilizan 2016 de un total de 20800 disponibles. La mayoría de los LUTs se asignan a la parte de detección de picos, específicamente al módulo de división seguido del módulo de multiplicación en la parte del filtrado. El módulo de detección de arritmias apenas necesita LUTs en comparación con los otros módulos.
+    \item \textit{Slice registers}: Se utilizan 3086 de un total de 41600 disponibles, y al igual que los LUTs, la mayoría se asignan a los módulos de división y multiplicación.
+    \item Bloque \textit{RAM tile}: Se utiliza 1 tile de los 50 disponibles. La mitad se utiliza para la ROM de coeficientes y la otra mitad para la RAM de los valores de la señal original.
     \item Se utilizan 4 DSPs de los 90 disponibles. Dos de ellos se utilizan en el módulo de multiplicación y dos en el módulo restador.
 \end{itemize}
 
@@ -53,11 +53,11 @@ Se han utilizado menos de un 10\% del  \textit{hardware}  disponible para cada r
 \end{figure}
 
 
-\subsection{Análisis de  \textit{timing} }
+\subsection{Análisis de \textit{timing} }
 
-La frecuencia de funcionamiento se ha calculado según la referencia del artículo \cite{desai2021low}, que indica que las muestras se toman a 360 sps (samples per second), lo que equivale a 360 Hz. Con esta información, sabemos que una muestra llega cada \( \frac{1}{360 Hz} = 2.777 ms\).
+La frecuencia de funcionamiento se ha calculado según la referencia del artículo \cite{desai2021low}, que indica que las muestras se toman a 360 sps (\textit{samples per second}), lo que equivale a 360 Hz. Con esta información, sabemos que una muestra llega cada \( \frac{1}{360 Hz} = 2.777 ms\).
 
-También se calcula el número de ciclos que tarda en ejecutarse el módulo de filtrado, que resulta ser el más crítico de todos. Este módulo requiere un total de 1780 ciclos, por lo que \( \frac{2.777  ms}{1780 ciclos} = 1.56  microsegundos \) por ciclo. Por lo tanto, en waveform se establecerá un periodo de 1500 ns con una oscilación desde 0 a 750 ns para que sea simétrico.
+También se calcula el número de ciclos que tarda en ejecutarse el módulo de filtrado, que resulta ser el más crítico de todos. Este módulo requiere un total de 1780 ciclos, por lo que \( \frac{2.777  ms}{1780 ciclos} = 1.56  microsegundos \) por ciclo. Por lo tanto, en el \textit{waveform} se establecerá un periodo de 1500 ns con una oscilación desde 0 a 750 ns para que sea simétrico.
 
 
 \lstset{language=VHDL, breaklines=true, basicstyle=\footnotesize}
@@ -68,7 +68,7 @@ set_property PACKAGE_PIN W5 [get_ports clk]
 	create_clock -add -name sys_clk_pin -period 1500.00 -waveform {0 750} [get_ports clk]
 \end{lstlisting}
 
-	En el análisis de  \textit{timing}  se comprobará cuál es el worst negative slack y se calculará el periodo mínimo necesario. Este reporte de  \textit{timing}  muestra lo siguiente. La frecuencia alcanzada con ese periodo es de 0,540 MHz
+	En el análisis de  \textit{timing}  se comprobará cuál es el \textit{worst negative slack} y se calculará el periodo mínimo necesario. Este reporte de  \textit{timing}  muestra lo siguiente. La frecuencia alcanzada con ese periodo es de 0,540 MHz
 
 	\begin{figure}[h!]
 		\centering
@@ -77,7 +77,7 @@ set_property PACKAGE_PIN W5 [get_ports clk]
 		\label{fig:reporteTiming}
 	\end{figure} 
 
-	Para calcular el periodo mínimo necesario se resta el periodo actual menos el worst negative slack dando como resultado 6,775 ns de periodo mínimo de funcionamiento.  
+	Para calcular el periodo mínimo necesario se resta el periodo actual menos el \textit{worst negative slack} dando como resultado 6,775 ns de periodo mínimo de funcionamiento.  
 	\[f - wns = f{min}\]
 	\[1500 - 1493,225 = 6,775\]
 
@@ -94,7 +94,7 @@ set_property PACKAGE_PIN W5 [get_ports clk]
 		\label{fig:reportepotencia}
 	\end{figure} 
 
-	En este análisis la potencia alcanzada es de 0,069 W, pero casi todo el consumo es causado por la placa en sí (Device static), este algoritmo no gasta más de un 0,001 Vatios como se puede ver en la figura \cref*{fig:hierarchical} del  \textit{hardware}  utilizado a temperatura ambiente como se ve en la \cref*{fig:temperaturaambiente}
+	En este análisis la potencia alcanzada es de 0,069 W, pero casi todo el consumo es causado por la placa en sí (Device static), este algoritmo no gasta más de un 0,001 Vatios como se puede ver en la \cref*{fig:hierarchical} del \textit{hardware} utilizado a temperatura ambiente como se ve en la \cref*{fig:temperaturaambiente}
 
 	\begin{figure}[h!]
 		\centering

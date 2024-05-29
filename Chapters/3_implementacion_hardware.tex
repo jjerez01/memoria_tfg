@@ -16,7 +16,7 @@ y probamos la simulación con un \textit{testbench}. Véase \Cref{fig:diagramaGe
 
 \section{Módulos adicionales} 
 
-Como los valores de las señales están en punto flotante y como se necesitan almacenar valores en una memoria, para poder operar con ellos, es necesario utilizar módulos  \textit{hardware}  que permitan hacer dichas operaciones. Para ello, se utilizarán los \textit{IP cores} (\textit{Intelectual Property cores}) de Vivado \cite{xilinx_ip_cores}. Estos \textit{IP cores} son bloques que pueden realizar funciones específicas de  \textit{hardware} , optimizando así el diseño y facilitando la implementación de operaciones complejas. En este proyecto utilizaremos módulos de multiplicación y suma, resta, división y comparación de números en punto flotante, aprovechando las capacidades de los \textit{IP cores} de Vivado para manejar estos cálculos de manera eficiente y precisa.
+Como los valores de las señales están en punto flotante y como se necesitan almacenar valores en una memoria, para poder operar con ellos, es necesario utilizar módulos  \textit{hardware}  que permitan hacer dichas operaciones. Para ello, se utilizarán los \textit{IP cores} (\textit{Intelectual Property cores}) de Vivado \cite{xilinx_ip_cores}. Estos \textit{IP cores} son bloques que pueden realizar funciones específicas de  \textit{hardware}, optimizando así el diseño y facilitando la implementación de operaciones complejas. En este proyecto utilizaremos módulos de multiplicación y suma, resta, división y comparación de números en punto flotante, aprovechando las capacidades de los \textit{IP cores} de Vivado para manejar estos cálculos de manera eficiente y precisa.
 \subsection{Módulos ROM y RAM}
  Se necesitan módulos de ROM y RAM para las pruebas y para el módulo de filtrado.
 
@@ -49,10 +49,8 @@ Como los valores de las señales están en punto flotante y como se necesitan al
 Para el módulo de filtrado, es necesario el uso de una ROM que contenga los coeficientes de filtrado y una RAM que contenga los valores de la señal original para ser procesados.
 
 \begin{itemize}
-\item La ROM se configura como \textit{single port ROM}, este tiene 99 filas y de anchura 
-tiene 32 bits. Se muestra la configuración de este módulo en la \cref{fig:romcoeficientesconf}
-\item La RAM se configura como \textit{single port RAM} y se mantiene desactivado el valor de \texttt{primitive output}.
-Se muestra la configuración de este módulo en la \cref{fig:rammuestrasconf}
+\item La ROM se configura como \textit{single port ROM}, este tiene 99 filas de profundidad y de anchura de palabra tiene 32 bits. Se muestra la configuración de este módulo en la \cref{fig:romcoeficientesconf}
+\item La RAM se configura como \textit{single port RAM} y se mantiene desactivado el valor de \texttt{primitive output}. Se muestra la configuración de este módulo en la \cref{fig:rammuestrasconf}
 
 \end{itemize}
 
@@ -73,10 +71,7 @@ Se muestra la configuración de este módulo en la \cref{fig:rammuestrasconf}
 
 \subsection{Módulos punto flotante}
 
-Se han definido varios módulos para hacer las distintas operaciones en punto flotante, ya que en VHDL no se
-pueden hacer estas operaciones directamente, se necesitan usar otros módulos especializados.
-
-Como se operan con valores en punto flotante simple, las señales tienen que ser de 32 bits.
+Se han definido varios módulos para hacer las distintas operaciones en punto flotante, ya que en VHDL no se pueden hacer estas operaciones directamente, se necesitan usar otros módulos especializados. Como se operan con valores en punto flotante simple, las señales tienen que ser de 32 bits.
 
 En este programa se necesitan 5 tipos de módulos de operaciones.
 
@@ -272,7 +267,7 @@ se activa usando así el \texttt{last\_index} correspondiente.
 
 \section{Módulo de detección de arritmias}
 
-El módulo de detección de arritmias se encarga de detectar si la distancia entre 2 picos QRS es considerada una arritmia o no,
+El módulo de detección de arritmias se encarga de detectar si la distancia entre 2 picos QRS es considerada una arritmia o no.
  
 \subsection{Señales de entrada y salida}
 Las señales de entrada de este módulo son:
@@ -360,12 +355,12 @@ Estos módulos se componen de un estado de lectura y uno de escritura. Uno lee e
 \item Estado de espera: Pone el bit de \textit{valid} a 1 y espera al bit de \textit{ready} para que el siguiente módulo lea el dato, actualiza el contador y pasa al estado de lectura.
 \end{itemize}
 
-Este módulo cuenta con una ROM con los valores de la señal original, valores que se van leyendo cundo la señal de \textit{ready} se activa.
+Este módulo cuenta con una ROM con los valores de la señal original, valores que se van leyendo cuando la señal de \textit{ready} se activa.
 
 \subsection{Módulo de salida}
 \begin{itemize}
 \item Estado de lectura: Primero, se asegura de que el contador no ha llegado a la cantidad máxima de muestras, que en este caso es 144. Luego, se pone el bit de \texttt{enable} a 1 y se pasa al estado de espera. Si se han leído todas las muestras, pasa al estado correcto.
-\item Estado de espera: Pone el bit de \textit{valid} a 1 y espera al bit de \textit{ready} para que el siguiente módulo lea el dato, actualiza el contador y se comprueba si la anotación del pico coincide con la anotación de la ROM, que es la anotación original. Además, se asegura de que la anotación pertenece al índice correcto. Si esta condición se cumple, sigue con la ejecución; de lo contrario, pasa al estado de error.
+\item Estado de espera: Pone el bit de \textit{valid} a 1 y espera al bit de \textit{ready} para que el siguiente módulo lea el dato, actualiza el contador y se comprueba si la anotación del pico coincide con la anotación de la ROM, que es la anotación original. Además, se asegura que la anotación pertenece al índice correcto. Si esta condición se cumple, sigue con la ejecución; de lo contrario, pasa al estado de error.
 \item Estado de error: Pone la señal de \texttt{error} a 1 y detiene la ejecución, ya que un resultado no coincide.
 \item Estado correcto: Pone la señal de \texttt{correcto} a 1, indicando que el programa ha sido replicado con éxito.
 \end{itemize}
